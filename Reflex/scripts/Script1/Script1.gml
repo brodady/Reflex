@@ -60,6 +60,55 @@ function reflex(_node_handle) constructor
 	__cache_struct = undefined;
 	#endregion
 	
+	#region jsDoc
+	/// @desc
+	///		Draws a debug visualization for this flex node and its subtree.
+	///		Draws the node rect (x/y/width/height) and then recurses through children.
+	///		Requires that a reflow has been performed so x/y/width/height are valid.
+	///
+	/// @param {Real} _depth
+	///		Internal recursion depth. Leave as default.
+	/// @param {Real} _max_depth
+	///		Stops recursion after this depth. Leave default for unlimited (-1).
+	#endregion
+	static draw_debug = function(_depth=0, _max_depth=-1)
+	{
+		// Stop conditions
+		if (_max_depth >= 0 && _depth > _max_depth) { return; }
+
+		// Basic rect from cached reflow output
+		var _left_value = x;
+		var _top_value = y;
+		var _right_value = x + width;
+		var _bottom_value = y + height;
+
+		// Vary alpha by depth; keep it simple and deterministic
+		var _alpha_value = 0.35;
+		if (_depth > 0)
+		{
+			_alpha_value = 0.35 / (_depth + 1);
+		}
+
+		// Outline
+		draw_set_alpha(_alpha_value);
+		draw_set_color(c_white);
+		draw_rectangle(_left_value, _top_value, _right_value, _bottom_value, true);
+
+		// Optional label
+		draw_set_alpha(1);
+		draw_set_color(c_white);
+		var _name_value = get_name();
+		if (_name_value == undefined) { _name_value = ""; }
+		draw_text(_left_value + 2, _top_value + 2, _name_value);
+
+		// Children
+		var _count = array_length(__children);
+		for (var i = 0; i < _count; i++)
+		{
+			__children[i].draw_debug(_depth + 1, _max_depth);
+		}
+	};
+	
 	// -------------------------------------------------------------------------
 	// Reflow directive
 	// -------------------------------------------------------------------------

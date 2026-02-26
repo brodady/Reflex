@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"_settings",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"_settings",
+  "parent":{
+    "name":"_internal",
+    "path":"folders/RedsTools/_Config/Settings/_internal.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

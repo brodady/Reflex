@@ -1,8 +1,16 @@
 {
-  "FolderOrderSettings":[],
+  "FolderOrderSettings":[
+    {"name":"Settings","order":1,"path":"folders/RedsTools/_Config/Settings.yy",},
+    {"name":"_internal","order":1,"path":"folders/RedsTools/_Config/Settings/_internal.yy",},
+    {"name":"RedsTools","order":8,"path":"folders/RedsTools.yy",},
+    {"name":"YoutubeDemo","order":5,"path":"folders/YoutubeDemo.yy",},
+  ],
   "ResourceOrderSettings":[
     {"name":"obj_test","order":1,"path":"objects/obj_test/obj_test.yy",},
+    {"name":"rm_youtube_demo","order":1,"path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},
+    {"name":"Debug","order":1,"path":"scripts/Debug/Debug.yy",},
     {"name":"Script1","order":2,"path":"scripts/Script1/Script1.yy",},
     {"name":"Script2","order":3,"path":"scripts/Script2/Script2.yy",},
+    {"name":"Settings","order":2,"path":"scripts/Settings/Settings.yy",},
   ],
 }

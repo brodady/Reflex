@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"Debug",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Debug",
+  "parent":{
+    "name":"RedsTools",
+    "path":"folders/RedsTools.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
