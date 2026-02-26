@@ -17,7 +17,7 @@
 ///		_wrap.request_reflow();
 ///		_wrap.flush();
 #endregion
-function reflex(_node_handle) constructor
+function Reflex(_node_handle) constructor
 {
 	// -------------------------------------------------------------------------
 	// Owned node handle
@@ -58,6 +58,23 @@ function reflex(_node_handle) constructor
 
 	// flexpanel_node_get_struct(node) -> Struct
 	__cache_struct = undefined;
+     
+    // -------------------------------------------------------------------------
+	// Helpers
+	// -------------------------------------------------------------------------
+    
+    /// @ignore Internal Unit Resolver
+    static __resolve_unit = function(_val) {
+        if (is_real(_val)) return { value: _val, unit: flexpanel_unit.point };
+        if (is_string(_val)) {
+            if (_val == "auto") return { value: 0, unit: flexpanel_unit.auto };
+            var _len = string_length(_val);
+            if (string_char_at(_val, _len) == "%") {
+                return { value: real(string_copy(_val, 1, _len - 1)), unit: flexpanel_unit.percent };
+            }
+        }
+        return { value: 0, unit: flexpanel_unit.point };
+    };
 	#endregion
 	
 	// -------------------------------------------------------------------------
@@ -281,8 +298,18 @@ function reflex(_node_handle) constructor
 	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); };
 	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); };
 	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); };
-	static set_width = function(_width_value, _unit_value) { flexpanel_node_style_set_width(node_handle, _width_value, _unit_value); };
-	static set_height = function(_height_value, _unit_value) { flexpanel_node_style_set_height(node_handle, _height_value, _unit_value); };
+	static set_width = function(_val) {
+        var _res = __resolve_unit(_val);
+        flexpanel_node_style_set_width(node_handle, _res.value, _res.unit);
+        request_reflow();
+        return self;
+    };
+    static set_height = function(_val) {
+        var _res = __resolve_unit(_val);
+        flexpanel_node_style_set_height(node_handle, _res.value, _res.unit);
+        request_reflow();
+        return self;
+    };
 	#endregion
 	#region Getters
 	

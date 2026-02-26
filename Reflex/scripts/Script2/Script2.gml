@@ -1,3 +1,4 @@
+/// Feather ignore all
 #region jsDoc
 /// @desc Measure function used to test set_measure_function.
 #endregion
@@ -157,9 +158,9 @@ function reflex_test_run()
 	show_debug_message("============================================================");
 	show_debug_message("reflex_test_run: begin");
 
-	var _outer = new reflex();
-	var _inner = new reflex();
-	var _leaf = new reflex();
+	var _outer = new Reflex();
+	var _inner = new Reflex();
+	var _leaf = new Reflex();
 
 	_outer.set_name("outer");
 	_inner.set_name("inner");
