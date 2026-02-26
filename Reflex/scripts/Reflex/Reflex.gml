@@ -33,48 +33,129 @@ function Reflex() constructor
 	// Drawing
 	// -------------------------------------------------------------------------
 	#region jsDoc
-	/// @desc
-	///		Draws a debug visualization for this flex node and its subtree.
-	///		Draws the node rect (x/y/width/height) and then recurses through children.
-	///		Requires that a reflow has been performed so x/y/width/height are valid.
-	///
-	/// @param {Real} _depth
-	///		Internal recursion depth. Leave as default.
-	/// @param {Real} _max_depth
-	///		Stops recursion after this depth. Leave default for unlimited (-1).
-	#endregion
-	static draw_debug = function(_depth=0, _max_depth=-1)
-	{
-		// Stop conditions
-		if (_max_depth >= 0 && _depth > _max_depth) { return; }
+    /// @desc Draws a contextual debug visualization with interactive label popovers.
+    /// @param {Real} _depth Internal recursion depth.
+    /// @param {Real} _max_depth Stops recursion after this depth.
+    /// @param {Bool} _padding Whether to visualize padding via diagonal lines.
+    /// @param {Bool} _margin Whether to visualize margin via diagonal lines.
+    /// @param {Bool} _show_labels Whether to draw names and numeric pixel values.
+    #endregion
+    static draw_debug = function(_depth=0, _max_depth=-1, _padding=false, _margin=false, _show_labels=true)
+    {
+        if (_max_depth >= 0 && _depth > _max_depth) return;
 
-		// Vary alpha by depth; keep it simple and deterministic
-		var _alpha_value = 0.35;
-		if (_depth > 0) {
-			_alpha_value = 0.35 / (_depth + 1);
-		}
+        // --- Internal Helper ---
+        var __draw_val = function(_cx, _cy, _val, _color) {
+            var _s = string(_val);
+            var _tw = string_width(_s) + 4;
+            var _th = string_height(_s);
+            var _rx1 = _cx - _tw/2;
+            var _ry1 = _cy - _th/2;
+            draw_set_color(c_black);
+            draw_rectangle(_rx1, _ry1, _rx1 + _tw, _ry1 + _th, false);
+            draw_set_color(_color);
+            draw_text(_rx1 + 2, _ry1, _s);
+        };
 
-		// Outline
-		draw_set_alpha(_alpha_value);
-		draw_set_color(c_lime);
-		draw_rectangle(x, y, x + width, y + height, true);
+        // --- Static Hover Management ---
+        static __hover_stack = [];
+        if (_depth == 0) array_resize(__hover_stack, 0); 
 
-		// Optional label
-		draw_set_alpha(1);
-		draw_set_color(c_white);
-		//Please dont set font here otherwise its not easily exportable as a standalone script
-		// draw_set_font(fnt_lbl);
-		//////////////////////////
-		var _name_value = get_name() ?? ""
-		draw_text(x + 2, y + 2, _name_value);
+        var _layout = __cache_layout;
+        var _col_main = merge_color(c_blue, c_orange, min(_depth * 0.15, 1.0));
 
-		// Children
-		var _count = array_length(__children);
-		for (var i = 0; i < _count; i++)
-		{
-			__children[i].draw_debug(_depth + 1, _max_depth);
-		}
-	};
+        // 1. Draw Margin & Padding (Line-based wireframes)
+        if (_layout != undefined) {
+            if (_margin) {
+                draw_set_color(c_orange); draw_set_alpha(0.4);
+                var _mx1 = x - _layout.marginLeft, _my1 = y - _layout.marginTop;
+                var _mx2 = x + width + _layout.marginRight, _my2 = y + height + _layout.marginBottom;
+                draw_rectangle(_mx1, _my1, _mx2, _my2, true);
+                draw_line(_mx1, _my1, x, y); draw_line(_mx2, _my1, x + width, y);
+                draw_line(_mx1, _my2, x, y + height); draw_line(_mx2, _my2, x + width, y + height);
+                if (_show_labels) {
+                    draw_set_alpha(1.0);
+                    if (_layout.marginTop != 0)    __draw_val(x + width/2, y - _layout.marginTop/2, _layout.marginTop, c_orange);
+                    if (_layout.marginBottom != 0) __draw_val(x + width/2, y + height + _layout.marginBottom/2, _layout.marginBottom, c_orange);
+                    if (_layout.marginLeft != 0)   __draw_val(x - _layout.marginLeft/2, y + height/2, _layout.marginLeft, c_orange);
+                    if (_layout.marginRight != 0)  __draw_val(x + width + _layout.marginRight/2, y + height/2, _layout.marginRight, c_orange);
+                }
+            }
+            if (_padding) {
+                draw_set_color(c_fuchsia); draw_set_alpha(0.4);
+                var _px1 = x + _layout.paddingLeft, _py1 = y + _layout.paddingTop;
+                var _px2 = x + width - _layout.paddingRight, _py2 = y + height - _layout.paddingBottom;
+                draw_rectangle(_px1, _py1, _px2, _py2, true);
+                draw_line(x, y, _px1, _py1); draw_line(x + width, y, _px2, _py1);
+                draw_line(x, y + height, _px1, _py2); draw_line(x + width, y + height, _px2, _py2);
+                if (_show_labels) {
+                    draw_set_alpha(1.0);
+                    if (_layout.paddingTop != 0)    __draw_val(x + width/2, y + _layout.paddingTop/2, _layout.paddingTop, c_fuchsia);
+                    if (_layout.paddingBottom != 0) __draw_val(x + width/2, y + height - _layout.paddingBottom/2, _layout.paddingBottom, c_fuchsia);
+                    if (_layout.paddingLeft != 0)   __draw_val(x + _layout.paddingLeft/2, y + height/2, _layout.paddingLeft, c_fuchsia);
+                    if (_layout.paddingRight != 0)  __draw_val(x + width - _layout.paddingRight/2, y + height/2, _layout.paddingRight, c_fuchsia);
+                }
+            }
+        }
+
+        // 2. Main Box Fill & 2px Border
+        draw_set_alpha(0.15); draw_set_color(_col_main);
+        draw_rectangle(x, y, x + width, y + height, false);
+        draw_set_alpha(0.8);
+        draw_line_width(x+1, y+1, x+width-1, y+1, 2);
+        draw_line_width(x+1, y+height-1, x+width-1, y+height-1, 2);
+        draw_line_width(x+1, y+1, x+1, y+height-1, 2);
+        draw_line_width(x+width-1, y+1, x+width-1, y+height-1, 2);
+
+        // 3. Primary Node Tag & Hover Logic
+        if (_show_labels) {
+            var _name = get_name() ?? ("Node_" + string(__uuid));
+            var _tw = string_width(_name) + 6, _th = string_height(_name);
+            var _lx1 = x + 2, _ly1 = y + 2, _lx2 = _lx1 + _tw, _ly2 = _ly1 + _th;
+
+            // Check Hover (GUI space)
+            var _mx = device_mouse_x_to_gui(0), _my = device_mouse_y_to_gui(0);
+            if (_mx >= _lx1 && _mx <= _lx2 && _my >= _ly1 && _my <= _ly2) {
+                array_push(__hover_stack, { name: _name, col: _col_main, depth: _depth });
+            }
+
+            draw_set_alpha(1.0); draw_set_color(c_black);
+            draw_rectangle(_lx1, _ly1, _lx2, _ly2, false);
+            draw_set_color(c_white);
+            draw_text(_lx1 + 3, _ly1, _name);
+        }
+
+        // 4. Recurse
+        var _count = array_length(__children);
+        for (var i = 0; i < _count; i++) {
+            __children[i].draw_debug(_depth + 1, _max_depth, _padding, _margin, _show_labels);
+        }
+
+        // 5. Render Popover (Root only)
+        if (_depth == 0 && array_length(__hover_stack) > 1) {
+            var _px = device_mouse_x_to_gui(0) + 12, _py = device_mouse_y_to_gui(0) + 12;
+            var _p_count = array_length(__hover_stack);
+            var _p_th = string_height("M") + 4;
+            var _p_tw = 120;
+            
+            for(var i=0; i<_p_count; i++) _p_tw = max(_p_tw, string_width(__hover_stack[i].name) + 24);
+
+            draw_set_alpha(0.95); draw_set_color(c_black);
+            draw_rectangle(_px, _py, _px + _p_tw, _py + (_p_count * _p_th) + 4, false);
+            draw_set_color(c_dkgray);
+            draw_rectangle(_px, _py, _px + _p_tw, _py + (_p_count * _p_th) + 4, true);
+
+            for (var i = 0; i < _p_count; i++) {
+                var _item = __hover_stack[i];
+                var _iy = _py + 2 + (i * _p_th);
+                draw_set_color(_item.col);
+                draw_rectangle(_px + 4, _iy + 4, _px + 8, _iy + _p_th - 4, false);
+                draw_set_color(c_white);
+                draw_text(_px + 14, _iy, _item.name);
+            }
+        }
+        draw_set_alpha(1.0);
+    };
 	
 	// -------------------------------------------------------------------------
 	// Reflow directive

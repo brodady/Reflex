@@ -2,13 +2,13 @@
   "FolderOrderSettings":[
     {"name":"Examples","order":3,"path":"folders/Examples.yy",},
     {"name":"Resources","order":1,"path":"folders/Examples/Leaf Nodes/Resources.yy",},
+    {"name":"YoutubeDemo","order":1,"path":"folders/Examples/YoutubeDemo.yy",},
     {"name":"RedsTools","order":2,"path":"folders/RedsTools.yy",},
     {"name":"Settings","order":1,"path":"folders/RedsTools/_Config/Settings.yy",},
     {"name":"_internal","order":1,"path":"folders/RedsTools/_Config/Settings/_internal.yy",},
     {"name":"Reflex","order":4,"path":"folders/Reflex.yy",},
     {"name":"LeafNodes","order":8,"path":"folders/Reflex/LeafNodes.yy",},
     {"name":"Tests","order":5,"path":"folders/Tests.yy",},
-    {"name":"YoutubeDemo","order":1,"path":"folders/Examples/YoutubeDemo.yy",},
   ],
   "ResourceOrderSettings":[
     {"name":"rm_youtube_demo","order":1,"path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},

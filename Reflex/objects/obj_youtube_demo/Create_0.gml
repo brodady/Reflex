@@ -44,6 +44,7 @@ layout_main.set_width(100, flexpanel_unit.percent);
 layout_main.set_height(100, flexpanel_unit.percent);
 layout_main.set_align_items(flexpanel_align.stretch);
 layout_main.set_gap(flexpanel_gutter.all_gutters, 8);
+layout_main.set_margin(flexpanel_edge.all_edges, 16);
 
 // Chipbar
 layout_chipbar = new Reflex();
@@ -72,6 +73,8 @@ layout_grid.set_flex_direction(flexpanel_flex_direction.row);
 layout_grid.set_flex_wrap(flexpanel_wrap.wrap);
 layout_grid.set_gap(flexpanel_gutter.all_gutters, 16);
 layout_grid.set_align_items(flexpanel_align.stretch);
+layout_grid.set_padding(flexpanel_edge.all_edges, 32);
+layout_grid.set_margin(flexpanel_edge.all_edges, 4);
 
 // Build tree
 layout_root.add(layout_masthead);
