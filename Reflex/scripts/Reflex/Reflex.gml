@@ -369,31 +369,31 @@ function Reflex() constructor
 	// guessing function names/signatures from memory)
 	// -------------------------------------------------------------------------
 	#region Setters
-	static set_name = function(_name_value) { flexpanel_node_set_name(node_handle, _name_value); };
-	static set_measure_function = function(_measure_function) { flexpanel_node_set_measure_function(node_handle, _measure_function); request_reflow(); };
-	static set_align_content = function(_align_value) { flexpanel_node_style_set_align_content(node_handle, _align_value); request_reflow(); };
-	static set_align_items = function(_align_value) { flexpanel_node_style_set_align_items(node_handle, _align_value); request_reflow(); };
-	static set_align_self = function(_align_value) { flexpanel_node_style_set_align_self(node_handle, _align_value); request_reflow(); };
-	static set_aspect_ratio = function(_aspect_ratio) { flexpanel_node_style_set_aspect_ratio(node_handle, _aspect_ratio); request_reflow(); };
-	static set_display = function(_display_value) { flexpanel_node_style_set_display(node_handle, _display_value); request_reflow(); };
-	static set_flex = function(_flex_value) { flexpanel_node_style_set_flex(node_handle, _flex_value); request_reflow(); };
-	static set_flex_wrap = function(_wrap_value) { flexpanel_node_style_set_flex_wrap(node_handle, _wrap_value); request_reflow(); };
-	static set_flex_grow = function(_grow_value) { flexpanel_node_style_set_flex_grow(node_handle, _grow_value); request_reflow(); };
-	static set_flex_shrink = function(_shrink_value) { flexpanel_node_style_set_flex_shrink(node_handle, _shrink_value); request_reflow(); };
-	static set_flex_basis = function(_value, _unit_value) { flexpanel_node_style_set_flex_basis(node_handle, _value, _unit_value); request_reflow(); };
-	static set_flex_direction = function(_flex_direction_value) { flexpanel_node_style_set_flex_direction(node_handle, _flex_direction_value); request_reflow(); };
-	static set_gap = function(_gutter_value, _size_value) { flexpanel_node_style_set_gap(node_handle, _gutter_value, _size_value); request_reflow(); };
-	static set_position = function(_edge_value, _value, _unit_value) { flexpanel_node_style_set_position(node_handle, _edge_value, _value, _unit_value); request_reflow(); };
-	static set_justify_content = function(_justify_value) { flexpanel_node_style_set_justify_content(node_handle, _justify_value); request_reflow(); };
-	static set_direction = function(_direction_value) { flexpanel_node_style_set_direction(node_handle, _direction_value); request_reflow(); };
-	static set_margin = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_margin(node_handle, _edge_value, _size_value, _unit_value); request_reflow(); };
-	static set_padding = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_padding(node_handle, _edge_value, _size_value, _unit_value); request_reflow(); };
-	static set_border = function(_edge_value, _size_value) { flexpanel_node_style_set_border(node_handle, _edge_value, _size_value); request_reflow(); };
-	static set_position_type = function(_position_type_value) { flexpanel_node_style_set_position_type(node_handle, _position_type_value); request_reflow(); };
-	static set_min_width = function(_value, _unit_value) { flexpanel_node_style_set_min_width(node_handle, _value, _unit_value); request_reflow(); };
-	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); request_reflow(); };
-	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); request_reflow(); };
-	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); request_reflow(); };
+	static set_name = function(_name_value) { flexpanel_node_set_name(node_handle, _name_value); return self; };
+	static set_measure_function = function(_measure_function) { flexpanel_node_set_measure_function(node_handle, _measure_function); request_reflow(); return self; };
+	static set_align_content = function(_align_value) { flexpanel_node_style_set_align_content(node_handle, _align_value); request_reflow(); return self; };
+	static set_align_items = function(_align_value) { flexpanel_node_style_set_align_items(node_handle, _align_value); request_reflow(); return self; };
+	static set_align_self = function(_align_value) { flexpanel_node_style_set_align_self(node_handle, _align_value); request_reflow(); return self; };
+	static set_aspect_ratio = function(_aspect_ratio) { flexpanel_node_style_set_aspect_ratio(node_handle, _aspect_ratio); request_reflow(); return self; };
+	static set_display = function(_display_value) { flexpanel_node_style_set_display(node_handle, _display_value); request_reflow(); return self; };
+	static set_flex = function(_flex_value) { flexpanel_node_style_set_flex(node_handle, _flex_value); request_reflow(); return self; };
+	static set_flex_wrap = function(_wrap_value) { flexpanel_node_style_set_flex_wrap(node_handle, _wrap_value); request_reflow(); return self; };
+	static set_flex_grow = function(_grow_value) { flexpanel_node_style_set_flex_grow(node_handle, _grow_value); request_reflow(); return self; };
+	static set_flex_shrink = function(_shrink_value) { flexpanel_node_style_set_flex_shrink(node_handle, _shrink_value); request_reflow(); return self; };
+	static set_flex_basis = function(_value, _unit_value) { flexpanel_node_style_set_flex_basis(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_flex_direction = function(_flex_direction_value) { flexpanel_node_style_set_flex_direction(node_handle, _flex_direction_value); request_reflow(); return self; };
+	static set_gap = function(_gutter_value, _size_value) { flexpanel_node_style_set_gap(node_handle, _gutter_value, _size_value); request_reflow(); return self; };
+	static set_position = function(_edge_value, _value, _unit_value) { flexpanel_node_style_set_position(node_handle, _edge_value, _value, _unit_value); request_reflow(); return self; };
+	static set_justify_content = function(_justify_value) { flexpanel_node_style_set_justify_content(node_handle, _justify_value); request_reflow(); return self; };
+	static set_direction = function(_direction_value) { flexpanel_node_style_set_direction(node_handle, _direction_value); request_reflow(); return self; };
+	static set_margin = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_margin(node_handle, _edge_value, _size_value, _unit_value); request_reflow(); return self; };
+	static set_padding = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_padding(node_handle, _edge_value, _size_value, _unit_value); request_reflow(); return self; };
+	static set_border = function(_edge_value, _size_value) { flexpanel_node_style_set_border(node_handle, _edge_value, _size_value); request_reflow(); return self; };
+	static set_position_type = function(_position_type_value) { flexpanel_node_style_set_position_type(node_handle, _position_type_value); request_reflow(); return self; };
+	static set_min_width = function(_value, _unit_value) { flexpanel_node_style_set_min_width(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); request_reflow(); return self; };
 	static set_width = function(_val, _unit_value) {
         if (_unit_value == undefined) {
 			var _res = __resolve_unit(_val);
