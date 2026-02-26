@@ -447,6 +447,12 @@ function Reflex() constructor
 	// PRIVITE
 	// -------------------------------------------------------------------------
 	#region Private
+	//keep an on running count
+	static __global_uuid = 0;
+	__global_uuid++;
+	
+	__uuid = __global_uuid;
+	
 	__root = self;
 	__parent = undefined;
 	__children = [];
