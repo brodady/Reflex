@@ -28,6 +28,7 @@
     {"id":{"name":"fnt_lbl","path":"fonts/fnt_lbl/fnt_lbl.yy",},},
     {"id":{"name":"obj_test","path":"objects/obj_test/obj_test.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"reflex_draw_debug","path":"scripts/reflex_draw_debug/reflex_draw_debug.yy",},},
     {"id":{"name":"Reflex","path":"scripts/Reflex/Reflex.yy",},},
     {"id":{"name":"ReflexLeaf","path":"scripts/ReflexLeaf/ReflexLeaf.yy",},},
     {"id":{"name":"ReflexSprite","path":"scripts/ReflexSprite/ReflexSprite.yy",},},

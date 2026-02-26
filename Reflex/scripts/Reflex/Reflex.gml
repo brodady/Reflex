@@ -377,5 +377,15 @@ function Reflex(_node_handle) constructor
 	static get_name = function()	{ return flexpanel_node_get_name(node_handle); };
 	static get_measure_function = function()	{ return flexpanel_node_get_measure_function(node_handle); };
 	#endregion
+    
+    static draw_debug = function() {
+    var _old_color = draw_get_color();
+    var _old_alpha = draw_get_alpha();
+    
+    reflex_draw_debug(self, true);
+    
+    draw_set_color(_old_color);
+    draw_set_alpha(_old_alpha);
+};
 }
 

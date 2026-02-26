@@ -1,8 +1,16 @@
-// Draw Sprite Mirror
-draw_sprite_ext(my_icon.sprite_index, my_icon.image_index, 
-                my_icon.x, my_icon.y, 
-                my_icon.scale_x, my_icon.scale_y, 0, c_white, 1);
+// --- REGULAR RENDERING ---
+// Draw Sprite
+if (variable_instance_exists(self, "my_icon")) {
+    draw_sprite(my_icon.sprite_index, my_icon.image_index, my_icon.x, my_icon.y);
+}
 
-// Draw Text Mirror
+// Draw Text
 draw_set_font(my_label.font);
-draw_text_ext(my_label.x, my_label.y, my_label.text, -1, my_label.w);
+draw_set_color(c_white);
+draw_text(my_label.x, my_label.y, my_label.text);
+
+
+// --- DEBUG OVERLAY ---
+if (keyboard_check(vk_control)) {
+    ui_root.draw_debug();
+}

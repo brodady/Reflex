@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"reflex_draw_debug",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"reflex_draw_debug",
+  "parent":{
+    "name":"(system)",
+    "path":"folders/Reflex/(system).yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
