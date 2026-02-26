@@ -10,7 +10,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"YoutubeDemo",
-    "path":"folders/YoutubeDemo.yy",
+    "path":"folders/Examples/YoutubeDemo.yy",
   },
   "parentObjectId":null,
   "persistent":false,

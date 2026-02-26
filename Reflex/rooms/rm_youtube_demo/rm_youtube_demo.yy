@@ -18,7 +18,7 @@
   "name":"rm_youtube_demo",
   "parent":{
     "name":"YoutubeDemo",
-    "path":"folders/YoutubeDemo.yy",
+    "path":"folders/Examples/YoutubeDemo.yy",
   },
   "parentRoom":null,
   "physicsSettings":{

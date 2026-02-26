@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"Resources",
-    "path":"folders/Reflex/Resources.yy",
+    "path":"folders/Examples/Leaf Nodes/Resources.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

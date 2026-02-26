@@ -312,6 +312,62 @@ function Reflex(_node_handle) constructor
 		request_reflow();
 	};
 	
+	#region jsDoc
+	/// @desc
+	///		Searches for a child component by name.
+	///		Uses a static stack (no per-entry structs) when recursive.
+	///		By default, only searches direct children.
+	///
+	/// @param {String} _name_value
+	/// @param {Bool} _recursive
+	///		If true, searches the entire subtree; if false, only direct children.
+	/// @returns {reflex|Undefined}
+	#endregion
+	static find_by_name = function(_name_value, _recursive=false)
+	{
+		if (!_recursive)
+		{
+			var _count = array_length(__children);
+			for (var i = 0; i < _count; i++)
+			{
+				var _child = __children[i];
+				if (_child.get_name() == _name_value)
+				{
+					return _child;
+				}
+			}
+
+			return undefined;
+		}
+
+		// Recursive (stack-based)
+		static __stack_node = [];
+		var _stack_node = __stack_node;
+
+		array_push(_stack_node, self);
+
+		while (array_length(_stack_node) > 0)
+		{
+			var _node = array_pop(_stack_node);
+
+			if (_node.get_name() == _name_value)
+			{
+				return _node;
+			}
+
+			var _child_count = array_length(_node.__children);
+			if (_child_count > 0)
+			{
+				for (var j = 0; j < _child_count; j++)
+				{
+					array_push(_stack_node, _node.__children[j]);
+				}
+			}
+		}
+
+		return undefined;
+	};
+	
 	// -------------------------------------------------------------------------
 	// Static binding surface (lets you map to the real flexpanel API without us
 	// guessing function names/signatures from memory)

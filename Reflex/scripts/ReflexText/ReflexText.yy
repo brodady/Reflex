@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexText",
   "parent":{
-    "name":"Reflex",
-    "path":"folders/Reflex.yy",
+    "name":"LeafNodes",
+    "path":"folders/Reflex/LeafNodes.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

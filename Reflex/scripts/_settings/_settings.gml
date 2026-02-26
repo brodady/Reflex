@@ -104,3 +104,4 @@ if (!__SETTINGS_ALLOW_WINDOW_RESIZE_VERT) {
 	}
 	,[],-1));
 }
+

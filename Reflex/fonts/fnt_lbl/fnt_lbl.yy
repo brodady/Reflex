@@ -192,7 +192,7 @@
   "name":"fnt_lbl",
   "parent":{
     "name":"Resources",
-    "path":"folders/Reflex/Resources.yy",
+    "path":"folders/Examples/Leaf Nodes/Resources.yy",
   },
   "pointRounding":0,
   "ranges":[

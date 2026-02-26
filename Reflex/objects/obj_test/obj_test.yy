@@ -11,7 +11,7 @@
   "overriddenProperties":[],
   "parent":{
     "name":"Objects",
-    "path":"folders/Reflex/Objects.yy",
+    "path":"folders/Examples/Leaf Nodes/Objects.yy",
   },
   "parentObjectId":null,
   "persistent":false,
