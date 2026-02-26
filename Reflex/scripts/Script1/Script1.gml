@@ -70,7 +70,7 @@ function reflex(_node_handle) constructor
 	{
 		__root.__reflow_dirty = true;
 	};
-
+	
 	#region jsDoc
 	/// @desc
 	///		Does reflow if dirty, and refreshes cached layout for this node + all children.
@@ -150,7 +150,7 @@ function reflex(_node_handle) constructor
 		
 		return true;
 	};
-
+	
 	// -------------------------------------------------------------------------
 	// Minimal forwarding surface
 	// -------------------------------------------------------------------------
@@ -162,7 +162,7 @@ function reflex(_node_handle) constructor
 	{
 		insert(_child_node, -1);
 	};
-
+	
 	#region jsDoc
 	/// @desc Inserts a child node at an index (or append if index < 0).
 	///       Also wires wrapper links: parent + root.
@@ -197,7 +197,7 @@ function reflex(_node_handle) constructor
 
 		request_reflow();
 	};
-
+	
 	#region jsDoc
 	/// @desc Removes a child node. Also clears wrapper links.
 	/// @param {reflex} _child_node
@@ -227,7 +227,7 @@ function reflex(_node_handle) constructor
 
 		request_reflow();
 	};
-
+	
 	#region jsDoc
 	/// @desc Removes all children nodes. Also clears wrapper links.
 	/// @param {Bool} _keep_nodes
@@ -250,7 +250,6 @@ function reflex(_node_handle) constructor
 
 		request_reflow();
 	};
-	
 	
 	// -------------------------------------------------------------------------
 	// Static binding surface (lets you map to the real flexpanel API without us
@@ -286,7 +285,31 @@ function reflex(_node_handle) constructor
 	static set_height = function(_height_value, _unit_value) { flexpanel_node_style_set_height(node_handle, _height_value, _unit_value); };
 	#endregion
 	#region Getters
+	
+	#region Layout (Output after reflow)
 	static get_layout_position = function()	{ return __cache_layout; };
+	static get_layout_struct = function() { return __cache_layout; };
+	static get_layout_left = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.left; };
+	static get_layout_top = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.top; };
+	static get_layout_right = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.right; };
+	static get_layout_bottom = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.bottom; };
+	static get_layout_padding_left = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingLeft; };
+	static get_layout_padding_right = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingRight; };
+	static get_layout_padding_top = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingTop; };
+	static get_layout_padding_bottom = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingBottom; };
+	static get_layout_margin_left = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginLeft; };
+	static get_layout_margin_right = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginRight; };
+	static get_layout_margin_top = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginTop; };
+	static get_layout_margin_bottom = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginBottom; };
+	static get_layout_direction = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.direction; };
+	static get_layout_had_overflow = function() { return (__cache_layout == undefined) ? false : __cache_layout.hadOverflow; };
+	static get_layout_x = function() { return x; };
+	static get_layout_y = function() { return y; };
+	static get_layout_width = function() { return width; };
+	static get_layout_height = function() { return height; };
+	#endregion
+
+	
 	static get_data = function()	{ return __cache_data; };
 	static get_struct = function()	{ return __cache_struct; };
 
