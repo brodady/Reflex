@@ -139,7 +139,7 @@ function Reflex(_node_handle) constructor
 	///		x/y are absolute (accumulated parent offsets), width/height are local.
 	///		Returns true if reflow happened.
 	#endregion
-	static attempt_reflow = function(_x=0, _y=0, _w=display_get_width(), _h=display_get_height(), _d=flexpanel_direction.LTR, _force=false)
+	static attempt_reflow = function(_x=0, _y=0, _w=camera_get_view_width(view_camera[0]), _h=camera_get_view_height(view_camera[0]), _d=flexpanel_direction.LTR, _force=false)
 	{
 		// Avoid Rebuild
 		if (!__reflow_dirty)
