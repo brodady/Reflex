@@ -16,63 +16,22 @@
 function Reflex() constructor
 {
 	// -------------------------------------------------------------------------
-	// Owned node handle
+	// Variables
 	// -------------------------------------------------------------------------
+	// Owned node handle
 	node_handle = flexpanel_create_node();
 
-	// -------------------------------------------------------------------------
 	// Required mirrors (initialize all to 0)
-	// -------------------------------------------------------------------------
-	x = 0;
-	y = 0;
-	w = 0;
-	h = 0;
-	width = 0;
-	height = 0;
-	
-	#region Private
-	__root = self;
-	__parent = undefined;
-	__children = [];
-
-	__reflow_dirty = false;
-	__reflow_last_x = 0;
-	__reflow_last_y = 0;
-	__reflow_last_w = 0;
-	__reflow_last_h = 0;
-	__reflow_last_d = -1;
+	x = 0; // setting these does nothing
+	y = 0; // setting these does nothing
+	w = 0; // setting these does nothing // same thing as width, just easier to type.
+	h = 0; // setting these does nothing // same thing as height, just easier to type.
+	width = 0;  // setting these does nothing
+	height = 0; // setting these does nothing
 	
 	// -------------------------------------------------------------------------
-	// Cached returns (struct/array only)
+	// Drawing
 	// -------------------------------------------------------------------------
-
-	// flexpanel_node_layout_get_position(node, [relative]) -> Struct
-	__cache_layout = undefined;
-
-	// flexpanel_node_get_data(node) -> Struct
-	__cache_data = undefined;
-
-	// flexpanel_node_get_struct(node) -> Struct
-	__cache_struct = undefined;
-     
-    // -------------------------------------------------------------------------
-	// Helpers
-	// -------------------------------------------------------------------------
-    
-    /// @ignore Internal Unit Resolver
-    static __resolve_unit = function(_val) {
-        if (is_real(_val)) return { value: _val, unit: flexpanel_unit.point };
-        if (is_string(_val)) {
-            if (_val == "auto") return { value: 0, unit: flexpanel_unit.auto };
-            var _len = string_length(_val);
-            if (string_char_at(_val, _len) == "%") {
-                return { value: real(string_copy(_val, 1, _len - 1)), unit: flexpanel_unit.percent };
-            }
-        }
-        return { value: 0, unit: flexpanel_unit.point };
-    };
-	#endregion
-	
 	#region jsDoc
 	/// @desc
 	///		Draws a debug visualization for this flex node and its subtree.
@@ -365,8 +324,7 @@ function Reflex() constructor
 	};
 	
 	// -------------------------------------------------------------------------
-	// Static binding surface (lets you map to the real flexpanel API without us
-	// guessing function names/signatures from memory)
+	// Flexpanel API
 	// -------------------------------------------------------------------------
 	#region Setters
 	static set_name = function(_name_value) { flexpanel_node_set_name(node_handle, _name_value); return self; };
@@ -417,6 +375,7 @@ function Reflex() constructor
         return self;
     };
 	#endregion
+	
 	#region Getters
 	
 	#region Layout (Output after reflow)
@@ -483,6 +442,181 @@ function Reflex() constructor
 	static get_name = function()	{ return flexpanel_node_get_name(node_handle); };
 	static get_measure_function = function()	{ return flexpanel_node_get_measure_function(node_handle); };
 	#endregion
-	    
+	
+	// -------------------------------------------------------------------------
+	// PRIVITE
+	// -------------------------------------------------------------------------
+	#region Private
+	__root = self;
+	__parent = undefined;
+	__children = [];
+
+	__reflow_dirty = false;
+	__reflow_last_x = 0;
+	__reflow_last_y = 0;
+	__reflow_last_w = 0;
+	__reflow_last_h = 0;
+	__reflow_last_d = -1;
+	
+	// -------------------------------------------------------------------------
+	// Cached returns (struct/array only)
+	// -------------------------------------------------------------------------
+
+	// flexpanel_node_layout_get_position(node, [relative]) -> Struct
+	__cache_layout = undefined;
+
+	// flexpanel_node_get_data(node) -> Struct
+	__cache_data = undefined;
+
+	// flexpanel_node_get_struct(node) -> Struct
+	__cache_struct = undefined;
+     
+    // -------------------------------------------------------------------------
+	// Helpers
+	// -------------------------------------------------------------------------
+    
+    /// @ignore Internal Unit Resolver
+    static __resolve_unit = function(_val) {
+		//avoid garbage collecter
+		static __struct = {};
+		
+        if (is_real(_val)) {
+			__struct.value = _val;
+	        __struct.unit = flexpanel_unit.point;
+			return __struct;
+		}
+        if (is_string(_val)) {
+            if (_val == "auto") {
+				__struct.value = 0;
+		        __struct.unit = flexpanel_unit.auto;
+				return __struct;
+			}
+			
+            if (string_ends_with(_val, "%")) {
+				__struct.value = real(string_copy(_val, 1, string_length(_val) - 1));
+		        __struct.unit = flexpanel_unit.percent;
+				return __struct;
+            }
+        }
+        
+		__struct.value = 0;
+        __struct.unit = flexpanel_unit.point;
+		return __struct;
+    };
+	
+	#region Garbage Collection
+	
+	////////////////////////////////////////////////////////////////////////////////
+	// This is all really complicated code to efficiently garbage collect lost data
+	//   structures like ds_list, ds_maps, and in this case flexpanels.
+	// Dont worry about reading or understanding any of it, its all self contained.
+	////////////////////////////////////////////////////////////////////////////////
+	
+	#region Dont Bother
+	enum __REFLEX_DESTRUCTOR { TTL = 0, REF = 1, }
+	static __gc = {
+		grid: ds_grid_create(2, 0),
+		used_rows: 0,
+		time_source: undefined,
+		collection_rate: 0,
+		min_true_rows: 256,
+	};
+
+	//init
+	if (__gc.time_source == undefined) {
+		__gc.time_source = time_source_create(time_source_global, 1, time_source_units_frames,
+			function() {
+				static __gc = Reflex.__gc;
+				var _grid = __gc.grid;
+				var _used_rows = __gc.used_rows;
+				var _used_rows_start = _used_rows;
+				var _tru_rows = ds_grid_height(_grid);
+				
+				// Decrement TTL for logical rows only.
+				if (_used_rows > 0) {
+					ds_grid_add_region(_grid, __REFLEX_DESTRUCTOR.TTL, 0, __REFLEX_DESTRUCTOR.TTL, _used_rows - 1, -1);
+				}
+				
+				// sort all objects by TTL ascending (expired float to the top half)
+				ds_grid_sort(_grid, __REFLEX_DESTRUCTOR.TTL, true);
+				
+				// Sweep top for expired items (TTL <= 0)
+				var _i = 0;
+				repeat (_used_rows) {
+					if (_grid[# __REFLEX_DESTRUCTOR.TTL, _i]) {
+						break;
+					}
+					else {
+						var _ref = _grid[# __REFLEX_DESTRUCTOR.REF, _i];
+						if (weak_ref_alive(_ref)) {
+							_grid[# __REFLEX_DESTRUCTOR.TTL, _i] = __gc.collection_rate;
+						} else {
+							flexpanel_delete_node(_ref.value);
+							_grid[# __REFLEX_DESTRUCTOR.TTL, _i] = infinity; // large positive sentinel
+							_grid[# __REFLEX_DESTRUCTOR.REF, _i] = undefined;
+							_used_rows--
+						}
+					}
+					_i++;
+				}
+				
+				if (_used_rows < _used_rows_start) {
+					// Optional hysteresis shrink of capacity to avoid ping-pong:
+					// If logical size is much smaller than capacity, shrink capacity by half, but never below a floor.
+					var _min_tru_rows = __gc.min_true_rows;
+					if (_tru_rows > _min_tru_rows) {
+						if (_used_rows <= (_tru_rows >> 2)) {
+							var _new_tru_rows = (_tru_rows >> 1);
+							if (_new_tru_rows < _min_tru_rows) _new_tru_rows = _min_tru_rows;
+							if (_new_tru_rows < _tru_rows && _new_tru_rows >= _used_rows) {
+								ds_grid_sort(_grid, __REFLEX_DESTRUCTOR.TTL, true);
+								ds_grid_resize(_grid, 2, _new_tru_rows);
+								_tru_rows = _new_tru_rows;
+							}
+						}
+					}
+				}
+				
+				__gc.used_rows = _used_rows;
+				
+		    }, [], -1);
+		time_source_start(__gc.time_source);
+	}
+	
+	//register
+	with(weak_ref_create(self)) {
+		value = other.node_handle;
+		var _grid = __gc.grid;
+	    var _used_rows = __gc.used_rows;
+	    var _tru_rows = ds_grid_height(_grid);
+		
+		// If we are at capacity, grow geometrically (x2) and initialize slack rows.
+		if (_used_rows >= _tru_rows) {
+			var _new_tru_rows = (_tru_rows < 4) ? 4 : (_tru_rows << 1);
+			ds_grid_resize(_grid, 2, _new_tru_rows);
+			
+			// Initialize newly added rows to sentinel values so they never get decremented or processed.
+			var _y = _tru_rows;
+			var _limit = _new_tru_rows - 1;
+			while (_y <= _limit) {
+				_grid[# __REFLEX_DESTRUCTOR.TTL, _y] = infinity; // large positive sentinel
+				_grid[# __REFLEX_DESTRUCTOR.REF, _y] = undefined;
+				_y += 1;
+			}
+			_tru_rows = _new_tru_rows;
+		}
+		
+		_grid[# __REFLEX_DESTRUCTOR.TTL, _used_rows] = irandom(15)+__gc.collection_rate;
+	    _grid[# __REFLEX_DESTRUCTOR.REF, _used_rows] = self;
+
+	    // Advance logical size without touching capacity.
+	    __gc.used_rows = _used_rows + 1;
+	}
+	#endregion
+	
+	#endregion
+	
+	#endregion
+	
 }
 
