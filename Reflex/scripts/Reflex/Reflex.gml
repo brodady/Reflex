@@ -17,7 +17,7 @@
 ///		_wrap.request_reflow();
 ///		_wrap.flush();
 #endregion
-function reflex(_node_handle) constructor
+function Reflex(_node_handle) constructor
 {
 	// -------------------------------------------------------------------------
 	// Owned node handle
@@ -58,6 +58,23 @@ function reflex(_node_handle) constructor
 
 	// flexpanel_node_get_struct(node) -> Struct
 	__cache_struct = undefined;
+     
+    // -------------------------------------------------------------------------
+	// Helpers
+	// -------------------------------------------------------------------------
+    
+    /// @ignore Internal Unit Resolver
+    static __resolve_unit = function(_val) {
+        if (is_real(_val)) return { value: _val, unit: flexpanel_unit.point };
+        if (is_string(_val)) {
+            if (_val == "auto") return { value: 0, unit: flexpanel_unit.auto };
+            var _len = string_length(_val);
+            if (string_char_at(_val, _len) == "%") {
+                return { value: real(string_copy(_val, 1, _len - 1)), unit: flexpanel_unit.percent };
+            }
+        }
+        return { value: 0, unit: flexpanel_unit.point };
+    };
 	#endregion
 	
 	#region jsDoc
@@ -76,30 +93,25 @@ function reflex(_node_handle) constructor
 		// Stop conditions
 		if (_max_depth >= 0 && _depth > _max_depth) { return; }
 
-		// Basic rect from cached reflow output
-		var _left_value = x;
-		var _top_value = y;
-		var _right_value = x + width;
-		var _bottom_value = y + height;
-
 		// Vary alpha by depth; keep it simple and deterministic
 		var _alpha_value = 0.35;
-		if (_depth > 0)
-		{
+		if (_depth > 0) {
 			_alpha_value = 0.35 / (_depth + 1);
 		}
 
 		// Outline
 		draw_set_alpha(_alpha_value);
-		draw_set_color(c_white);
-		draw_rectangle(_left_value, _top_value, _right_value, _bottom_value, true);
+		draw_set_color(c_lime);
+		draw_rectangle(x, y, x + width, y + height, true);
 
 		// Optional label
 		draw_set_alpha(1);
 		draw_set_color(c_white);
-		var _name_value = get_name();
-		if (_name_value == undefined) { _name_value = ""; }
-		draw_text(_left_value + 2, _top_value + 2, _name_value);
+		//Please dont set font here otherwise its not easily exportable as a standalone script
+		// draw_set_font(fnt_lbl);
+		//////////////////////////
+		var _name_value = get_name() ?? ""
+		draw_text(x + 2, y + 2, _name_value);
 
 		// Children
 		var _count = array_length(__children);
@@ -205,7 +217,7 @@ function reflex(_node_handle) constructor
 	// -------------------------------------------------------------------------
 	#region jsDoc
 	/// @desc Adds a child node (append). Also wires wrapper links: parent + root.
-	/// @param {reflex} _child_node
+	/// @param {Reflex} _child_node
 	#endregion
 	static add = function(_child_node)
 	{
@@ -215,7 +227,7 @@ function reflex(_node_handle) constructor
 	#region jsDoc
 	/// @desc Inserts a child node at an index (or append if index < 0).
 	///       Also wires wrapper links: parent + root.
-	/// @param {reflex} _child_node
+	/// @param {Reflex} _child_node
 	/// @param {Real} _index_value
 	#endregion
 	static insert = function(_child_node, _index_value=-1)
@@ -249,7 +261,7 @@ function reflex(_node_handle) constructor
 	
 	#region jsDoc
 	/// @desc Removes a child node. Also clears wrapper links.
-	/// @param {reflex} _child_node
+	/// @param {Reflex} _child_node
 	#endregion
 	static remove = function(_child_node)
 	{
@@ -330,8 +342,28 @@ function reflex(_node_handle) constructor
 	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); };
 	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); };
 	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); };
-	static set_width = function(_width_value, _unit_value) { flexpanel_node_style_set_width(node_handle, _width_value, _unit_value); };
-	static set_height = function(_height_value, _unit_value) { flexpanel_node_style_set_height(node_handle, _height_value, _unit_value); };
+	static set_width = function(_val, _unit_value) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_val);
+			_val = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_width(node_handle, _val, _unit_value);
+        request_reflow();
+        return self;
+    };
+    static set_height = function(_val, _unit_value) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_val);
+			_val = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_height(node_handle, _val, _unit_value);
+		request_reflow();
+        return self;
+    };
 	#endregion
 	#region Getters
 	
@@ -399,5 +431,6 @@ function reflex(_node_handle) constructor
 	static get_name = function()	{ return flexpanel_node_get_name(node_handle); };
 	static get_measure_function = function()	{ return flexpanel_node_get_measure_function(node_handle); };
 	#endregion
+	    
 }
 

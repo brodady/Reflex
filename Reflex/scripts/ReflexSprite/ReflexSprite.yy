@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"Script1",
+  "%Name":"ReflexSprite",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"Script1",
+  "name":"ReflexSprite",
   "parent":{
     "name":"Reflex",
-    "path":"Reflex.yyp",
+    "path":"folders/Reflex.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

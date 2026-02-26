@@ -1,7 +1,8 @@
+/// Feather ignore all
 #region jsDoc
 /// @desc Measure function used to test set_measure_function.
 #endregion
-function reflex_test_measure(_width_value, _width_type, _height_value, _height_type)
+function Reflex_test_measure(_width_value, _width_type, _height_value, _height_type)
 {
 	return { width: 64, height: 24 };
 }
@@ -10,7 +11,7 @@ function reflex_test_measure(_width_value, _width_type, _height_value, _height_t
 /// @desc Struct/array safe equality. Uses json_stringify for struct/array.
 /// @returns {Bool}
 #endregion
-function reflex_test_equal(_left_value, _right_value)
+function Reflex_test_equal(_left_value, _right_value)
 {
 	if (is_struct(_left_value) && is_struct(_right_value))
 	{
@@ -26,10 +27,10 @@ function reflex_test_equal(_left_value, _right_value)
 }
 
 #region jsDoc
-/// @desc Capture every getter output from a reflex instance into a struct.
+/// @desc Capture every getter output from a Reflex instance into a struct.
 /// @returns {Struct}
 #endregion
-function reflex_test_capture(_node_wrap)
+function Reflex_test_capture(_node_wrap)
 {
 	var _capture = {};
 
@@ -102,10 +103,10 @@ function reflex_test_capture(_node_wrap)
 /// @desc Compare two capture structs and print detailed debug output.
 /// @returns {Real} number of changed keys
 #endregion
-function reflex_test_compare(_label_text, _before_state, _after_state)
+function Reflex_test_compare(_label_text, _before_state, _after_state)
 {
 	show_debug_message("------------------------------------------------------------");
-	show_debug_message("reflex_test_compare: " + _label_text);
+	show_debug_message("Reflex_test_compare: " + _label_text);
 
 	var _keys = [
 		"layout_position","data","struct_data",
@@ -125,7 +126,7 @@ function reflex_test_compare(_label_text, _before_state, _after_state)
 		var _left_value = _before_state[$ _key];
 		var _right_value = _after_state[$ _key];
 
-		if (!reflex_test_equal(_left_value, _right_value))
+		if (!Reflex_test_equal(_left_value, _right_value))
 		{
 			_changed_count += 1;
 			show_debug_message("CHANGED: " + _key);
@@ -152,14 +153,14 @@ function reflex_test_compare(_label_text, _before_state, _after_state)
 ///		resizes outer container + stretch-related settings, reflows, captures after, compares.
 ///		Measure function is only set on Leaf (must be a leaf node).
 #endregion
-function reflex_test_run()
+function Reflex_test_run()
 {
 	show_debug_message("============================================================");
-	show_debug_message("reflex_test_run: begin");
+	show_debug_message("Reflex_test_run: begin");
 
-	var _outer = new reflex();
-	var _inner = new reflex();
-	var _leaf = new reflex();
+	var _outer = new Reflex();
+	var _inner = new Reflex();
+	var _leaf = new Reflex();
 
 	_outer.set_name("outer");
 	_inner.set_name("inner");
@@ -227,7 +228,7 @@ function reflex_test_run()
 	_inner.set_height(40, flexpanel_unit.point);
 
 	// leaf: absolute positioning + measure function (leaf-only)
-	_leaf.set_measure_function(reflex_test_measure);
+	_leaf.set_measure_function(Reflex_test_measure);
 	_leaf.set_align_content(flexpanel_align.stretch);
 	_leaf.set_align_items(flexpanel_align.stretch);
 	_leaf.set_align_self(flexpanel_align.auto);
@@ -258,19 +259,19 @@ function reflex_test_run()
 	// ----------------------------
 	// Commit initial reflow so caches are non-null, then capture baseline
 	// ----------------------------
-	show_debug_message("reflex_test_run: commit initial reflow");
+	show_debug_message("Reflex_test_run: commit initial reflow");
 	_outer.request_reflow();
 	_outer.attempt_reflow(0, 0, 400, 200, flexpanel_direction.LTR, true);
 
-	show_debug_message("reflex_test_run: capture baseline (before resize)");
-	var _outer_before = reflex_test_capture(_outer);
-	var _inner_before = reflex_test_capture(_inner);
-	var _leaf_before = reflex_test_capture(_leaf);
+	show_debug_message("Reflex_test_run: capture baseline (before resize)");
+	var _outer_before = Reflex_test_capture(_outer);
+	var _inner_before = Reflex_test_capture(_inner);
+	var _leaf_before = Reflex_test_capture(_leaf);
 
 	// ----------------------------
 	// Modify outer only (container resize + stretch-related knobs), then reflow and compare
 	// ----------------------------
-	show_debug_message("reflex_test_run: apply outer-only changes + resize");
+	show_debug_message("Reflex_test_run: apply outer-only changes + resize");
 	_outer.set_align_items(flexpanel_align.stretch);
 	_outer.set_align_content(flexpanel_align.stretch);
 	_outer.set_justify_content(flexpanel_justify.space_around);
@@ -279,17 +280,17 @@ function reflex_test_run()
 	_outer.request_reflow();
 	_outer.attempt_reflow(0, 0, 800, 300, flexpanel_direction.LTR, false);
 
-	show_debug_message("reflex_test_run: capture after resize");
-	var _outer_after = reflex_test_capture(_outer);
-	var _inner_after = reflex_test_capture(_inner);
-	var _leaf_after = reflex_test_capture(_leaf);
+	show_debug_message("Reflex_test_run: capture after resize");
+	var _outer_after = Reflex_test_capture(_outer);
+	var _inner_after = Reflex_test_capture(_inner);
+	var _leaf_after = Reflex_test_capture(_leaf);
 
-	reflex_test_compare("OUTER after resize reflow", _outer_before, _outer_after);
-	reflex_test_compare("INNER after resize reflow", _inner_before, _inner_after);
-	reflex_test_compare("LEAF after resize reflow", _leaf_before, _leaf_after);
+	Reflex_test_compare("OUTER after resize reflow", _outer_before, _outer_after);
+	Reflex_test_compare("INNER after resize reflow", _inner_before, _inner_after);
+	Reflex_test_compare("LEAF after resize reflow", _leaf_before, _leaf_after);
 
-	show_debug_message("reflex_test_run: done");
+	show_debug_message("Reflex_test_run: done");
 	show_debug_message("============================================================");
 }
 
-reflex_test_run();
+Reflex_test_run();

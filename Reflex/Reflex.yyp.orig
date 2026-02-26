@@ -10,15 +10,19 @@
   },
   "defaultScriptType":1,
   "Folders":[
-    {"$GMFolder":"","%Name":"RedsTools","folderPath":"folders/RedsTools.yy","name":"RedsTools","resourceType":"GMFolder","resourceVersion":"2.0",},
+<<<<<<< HEAD
     {"$GMFolder":"","%Name":"_Config","folderPath":"folders/RedsTools/_Config.yy","name":"_Config","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Settings","folderPath":"folders/RedsTools/_Config/Settings.yy","name":"Settings","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"_internal","folderPath":"folders/RedsTools/_Config/Settings/_internal.yy","name":"_internal","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"RedsTools","folderPath":"folders/RedsTools.yy","name":"RedsTools","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"YoutubeDemo","folderPath":"folders/YoutubeDemo.yy","name":"YoutubeDemo","resourceType":"GMFolder","resourceVersion":"2.0",},
+=======
     {"$GMFolder":"","%Name":"Reflex","folderPath":"folders/Reflex.yy","name":"Reflex","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"(system)","folderPath":"folders/Reflex/(system).yy","name":"(system)","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Tests","folderPath":"folders/Reflex/Tests.yy","name":"Tests","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Objects","folderPath":"folders/Reflex/Objects.yy","name":"Objects","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Resources","folderPath":"folders/Reflex/Resources.yy","name":"Resources","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"Tests","folderPath":"folders/Reflex/Tests.yy","name":"Tests","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"YoutubeDemo","folderPath":"folders/YoutubeDemo.yy","name":"YoutubeDemo","resourceType":"GMFolder","resourceVersion":"2.0",},
+>>>>>>> origin/main
   ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[],
@@ -34,15 +38,21 @@
     {"id":{"name":"obj_youtube_demo","path":"objects/obj_youtube_demo/obj_youtube_demo.yy",},},
     {"id":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+<<<<<<< HEAD
     {"id":{"name":"_settings","path":"scripts/_settings/_settings.yy",},},
     {"id":{"name":"Debug","path":"scripts/Debug/Debug.yy",},},
+    {"id":{"name":"Script1","path":"scripts/Script1/Script1.yy",},},
+    {"id":{"name":"Script2","path":"scripts/Script2/Script2.yy",},},
+    {"id":{"name":"Settings","path":"scripts/Settings/Settings.yy",},},
+=======
+    {"id":{"name":"reflex_draw_debug","path":"scripts/reflex_draw_debug/reflex_draw_debug.yy",},},
     {"id":{"name":"Reflex","path":"scripts/Reflex/Reflex.yy",},},
     {"id":{"name":"ReflexLeaf","path":"scripts/ReflexLeaf/ReflexLeaf.yy",},},
     {"id":{"name":"ReflexSprite","path":"scripts/ReflexSprite/ReflexSprite.yy",},},
     {"id":{"name":"ReflexText","path":"scripts/ReflexText/ReflexText.yy",},},
     {"id":{"name":"Script2","path":"scripts/Script2/Script2.yy",},},
-    {"id":{"name":"Settings","path":"scripts/Settings/Settings.yy",},},
     {"id":{"name":"spr_test","path":"sprites/spr_test/spr_test.yy",},},
+>>>>>>> origin/main
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
