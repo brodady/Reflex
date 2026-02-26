@@ -1,4 +1,4 @@
-function ReflexLeaf(_node_handle = 0) : Reflex(_node_handle) constructor {
+function ReflexLeaf() : Reflex() constructor {
     // Prohibit children for leaf nodes
     static add = function() { throw("ReflexLeaf: Cannot add children to a leaf node."); };
     static insert = function() { throw("ReflexLeaf: Cannot insert children into a leaf node."); };

@@ -6,18 +6,14 @@
 ///		- call-side caching to avoid redundant API calls
 ///		- reflow directive (dirty flag + optional bound reflow function)
 ///
-/// @param {Real|Pointer} _node_handle
-///		Existing flexpanel node handle/id to wrap. If you want the wrapper to create the node,
-///		pass 0 and call set_node_handle() later after you create it externally.
-///
 /// @example
-///		var _wrap = new WWFlexNode(_some_node);
+///		var _wrap = new WWFlexNode();
 ///		_wrap.set_rect(10, 10, 200, 40);
 ///		_wrap.style_set_cached("padding", 6);
 ///		_wrap.request_reflow();
 ///		_wrap.flush();
 #endregion
-function Reflex(_node_handle) constructor
+function Reflex() constructor
 {
 	// -------------------------------------------------------------------------
 	// Owned node handle
