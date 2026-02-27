@@ -11,7 +11,10 @@
     {"name":"Tests","order":5,"path":"folders/Tests.yy",},
   ],
   "ResourceOrderSettings":[
+    {"name":"obj_leaf_test","order":3,"path":"objects/obj_leaf_test/obj_leaf_test.yy",},
+    {"name":"rm_leaf_demo","order":2,"path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},
     {"name":"rm_youtube_demo","order":1,"path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},
+    {"name":"RoomUI","order":6,"path":"roomui/RoomUI/RoomUI.yy",},
     {"name":"Debug","order":1,"path":"scripts/Debug/Debug.yy",},
     {"name":"Reflex","order":2,"path":"scripts/Reflex/Reflex.yy",},
     {"name":"ReflexSprite","order":1,"path":"scripts/ReflexSprite/ReflexSprite.yy",},
