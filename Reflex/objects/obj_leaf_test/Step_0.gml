@@ -8,6 +8,6 @@ if (keyboard_check_pressed(vk_escape)) {
     my_label.set_text("Short again.");
 }
 
-// Global attempt to reflow. This checks if the root is "dirty" 
-// and propagates absolute x/y to all mirrors.
-ui_root.attempt_reflow(0, 0, window_get_width(), window_get_height());
+// 1. Calculate the math for our debug boxes
+ui_root.attempt_reflow();
+

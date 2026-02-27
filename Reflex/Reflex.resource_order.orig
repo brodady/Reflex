@@ -1,30 +1,28 @@
 {
   "FolderOrderSettings":[
-<<<<<<< HEAD
+    {"name":"Examples","order":3,"path":"folders/Examples.yy",},
+    {"name":"Grid","order":2,"path":"folders/Examples/Grid.yy",},
+    {"name":"Resources","order":1,"path":"folders/Examples/Leaf Nodes/Resources.yy",},
+    {"name":"YoutubeDemo","order":1,"path":"folders/Examples/YoutubeDemo.yy",},
+    {"name":"RedsTools","order":2,"path":"folders/RedsTools.yy",},
     {"name":"Settings","order":1,"path":"folders/RedsTools/_Config/Settings.yy",},
     {"name":"_internal","order":1,"path":"folders/RedsTools/_Config/Settings/_internal.yy",},
-    {"name":"RedsTools","order":8,"path":"folders/RedsTools.yy",},
-    {"name":"YoutubeDemo","order":5,"path":"folders/YoutubeDemo.yy",},
+    {"name":"Reflex","order":4,"path":"folders/Reflex.yy",},
+    {"name":"LeafNodes","order":8,"path":"folders/Reflex/LeafNodes.yy",},
+    {"name":"Tests","order":5,"path":"folders/Tests.yy",},
   ],
   "ResourceOrderSettings":[
-    {"name":"obj_test","order":1,"path":"objects/obj_test/obj_test.yy",},
+    {"name":"obj_test_grid","order":2,"path":"objects/obj_test_grid/obj_test_grid.yy",},
+    {"name":"rm_test_grid","order":1,"path":"rooms/rm_test_grid/rm_test_grid.yy",},
+    {"name":"obj_leaf_test","order":3,"path":"objects/obj_leaf_test/obj_leaf_test.yy",},
+    {"name":"rm_leaf_demo","order":2,"path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},
     {"name":"rm_youtube_demo","order":1,"path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},
+    {"name":"RoomUI","order":6,"path":"roomui/RoomUI/RoomUI.yy",},
     {"name":"Debug","order":1,"path":"scripts/Debug/Debug.yy",},
-    {"name":"Script1","order":2,"path":"scripts/Script1/Script1.yy",},
-    {"name":"Script2","order":3,"path":"scripts/Script2/Script2.yy",},
-    {"name":"Settings","order":2,"path":"scripts/Settings/Settings.yy",},
-=======
-    {"name":"Reflex","order":5,"path":"folders/Reflex.yy",},
-    {"name":"(system)","order":1,"path":"folders/Reflex/(system).yy",},
-    {"name":"Tests","order":6,"path":"folders/Reflex/Tests.yy",},
-    {"name":"Resources","order":3,"path":"folders/Reflex/Resources.yy",},
-  ],
-  "ResourceOrderSettings":[
     {"name":"Reflex","order":2,"path":"scripts/Reflex/Reflex.yy",},
-    {"name":"ReflexLeaf","order":5,"path":"scripts/ReflexLeaf/ReflexLeaf.yy",},
-    {"name":"ReflexSprite","order":7,"path":"scripts/ReflexSprite/ReflexSprite.yy",},
-    {"name":"ReflexText","order":4,"path":"scripts/ReflexText/ReflexText.yy",},
+    {"name":"ReflexSprite","order":1,"path":"scripts/ReflexSprite/ReflexSprite.yy",},
+    {"name":"ReflexText","order":2,"path":"scripts/ReflexText/ReflexText.yy",},
+    {"name":"Settings","order":2,"path":"scripts/Settings/Settings.yy",},
     {"name":"spr_test","order":1,"path":"sprites/spr_test/spr_test.yy",},
->>>>>>> origin/main
   ],
 }
