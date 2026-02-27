@@ -33,8 +33,8 @@
   "name":"Reflex",
   "resources":[
     {"id":{"name":"fnt_lbl","path":"fonts/fnt_lbl/fnt_lbl.yy",},},
-    {"id":{"name":"obj_test_grid","path":"objects/obj_test_grid/obj_test_grid.yy",},},
     {"id":{"name":"obj_leaf_test","path":"objects/obj_leaf_test/obj_leaf_test.yy",},},
+    {"id":{"name":"obj_test_grid","path":"objects/obj_test_grid/obj_test_grid.yy",},},
     {"id":{"name":"obj_youtube_demo","path":"objects/obj_youtube_demo/obj_youtube_demo.yy",},},
     {"id":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
     {"id":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
@@ -55,8 +55,8 @@
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
     {"roomId":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
-    {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
     {"roomId":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
+    {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
