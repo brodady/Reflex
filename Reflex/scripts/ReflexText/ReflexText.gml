@@ -28,7 +28,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
     #endregion
     static __get_layer_element = function() {
         return {
-            textFontIndex: font, // Sadly this struct cannot be pass without a valid font ref
+            textFontIndex: font, 
             textOffsetX: 0.0,
             textOffsetY: 0.0,
             textScaleX: xscale,
@@ -48,7 +48,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
             textWrap: false, 
             textWrapMode: 0.0,
             elementOrder: 10.0,
-            elementId: __uuid, // Using our Reflex UUID
+            elementId: __uuid,
             type: "Text",
             flexVisible: true,
             flexAnchor: "TopLeft",
@@ -172,7 +172,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
         var _nat_w = string_width(text) * xscale;
         var _wrap_w = (width >= _nat_w - 0.5) ? -1 : (width / xscale);
 
-        draw_text_ext_transformed_colour( // Still manually drawing, but we could rely 
+        draw_text_ext_transformed_colour( 
             _dx, _dy, text, sep, _wrap_w, xscale, yscale, angle, 
             color, color, color, color, alpha
         );

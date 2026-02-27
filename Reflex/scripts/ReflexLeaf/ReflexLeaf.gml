@@ -1,10 +1,3 @@
-// Constant for measure function type clarity
-enum REFLEX_SET_MEASURE {
-    Undefined = 0,
-    Exactly = 1,
-    AtMost = 2
-}
-
 #region jsDoc
 /// @func ReflexLeaf()
 /// @desc Base wrapper for native layerElement leaf nodes.
@@ -39,9 +32,6 @@ function ReflexLeaf() : Reflex() constructor
         
         flexpanel_delete_node(node_handle);
         node_handle = _new_handle;
-        
-        // Notice we no longer rebind the custom measure function!
-        // GameMaker's C++ will read the layerElements and assign its own native measurement.
         
         request_reflow();
     };
