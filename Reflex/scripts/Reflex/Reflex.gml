@@ -241,9 +241,8 @@ function Reflex() constructor
 			}
 		}
 		
-		// Self-only refreshes, if you still want them on reflow
-		__cache_data = flexpanel_node_get_data(node_handle);
-		__cache_struct = flexpanel_node_get_struct(node_handle);
+		__cache_data = undefined;
+		__cache_struct = undefined;
 		
 		return true;
 	};
@@ -483,8 +482,14 @@ function Reflex() constructor
 	#endregion
 
 	
-	static get_data = function()	{ return __cache_data; };
-	static get_struct = function()	{ return __cache_struct; };
+	static get_data = function()	{
+		__cache_data ??= flexpanel_node_get_data(node_handle);
+		return __cache_data;
+	};
+	static get_struct = function()	{
+		__cache_struct ??= flexpanel_node_get_struct(node_handle);
+		return __cache_struct;
+	};
 
 	// Style getters are live (since style is no longer refreshed during reflow)
 	static get_width = function()	{ return flexpanel_node_style_get_width(node_handle); };
