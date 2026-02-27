@@ -431,6 +431,107 @@ function Reflex(_data=undefined) constructor
 		return undefined;
 	};
 	
+	#region jsDoc
+	/// @func    get_root()
+	/// @desc    Returns the root wrapper node for this tree. For a detached node, this is itself.
+	/// @self    Reflex
+	/// @returns {Struct.Reflex}
+	#endregion
+	static get_root = function()
+	{
+		return __root;
+	};
+
+	#region jsDoc
+	/// @func    get_parent()
+	/// @desc    Returns the parent wrapper node, or undefined if this node is a root.
+	/// @self    Reflex
+	/// @returns {Struct.Reflex|Undefined}
+	#endregion
+	static get_parent = function()
+	{
+		return __parent;
+	};
+
+	#region jsDoc
+	/// @func    get_child_count()
+	/// @desc    Returns the number of direct children.
+	/// @self    Reflex
+	/// @returns {Real}
+	#endregion
+	static get_child_count = function()
+	{
+		return array_length(__children);
+	};
+
+	#region jsDoc
+	/// @func    get_child_at()
+	/// @desc    Returns the child at the given index, or undefined if out of range.
+	/// @self    Reflex
+	/// @param   {Real} index : Zero-based child index.
+	/// @returns {Struct.Reflex|Undefined}
+	#endregion
+	static get_child_at = function(_index)
+	{
+		var _index_value = floor(_index);
+		if (_index_value < 0) { return undefined; }
+		if (_index_value >= array_length(__children)) { return undefined; }
+		return __children[_index_value];
+	};
+
+	#region jsDoc
+	/// @func    get_children_array()
+	/// @desc    Returns the internal children array. This is a live reference; modifying it directly
+	///          will desync the wrapper tree from the flexpanel tree. Prefer add/insert/remove/clear.
+	/// @self    Reflex
+	/// @returns {Array}
+	#endregion
+	static get_children_array = function()
+	{
+		return __children;
+	};
+
+	#region jsDoc
+	/// @func    contains()
+	/// @desc    Returns whether the given node exists in this node's subtree.
+	///          If recursive is false, checks only direct children.
+	///          If recursive is true, checks the entire subtree using a reusable static stack.
+	/// @self    Reflex
+	/// @param   {Struct.Reflex} node : Node to search for.
+	/// @param   {Bool} recursive : If true, searches the entire subtree; if false, only direct children.
+	/// @returns {Bool}
+	#endregion
+	static contains = function(_target_node, _recursive=true)
+	{
+		if (_target_node == undefined) { return false; }
+
+		if (array_contains(__children, _target_node)) { return true; }
+		
+		if (!_recursive) { return false; }
+		
+		static __stack_node = [];
+		var _stack_node = __stack_node;
+		
+		array_push(_stack_node, self);
+		
+		while (array_length(_stack_node) > 0) {
+			var _node = array_pop(_stack_node);
+			
+			if (array_contains(_node.__children, _target_node)) {
+				array_resize(_stack_node, 0);
+				return true;
+			}
+			else {
+				var _child_count = array_length(_node.__children);
+				if (_child_count > 0) {
+					array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
+				}
+			}
+		}
+		
+		return false;
+	};
+
 	// -------------------------------------------------------------------------
 	// Flexpanel API
 	// -------------------------------------------------------------------------
