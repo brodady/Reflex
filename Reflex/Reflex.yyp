@@ -50,8 +50,8 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
     {"roomId":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
+    {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[

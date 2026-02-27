@@ -15,7 +15,7 @@ function Reflex(_data=undefined) constructor
 	// Variables
 	// -------------------------------------------------------------------------
 	// Owned node handle
-	node_handle = (data == undefined) ? flexpanel_create_node() : flexpanel_create_node(_data);
+	node_handle = (_data == undefined) ? flexpanel_create_node() : flexpanel_create_node(_data);
 	
 	// Required mirrors (initialize all to 0)
 	x = 0; // setting these does nothing
@@ -235,14 +235,9 @@ function Reflex(_data=undefined) constructor
 			_node.width = _layout.width;
 			_node.height = _layout.height;
 			
-			var _count = array_length(_node.__children);
-			if (_count > 0)
-			{
-				for (var i = 0; i < _count; i++)
-				{
-					var _child = _node.__children[i];
-					array_push(_stack_node, _child);
-				}
+			var _child_count = array_length(_node.__children);
+			if (_child_count > 0) {
+				array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
 			}
 		}
 		
@@ -297,13 +292,28 @@ function Reflex(_data=undefined) constructor
 		if (_insert_index < 0) { _insert_index = array_length(__children); }
 		if (_insert_index > array_length(__children)) { _insert_index = array_length(__children); }
 
-		// Wrapper links
-		_child_node.__parent = self;
-		_child_node.__root = __root;
-
 		// Wrapper child list
 		array_insert(__children, _insert_index, _child_node);
-
+		
+		_child_node.__parent = self;
+		
+		// Recursive update root and parent
+		static __stack_node = [];
+		var _stack_node = __stack_node;
+		array_push(_stack_node, _child_node);
+		
+		var _root = __root;
+		while (array_length(_stack_node) > 0)
+		{
+			var _node = array_pop(_stack_node);
+			_node.__root = _root;
+			
+			var _child_count = array_length(_node.__children);
+			if (_child_count > 0) {
+				array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
+			}
+		}
+		
 		// Flexpanel tree
 		flexpanel_node_insert_child(node_handle, _child_node.node_handle, _insert_index);
 
@@ -401,9 +411,8 @@ function Reflex(_data=undefined) constructor
 		// Recursive (stack-based)
 		static __stack_node = [];
 		var _stack_node = __stack_node;
-
 		array_push(_stack_node, self);
-
+		
 		while (array_length(_stack_node) > 0)
 		{
 			var _node = array_pop(_stack_node);
@@ -414,12 +423,8 @@ function Reflex(_data=undefined) constructor
 			}
 
 			var _child_count = array_length(_node.__children);
-			if (_child_count > 0)
-			{
-				for (var j = 0; j < _child_count; j++)
-				{
-					array_push(_stack_node, _node.__children[j]);
-				}
+			if (_child_count > 0) {
+				array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
 			}
 		}
 
@@ -1281,4 +1286,5 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	
 }
+
 
