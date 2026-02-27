@@ -1,6 +1,7 @@
 {
   "FolderOrderSettings":[
     {"name":"Examples","order":3,"path":"folders/Examples.yy",},
+    {"name":"Grid","order":2,"path":"folders/Examples/Grid.yy",},
     {"name":"Resources","order":1,"path":"folders/Examples/Leaf Nodes/Resources.yy",},
     {"name":"YoutubeDemo","order":1,"path":"folders/Examples/YoutubeDemo.yy",},
     {"name":"RedsTools","order":2,"path":"folders/RedsTools.yy",},
@@ -11,6 +12,8 @@
     {"name":"Tests","order":5,"path":"folders/Tests.yy",},
   ],
   "ResourceOrderSettings":[
+    {"name":"obj_test_grid","order":2,"path":"objects/obj_test_grid/obj_test_grid.yy",},
+    {"name":"rm_test_grid","order":1,"path":"rooms/rm_test_grid/rm_test_grid.yy",},
     {"name":"rm_youtube_demo","order":1,"path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},
     {"name":"Debug","order":1,"path":"scripts/Debug/Debug.yy",},
     {"name":"Reflex","order":2,"path":"scripts/Reflex/Reflex.yy",},

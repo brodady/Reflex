@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexGrid",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexGrid",
+  "parent":{
+    "name":"Grid",
+    "path":"folders/Examples/Grid.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
