@@ -9,14 +9,14 @@
 ///		for fast access during drawing and interaction.
 ///
 #endregion
-function Reflex() constructor
+function Reflex(_data=undefined) constructor
 {
 	// -------------------------------------------------------------------------
 	// Variables
 	// -------------------------------------------------------------------------
 	// Owned node handle
-	node_handle = flexpanel_create_node();
-
+	node_handle = (data == undefined) ? flexpanel_create_node() : flexpanel_create_node(_data);
+	
 	// Required mirrors (initialize all to 0)
 	x = 0; // setting these does nothing
 	y = 0; // setting these does nothing
@@ -838,18 +838,24 @@ function Reflex() constructor
 	
 	#region jsDoc
 	/// @func    get_data()
-	/// @desc    
+	/// @desc    Returns the data struct of the flexpanel node.
 	/// @self    Reflex
-	/// @returns {Any}
+	/// @returns {Struct}
 	#endregion
-	static get_data = function()	{ return __cache_data; };
+		static get_data = function()	{
+		__cache_data ??= flexpanel_node_get_data(node_handle);
+		return __cache_data;
+	};
 	#region jsDoc
 	/// @func    get_struct()
-	/// @desc    
+	/// @desc    Returns the layout data of the given node as a struct. This is the same data that can be passed into `new Reflex(_data)`.
 	/// @self    Reflex
-	/// @returns {Any}
+	/// @returns {Struct}
 	#endregion
-	static get_struct = function()	{ return __cache_struct; };
+	static get_struct = function()	{
+		__cache_struct ??= flexpanel_node_get_struct(node_handle);
+		return __cache_struct;
+	};
 
 	// Style getters are live (since style is no longer refreshed during reflow)
 	#region jsDoc
