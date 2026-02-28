@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexTree",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexTree",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"Components",
+    "path":"folders/ReflexUI/Components.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

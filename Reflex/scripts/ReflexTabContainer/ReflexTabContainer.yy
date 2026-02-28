@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexTabContainer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexTabContainer",
+  "parent":{
+    "name":"Container",
+    "path":"folders/ReflexUI/Components/Container.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

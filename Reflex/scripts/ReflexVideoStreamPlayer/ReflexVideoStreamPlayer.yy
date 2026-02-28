@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexVideoStreamPlayer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexVideoStreamPlayer",
+  "parent":{
+    "name":"Components",
+    "path":"folders/ReflexUI/Components.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

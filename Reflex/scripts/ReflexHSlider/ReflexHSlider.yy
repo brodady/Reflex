@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexHSlider",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexHSlider",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"Slider",
+    "path":"folders/ReflexUI/Components/Range/Slider.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

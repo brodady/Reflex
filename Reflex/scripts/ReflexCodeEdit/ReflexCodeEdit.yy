@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexCodeEdit",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexCodeEdit",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"TextEdit",
+    "path":"folders/ReflexUI/Components/TextEdit.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

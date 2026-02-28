@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexFlowContainer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexFlowContainer",
+  "parent":{
+    "name":"FlowContainer",
+    "path":"folders/ReflexUI/Components/Container/FlowContainer.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

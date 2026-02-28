@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexTextureProgressBar",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexTextureProgressBar",
+  "parent":{
+    "name":"Range",
+    "path":"folders/ReflexUI/Components/Range.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

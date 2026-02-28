@@ -207,8 +207,7 @@ function Reflex(_data=undefined) constructor
 		
 		return true;
 	};
-
-
+	
 	#region jsDoc
 	/// @func    remove_from()
 	/// @desc    Detaches this Reflex node from either:

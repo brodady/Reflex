@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexLinkButton",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexLinkButton",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"BaseButton",
+    "path":"folders/ReflexUI/Components/BaseButton.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

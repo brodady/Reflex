@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexSplitContainer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexSplitContainer",
+  "parent":{
+    "name":"SplitContainer",
+    "path":"folders/ReflexUI/Components/Container/SplitContainer.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

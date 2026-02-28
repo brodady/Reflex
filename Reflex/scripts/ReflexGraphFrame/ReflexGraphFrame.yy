@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexGraphFrame",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexGraphFrame",
+  "parent":{
+    "name":"GraphElement",
+    "path":"folders/ReflexUI/Components/Container/GraphElement.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexVSeporator",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexVSeporator",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"Seporator",
+    "path":"folders/ReflexUI/Components/Seporator.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

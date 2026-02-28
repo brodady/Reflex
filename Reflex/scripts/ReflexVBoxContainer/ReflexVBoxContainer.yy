@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexVBoxContainer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexVBoxContainer",
+  "parent":{
+    "name":"VBoxContainer",
+    "path":"folders/ReflexUI/Components/Container/BoxContainer/VBoxContainer.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexColorPickerButton",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexColorPickerButton",
+  "parent":{
+    "name":"Button",
+    "path":"folders/ReflexUI/Components/BaseButton/Button.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexSpinBox",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexSpinBox",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"Range",
+    "path":"folders/ReflexUI/Components/Range.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

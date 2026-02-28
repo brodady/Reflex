@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexMenuButton",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexMenuButton",
+  "parent":{
+    "name":"Button",
+    "path":"folders/ReflexUI/Components/BaseButton/Button.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

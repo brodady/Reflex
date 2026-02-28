@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexHScrollBar",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexHScrollBar",
+  "parent":{
+    "name":"ScrollBar",
+    "path":"folders/ReflexUI/Components/Range/ScrollBar.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

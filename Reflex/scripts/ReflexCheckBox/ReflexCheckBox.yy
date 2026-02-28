@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexGrid",
+  "%Name":"ReflexCheckBox",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexGrid",
+  "name":"ReflexCheckBox",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"Button",
+    "path":"folders/ReflexUI/Components/BaseButton/Button.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
