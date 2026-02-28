@@ -312,7 +312,7 @@ function Reflex(_data=undefined) constructor
 		_child_node.__parent = undefined;
 		
 		// Flexpanel tree
-		flexpanel_node_remove_child(node_handle, _childnode_handle);
+		flexpanel_node_remove_child(node_handle, _child_node.node_handle);
 	};
 	
 	#region jsDoc
