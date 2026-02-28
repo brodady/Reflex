@@ -155,6 +155,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 		
 		return _value;
 	}
+	
 	#region jsDoc
 	/// @func    insert()
 	/// @desc    Inserts a child node at the given index (or appends if index < 0).
