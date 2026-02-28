@@ -38,8 +38,8 @@ function Reflex(_data=undefined) constructor
         if (_max_depth >= 0 && _depth > _max_depth) return;
 		
         // --- Internal Helper ---
-        static __draw_val = function(_cx, _cy, _val, _color) {
-            var _s = string(_val);
+        static __draw_val = function(_cx, _cy, _value, _color) {
+            var _s = string(_value);
             var _tw = string_width(_s) + 4;
             var _th = string_height(_s);
             var _rx1 = _cx - _tw/2;
@@ -158,6 +158,7 @@ function Reflex(_data=undefined) constructor
 	// -------------------------------------------------------------------------
 	// Minimal forwarding surface
 	// -------------------------------------------------------------------------
+	
 	#region jsDoc
 	/// @func    add_to()
 	/// @desc    Attaches this Reflex node to either:
@@ -242,6 +243,7 @@ function Reflex(_data=undefined) constructor
 		return true;
 	};
 	
+	#region FlexPanels
 	#region jsDoc
 	/// @func    add()
 	/// @desc    Appends a child node to the end of this node's children list.
@@ -269,24 +271,32 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static insert = function(_child_node, _index_value=-1)
 	{
+		if (_child_node == undefined) { return; }
+
+		// Leaf descriptors are NOT Reflex nodes anymore - they must go through add_element()
+		if (is_instanceof(_child_node, ReflexLayerElementBase)) {
+			throw("Child Node being added is a ReflexElement, please use `add_element()` or `insert_element()`")
+		}
+
 		// Detach from old parent (wrapper side)
 		if (_child_node.__parent != undefined)
 		{
 			_child_node.__parent.remove(_child_node);
 		}
-		
+
 		// Choose insertion index
 		var _insert_index = _index_value;
 		if (_insert_index < 0) { _insert_index = array_length(__children); }
 		if (_insert_index > array_length(__children)) { _insert_index = array_length(__children); }
-		
+
 		// Wrapper child list
 		array_insert(__children, _insert_index, _child_node);
-		
 		_child_node.__parent = self;
-		
+
 		// Flexpanel tree
 		flexpanel_node_insert_child(node_handle, _child_node.node_handle, _insert_index);
+
+		request_reflow();
 	};
 	
 	#region jsDoc
@@ -332,7 +342,10 @@ function Reflex(_data=undefined) constructor
 		}
 		
 		array_resize(__children, 0);
-
+		
+		array_resize(__elements, 0);
+		__apply_elements();
+		
 		flexpanel_node_remove_all_children(node_handle);
 	};
 	
@@ -475,7 +488,124 @@ function Reflex(_data=undefined) constructor
 		
 		return false;
 	};
+	
+	#endregion
+	
+	#region Elements
+	#region jsDoc
+	/// @func    add_element()
+	/// @desc    Adds a leaf layer element descriptor (Sprite/Text/Instance) to this node.
+	/// @self    Reflex
+	/// @param   {Struct} _element : A ReflexLayerElementBase-derived object.
+	/// @returns {Undefined}
+	#endregion
+	static add_element = function(_element)
+	{
+		insert_element(_element, -1);
+	};
 
+	#region jsDoc
+	/// @func    insert_element()
+	/// @desc    Inserts a leaf layer element descriptor at an index.
+	/// @self    Reflex
+	/// @param   {Struct} _element : A ReflexLayerElementBase-derived object.
+	/// @param   {Real} _index_value
+	/// @returns {Undefined}
+	#endregion
+	static insert_element = function(_element, _index_value=-1)
+	{
+		if (_element == undefined) { return; }
+
+		// Minimal validation: must be a struct and provide to_struct()
+		if (!is_struct(_element) || !variable_struct_exists(_element, "to_struct"))
+		{
+			return;
+		}
+
+		var _insert_index = _index_value;
+		if (_insert_index < 0) { _insert_index = array_length(__elements); }
+		if (_insert_index > array_length(__elements)) { _insert_index = array_length(__elements); }
+
+		array_insert(__elements, _insert_index, _element);
+
+		__apply_elements();
+	};
+
+	#region jsDoc
+	/// @func    remove_element()
+	/// @desc    Removes a leaf element descriptor.
+	/// @self    Reflex
+	/// @param   {Struct} _element
+	/// @returns {Undefined}
+	#endregion
+	static remove_element = function(_element)
+	{
+		if (_element == undefined) { return; }
+
+		var _count = array_length(__elements);
+		for (var i = 0; i < _count; i++)
+		{
+			if (__elements[i] == _element)
+			{
+				array_delete(__elements, i, 1);
+				break;
+			}
+		}
+
+		__apply_elements();
+	};
+
+	#region jsDoc
+	/// @func    clear_elements()
+	/// @desc    Clears all leaf element descriptors from this node.
+	/// @self    Reflex
+	/// @returns {Undefined}
+	#endregion
+	static clear_elements = function()
+	{
+		array_resize(__elements, 0);
+		__apply_elements();
+	};
+
+	#region jsDoc
+	/// @func    get_element_count()
+	/// @desc    Returns number of leaf elements on this node.
+	/// @self    Reflex
+	/// @returns {Real}
+	#endregion
+	static get_element_count = function()
+	{
+		return array_length(__elements);
+	};
+
+	#region jsDoc
+	/// @func    get_element_at()
+	/// @desc    Returns the leaf element descriptor at an index.
+	/// @self    Reflex
+	/// @param   {Real} _index_value
+	/// @returns {Struct|Undefined}
+	#endregion
+	static get_element_at = function(_index_value)
+	{
+		var _index = floor(_index_value);
+		if (_index < 0) { return undefined; }
+		if (_index >= array_length(__elements)) { return undefined; }
+		return __elements[_index];
+	};
+
+	#region jsDoc
+	/// @func    get_elements_array()
+	/// @desc    Returns the internal leaf element array by reference.
+	/// @self    Reflex
+	/// @returns {Array}
+	#endregion
+	static get_elements_array = function()
+	{
+		return __elements;
+	};
+	
+	#endregion
+	
 	// -------------------------------------------------------------------------
 	// Flexpanel API
 	// -------------------------------------------------------------------------
@@ -741,8 +871,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static set_padding = function(_edge, _value, _unit_value=undefined) {
         if (_unit_value == undefined) {
-			var _res = __resolve_unit(_val);
-			_val = _res.value;
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
 			_unit_value = _res.unit
 		}
 		
@@ -1240,6 +1370,7 @@ function Reflex(_data=undefined) constructor
 	
 	__parent = undefined;
 	__children = [];
+	__elements = [];
 	
     // -------------------------------------------------------------------------
 	// Helpers
@@ -1281,6 +1412,55 @@ function Reflex(_data=undefined) constructor
         __struct.unit = flexpanel_unit.point;
 		return __struct;
     };
+	
+	#region Private
+	static __apply_elements = function()
+	{
+		// Build node struct
+		var _node_struct = flexpanel_node_get_struct(node_handle);
+		
+		_node_struct.layerElements = [];
+
+		var _count = array_length(__elements);
+		for (var i = 0; i < _count; i++)
+		{
+			var _elem = __elements[i];
+			if (_elem == undefined) { continue; }
+			array_push(_node_struct.layerElements, _elem.to_struct());
+		}
+
+		// If layerElements cannot be updated in-place reliably, rebuild
+		var _new_handle = flexpanel_create_node(_node_struct);
+
+		// Swap into native tree - wrapper parent or UI-layer/native parent
+		if (__parent != undefined)
+		{
+			var _idx = array_get_index(__parent.__children, self);
+			if (_idx != -1)
+			{
+				flexpanel_node_remove_child(__parent.node_handle, node_handle);
+				flexpanel_node_insert_child(__parent.node_handle, _new_handle, _idx);
+			}
+		}
+		else
+		{
+			var _native_parent = flexpanel_node_get_parent(node_handle);
+			if (_native_parent != undefined)
+			{
+				flexpanel_node_remove_child(_native_parent, node_handle);
+				flexpanel_node_insert_child(_native_parent, _new_handle, flexpanel_node_get_num_children(_native_parent));
+			}
+		}
+
+		flexpanel_delete_node(node_handle);
+		node_handle = _new_handle;
+
+		__cache_data = undefined;
+		__cache_struct = undefined;
+
+		request_reflow();
+	};
+	#endregion
 	
 	#region Garbage Collection
 	

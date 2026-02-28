@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexSprite",
+  "%Name":"ReflexLayerElementText",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexSprite",
+  "name":"ReflexLayerElementText",
   "parent":{
     "name":"LeafNodes",
     "path":"folders/Reflex/LeafNodes.yy",

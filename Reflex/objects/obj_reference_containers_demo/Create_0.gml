@@ -103,7 +103,7 @@ aspect_wrap.set_width(100, flexpanel_unit.percent);
 aspect_wrap.set_height(100, flexpanel_unit.percent);
 
 // Sprite to visualize ratio
-aspect_sprite = new ReflexSprite(spr_test, 0);
+aspect_sprite = new ReflexLayerElementSprite(spr_test, 0);
 aspect_sprite.set_name("spr_test");
 aspect_sprite.set_width(100, flexpanel_unit.percent);
 aspect_sprite.set_height(100, flexpanel_unit.percent);

@@ -54,20 +54,23 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 	
 	set_display(flexpanel_display.flex);
 	
-	// Background sprite node
-	__panel_sprite = new ReflexSprite();
-	__panel_sprite.set_name("PanelSprite" + string(__panel_sprite.__uuid));
-	insert(__panel_sprite, 0);
-	
-	// Fill parent
-	__panel_sprite.set_position_type(flexpanel_position_type.absolute);
-	__panel_sprite.set_position(flexpanel_edge.left, 0, flexpanel_unit.point);
-	__panel_sprite.set_position(flexpanel_edge.top, 0, flexpanel_unit.point);
-	__panel_sprite.set_width(100, flexpanel_unit.percent);
-	__panel_sprite.set_height(100, flexpanel_unit.percent);
-	
-	// Default: preserve sprite aspect if desired (caller can change)
-	__panel_sprite.set_maintain_aspect(false);
+	// Background sprite element (not a child node)
+	__panel_sprite = new ReflexLayerElementSprite();
+	__panel_sprite.set_common("Sprite", 1.0, 0.0); // elementId/elementOrder are your call
+
+	// Make it behave like a full-background
+	__panel_sprite.set_flex_flags(
+		true,			// flexVisible
+		"TopLeft",		// flexAnchor
+		true,			// flexStretchWidth
+		true,			// flexStretchHeight
+		false,			// flexTileHorizontal
+		false,			// flexTileVertical
+		false			// flexStretchKeepAspect (default false)
+	);
+
+	// Insert as the first element so it draws behind other elements (order 0)
+	insert_element(__panel_sprite, 0);
 	
 	#endregion
 }
