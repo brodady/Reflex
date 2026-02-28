@@ -21,7 +21,7 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 	#endregion
 	static set_panel_sprite = function(_sprite, _index=0)
 	{
-		__panel_sprite.set_sprite(_sprite, _index);
+		__panel_sprite.set_sprite_sprite(_sprite, _index);
 		request_reflow();
 		return self;
 	};

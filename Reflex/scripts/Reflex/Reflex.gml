@@ -38,8 +38,8 @@ function Reflex(_data=undefined) constructor
         if (_max_depth >= 0 && _depth > _max_depth) return;
 		
         // --- Internal Helper ---
-        static __draw_val = function(_cx, _cy, _val, _color) {
-            var _s = string(_val);
+        static __draw_val = function(_cx, _cy, _value, _color) {
+            var _s = string(_value);
             var _tw = string_width(_s) + 4;
             var _th = string_height(_s);
             var _rx1 = _cx - _tw/2;
@@ -741,8 +741,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static set_padding = function(_edge, _value, _unit_value=undefined) {
         if (_unit_value == undefined) {
-			var _res = __resolve_unit(_val);
-			_val = _res.value;
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
 			_unit_value = _res.unit
 		}
 		

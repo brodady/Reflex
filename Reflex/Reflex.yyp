@@ -13,9 +13,9 @@
     {"$GMFolder":"","%Name":"Examples","folderPath":"folders/Examples.yy","name":"Examples","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Basic Containers","folderPath":"folders/Examples/Basic Containers.yy","name":"Basic Containers","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Grid","folderPath":"folders/Examples/Grid.yy","name":"Grid","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"Reference Containers","folderPath":"folders/Examples/Reference Containers.yy","name":"Reference Containers","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Leaf Nodes","folderPath":"folders/Examples/Leaf Nodes.yy","name":"Leaf Nodes","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Resources","folderPath":"folders/Examples/Leaf Nodes/Resources.yy","name":"Resources","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Reference Containers","folderPath":"folders/Examples/Reference Containers.yy","name":"Reference Containers","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"YoutubeDemo","folderPath":"folders/Examples/YoutubeDemo.yy","name":"YoutubeDemo","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"RedsTools","folderPath":"folders/RedsTools.yy","name":"RedsTools","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"_Config","folderPath":"folders/RedsTools/_Config.yy","name":"_Config","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -132,11 +132,11 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
+    {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
     {"roomId":{"name":"rm_reference_containers_demo","path":"rooms/rm_reference_containers_demo/rm_reference_containers_demo.yy",},},
     {"roomId":{"name":"rm_basic_container_demo","path":"rooms/rm_basic_container_demo/rm_basic_container_demo.yy",},},
     {"roomId":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
     {"roomId":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
-    {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
