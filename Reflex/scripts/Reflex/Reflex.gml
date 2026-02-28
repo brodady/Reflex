@@ -159,6 +159,92 @@ function Reflex(_data=undefined) constructor
 	// Minimal forwarding surface
 	// -------------------------------------------------------------------------
 	#region jsDoc
+	/// @func    add_to()
+	/// @desc    Attaches this Reflex node to either:
+	///          1) Another Reflex node (as a child), or
+	///          2) The root Flex Panel Node of a UI layer (by name).
+	///          If currently parented, this will detach first (from a Reflex parent or native flexpanel parent).
+	/// @self    Reflex
+	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : UI layer name (String) or parent Reflex node.
+	/// @returns {Bool}
+	#endregion
+	static add_to = function(_parent_or_ui_layer="ReflexLayer")
+	{
+		// Parent Reflex case
+		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
+			// Detach first (handles both wrapper + UI layer parenting)
+			remove_from((__parent == undefined) ? "ReflexLayer" : __parent);
+
+			_parent_or_ui_layer.add(self);
+			return true;
+		}
+		
+		// UI layer case
+		var _ui_root_node = layer_get_flexpanel_node(_parent_or_ui_layer);
+		if (_ui_root_node == undefined) {
+			return false;
+		}
+
+		// Detach from Reflex parent (wrapper + flexpanel)
+		if (__parent != undefined) {
+			__parent.remove(self);
+		}
+		else {
+			// Detach from native flexpanel parent (UI layer or other owner)
+			var _native_parent = flexpanel_node_get_parent(node_handle);
+			if (_native_parent != undefined) {
+				flexpanel_node_remove_child(_native_parent, node_handle);
+			}
+		}
+		
+		// Become a top-level wrapper node
+		__parent = undefined;
+		__root = self;
+		
+		// Insert into UI layer root as last child
+		var _child_count = flexpanel_node_get_num_children(_ui_root_node);
+		flexpanel_node_insert_child(_ui_root_node, node_handle, _child_count);
+		
+		return true;
+	};
+
+
+	#region jsDoc
+	/// @func    remove_from()
+	/// @desc    Detaches this Reflex node from either:
+	///          1) A Reflex parent (if given a Reflex), or
+	///          2) A UI layer root (if given a layer name String).
+	///          If a Reflex parent is provided, this calls parent.remove(self).
+	///          If a UI layer name is provided, this removes node_handle from that UI layer root.
+	///          After detaching, this node becomes its own wrapper root (__parent=undefined, __root=self).
+	/// @self    Reflex
+	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : Defaults to (__parent==undefined) ? "ReflexLayer" : __parent.
+	/// @returns {Bool}
+	#endregion
+	static remove_from = function(_parent_or_ui_layer=(__parent == undefined) ? "ReflexLayer" : __parent)
+	{
+		// Reflex parent case
+		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
+			_parent_or_ui_layer.remove(self);
+			return true;
+		}
+		
+		// UI layer case
+		var _ui_root_node = layer_get_flexpanel_node(_parent_or_ui_layer);
+		if (_ui_root_node == undefined) {
+			return false;
+		}
+		
+		// Attempt to remove from the specified UI layer root
+		flexpanel_node_remove_child(_ui_root_node, node_handle);
+		
+		__parent = undefined;
+		__root = self;
+		
+		return true;
+	};
+	
+	#region jsDoc
 	/// @func    add()
 	/// @desc    Appends a child node to the end of this node's children list.
 	///          Equivalent to insert(_child_node, -1).
