@@ -19,7 +19,7 @@
 ///		- "stretch" forces the node to match the cell size on that axis.
 ///
 #endregion
-function ReflexGrid() : Reflex() constructor
+function ReflexGrid() : ReflexUI() constructor
 {
 	// -------------------------------------------------------------------------
 	// Public API
