@@ -5,8 +5,8 @@
 #endregion
 function ReflexLeaf() : Reflex() constructor 
 {
-    static add = function() { throw("ReflexLeaf: Cannot add children to a leaf node."); };
-    static insert = function() { throw("ReflexLeaf: Cannot insert children into a leaf node."); };
+    static add = function(_child_node) { throw("ReflexLeaf: Cannot add children to a leaf node."); };
+    static insert = function(_child_node, _index_value=-1) { throw("ReflexLeaf: Cannot insert children into a leaf node."); };
 
     #region jsDoc
     /// @func __rebuild_node(_element_struct)

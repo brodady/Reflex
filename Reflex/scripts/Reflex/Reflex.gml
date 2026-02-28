@@ -17,14 +17,6 @@ function Reflex(_data=undefined) constructor
 	// Owned node handle
 	node_handle = (_data == undefined) ? flexpanel_create_node() : flexpanel_create_node(_data);
 	
-	// Required mirrors (initialize all to 0)
-	x = 0; // setting these does nothing
-	y = 0; // setting these does nothing
-	w = 0; // setting these does nothing // same thing as width, just easier to type.
-	h = 0; // setting these does nothing // same thing as height, just easier to type.
-	width = 0;  // setting these does nothing
-	height = 0; // setting these does nothing
-	
 	// -------------------------------------------------------------------------
 	// Drawing
 	// -------------------------------------------------------------------------
@@ -44,9 +36,9 @@ function Reflex(_data=undefined) constructor
     static draw_debug = function(_depth=0, _max_depth=-1, _padding=false, _margin=false, _show_labels=true)
     {
         if (_max_depth >= 0 && _depth > _max_depth) return;
-
+		
         // --- Internal Helper ---
-        var __draw_val = function(_cx, _cy, _val, _color) {
+        static __draw_val = function(_cx, _cy, _val, _color) {
             var _s = string(_val);
             var _tw = string_width(_s) + 4;
             var _th = string_height(_s);
@@ -57,62 +49,67 @@ function Reflex(_data=undefined) constructor
             draw_set_color(_color);
             draw_text(_rx1 + 2, _ry1, _s);
         };
-
+		
         // --- Static Hover Management ---
         static __hover_stack = [];
         if (_depth == 0) array_resize(__hover_stack, 0); 
-
-        var _layout = __cache_layout;
+		
+        var _layout = flexpanel_node_layout_get_position(node_handle, false);
         var _col_main = merge_color(c_blue, c_orange, min(_depth * 0.15, 1.0));
-
+		
+		var _x = _layout.left;
+		var _y = _layout.top;
+		var _w = (is_nan(_layout.width)) ? 0 : _layout.width;
+		var _h = (is_nan(_layout.height)) ? 0 : _layout.height;
+		
         // 1. Draw Margin & Padding (Line-based wireframes)
         if (_layout != undefined) {
             if (_margin) {
                 draw_set_color(c_orange); draw_set_alpha(0.4);
-                var _mx1 = x - _layout.marginLeft, _my1 = y - _layout.marginTop;
-                var _mx2 = x + width + _layout.marginRight, _my2 = y + height + _layout.marginBottom;
+                var _mx1 = _x - _layout.marginLeft, _my1 = _y - _layout.marginTop;
+                var _mx2 = _x + _w + _layout.marginRight, _my2 = _y + _h + _layout.marginBottom;
                 draw_rectangle(_mx1, _my1, _mx2, _my2, true);
-                draw_line(_mx1, _my1, x, y); draw_line(_mx2, _my1, x + width, y);
-                draw_line(_mx1, _my2, x, y + height); draw_line(_mx2, _my2, x + width, y + height);
+                draw_line(_mx1, _my1, _x, _y); draw_line(_mx2, _my1, _x + _w, _y);
+                draw_line(_mx1, _my2, _x, _y + _h); draw_line(_mx2, _my2, _x + _w, _y + _h);
                 if (_show_labels) {
                     draw_set_alpha(1.0);
-                    if (_layout.marginTop != 0)    __draw_val(x + width/2, y - _layout.marginTop/2, _layout.marginTop, c_orange);
-                    if (_layout.marginBottom != 0) __draw_val(x + width/2, y + height + _layout.marginBottom/2, _layout.marginBottom, c_orange);
-                    if (_layout.marginLeft != 0)   __draw_val(x - _layout.marginLeft/2, y + height/2, _layout.marginLeft, c_orange);
-                    if (_layout.marginRight != 0)  __draw_val(x + width + _layout.marginRight/2, y + height/2, _layout.marginRight, c_orange);
+                    if (_layout.marginTop != 0)    __draw_val(_x + _w/2, _y - _layout.marginTop/2, _layout.marginTop, c_orange);
+                    if (_layout.marginBottom != 0) __draw_val(_x + _w/2, _y + _h + _layout.marginBottom/2, _layout.marginBottom, c_orange);
+                    if (_layout.marginLeft != 0)   __draw_val(_x - _layout.marginLeft/2, _y + _h/2, _layout.marginLeft, c_orange);
+                    if (_layout.marginRight != 0)  __draw_val(_x + _w + _layout.marginRight/2, _y + _h/2, _layout.marginRight, c_orange);
                 }
             }
             if (_padding) {
                 draw_set_color(c_fuchsia); draw_set_alpha(0.4);
-                var _px1 = x + _layout.paddingLeft, _py1 = y + _layout.paddingTop;
-                var _px2 = x + width - _layout.paddingRight, _py2 = y + height - _layout.paddingBottom;
+                var _px1 = _x + _layout.paddingLeft, _py1 = _y + _layout.paddingTop;
+                var _px2 = _x + _w - _layout.paddingRight, _py2 = _y + _h - _layout.paddingBottom;
                 draw_rectangle(_px1, _py1, _px2, _py2, true);
-                draw_line(x, y, _px1, _py1); draw_line(x + width, y, _px2, _py1);
-                draw_line(x, y + height, _px1, _py2); draw_line(x + width, y + height, _px2, _py2);
+                draw_line(_x, _y, _px1, _py1); draw_line(_x + _w, _y, _px2, _py1);
+                draw_line(_x, _y + _h, _px1, _py2); draw_line(_x + _w, _y + _h, _px2, _py2);
                 if (_show_labels) {
                     draw_set_alpha(1.0);
-                    if (_layout.paddingTop != 0)    __draw_val(x + width/2, y + _layout.paddingTop/2, _layout.paddingTop, c_fuchsia);
-                    if (_layout.paddingBottom != 0) __draw_val(x + width/2, y + height - _layout.paddingBottom/2, _layout.paddingBottom, c_fuchsia);
-                    if (_layout.paddingLeft != 0)   __draw_val(x + _layout.paddingLeft/2, y + height/2, _layout.paddingLeft, c_fuchsia);
-                    if (_layout.paddingRight != 0)  __draw_val(x + width - _layout.paddingRight/2, y + height/2, _layout.paddingRight, c_fuchsia);
+                    if (_layout.paddingTop != 0)    __draw_val(_x + _w/2, _y + _layout.paddingTop/2, _layout.paddingTop, c_fuchsia);
+                    if (_layout.paddingBottom != 0) __draw_val(_x + _w/2, _y + _h - _layout.paddingBottom/2, _layout.paddingBottom, c_fuchsia);
+                    if (_layout.paddingLeft != 0)   __draw_val(_x + _layout.paddingLeft/2, _y + _h/2, _layout.paddingLeft, c_fuchsia);
+                    if (_layout.paddingRight != 0)  __draw_val(_x + _w - _layout.paddingRight/2, _y + _h/2, _layout.paddingRight, c_fuchsia);
                 }
             }
         }
-
+		
         // 2. Main Box Fill & 2px Border
         draw_set_alpha(0.15); draw_set_color(_col_main);
-        draw_rectangle(x, y, x + width, y + height, false);
+        draw_rectangle(_x, _y, _x + _w, _y + _h, false);
         draw_set_alpha(0.8);
-        draw_line_width(x+1, y+1, x+width-1, y+1, 2);
-        draw_line_width(x+1, y+height-1, x+width-1, y+height-1, 2);
-        draw_line_width(x+1, y+1, x+1, y+height-1, 2);
-        draw_line_width(x+width-1, y+1, x+width-1, y+height-1, 2);
-
+        draw_line_width(_x+1, _y+1, _x+_w-1, _y+1, 2);
+        draw_line_width(_x+1, _y+_h-1, _x+_w-1, _y+_h-1, 2);
+        draw_line_width(_x+1, _y+1, _x+1, _y+_h-1, 2);
+        draw_line_width(_x+_w-1, _y+1, _x+_w-1, _y+_h-1, 2);
+		
         // 3. Primary Node Tag & Hover Logic
         if (_show_labels) {
             var _name = get_name() ?? ("Node_" + string(__uuid));
             var _tw = string_width(_name) + 6, _th = string_height(_name);
-            var _lx1 = x + 2, _ly1 = y + 2, _lx2 = _lx1 + _tw, _ly2 = _ly1 + _th;
+            var _lx1 = _x + 2, _ly1 = _y + 2, _lx2 = _lx1 + _tw, _ly2 = _ly1 + _th;
 
             // Check Hover (GUI space)
             var _mx = device_mouse_x_to_gui(0), _my = device_mouse_y_to_gui(0);
@@ -125,13 +122,13 @@ function Reflex(_data=undefined) constructor
             draw_set_color(c_white);
             draw_text(_lx1 + 3, _ly1, _name);
         }
-
+		
         // 4. Recurse
         var _count = array_length(__children);
         for (var i = 0; i < _count; i++) {
             __children[i].draw_debug(_depth + 1, _max_depth, _padding, _margin, _show_labels);
         }
-
+		
         // 5. Render Popover (Root only)
         if (_depth == 0 && array_length(__hover_stack) > 1) {
             var _px = device_mouse_x_to_gui(0) + 12, _py = device_mouse_y_to_gui(0) + 12;
@@ -159,95 +156,6 @@ function Reflex(_data=undefined) constructor
     };
 	
 	// -------------------------------------------------------------------------
-	// Reflow directive
-	// -------------------------------------------------------------------------
-	#region jsDoc
-	/// @func    request_reflow()
-	/// @desc    Marks the root node as needing layout reflow.
-	///          This does not calculate layout immediately - it only sets a dirty flag.
-	/// @self    Reflex
-	/// @returns {Undefined}
-	#endregion
-	static request_reflow = function()
-	{
-		__root.__reflow_dirty = true;
-	};
-	
-	#region jsDoc
-	/// @func    attempt_reflow()
-	/// @desc    Calculates flexpanel layout if needed, then refreshes cached layout values for
-	///          this node and its children. Updates:
-	///          - __cache_layout (raw flexpanel layout struct)
-	///          - x, y (absolute GUI positions using passed _x/_y as origin)
-	///          - w, h, width, height (layout sizes)
-	///          Returns true only when a reflow actually occurred.
-	/// @self    Reflex
-	/// @param   {Real} x : Origin x used as the absolute offset for all computed node positions.
-	/// @param   {Real} y : Origin y used as the absolute offset for all computed node positions.
-	/// @param   {Real} w : Width of the layout space passed to flexpanel_calculate_layout().
-	/// @param   {Real} h : Height of the layout space passed to flexpanel_calculate_layout().
-	/// @param   {Struct.flexpanel_direction} direction : Layout direction passed to flexpanel_calculate_layout().
-	/// @param   {Bool} force : If true, forces layout calculation even when inputs match last reflow.
-	/// @returns {Bool}
-	#endregion
-	static attempt_reflow = function(_x=0, _y=0, _w=camera_get_view_width(view_camera[0]), _h=camera_get_view_height(view_camera[0]), _d=flexpanel_direction.LTR, _force=false)
-	{
-		// Avoid Rebuild
-		if (!__reflow_dirty)
-		&& (!_force)
-		&& (__reflow_last_x == _x)
-		&& (__reflow_last_y == _y)
-		&& (__reflow_last_w == _w)
-		&& (__reflow_last_h == _h)
-		&& (__reflow_last_d == _d)
-		{
-			return false;
-		}
-		
-		__reflow_dirty = false;
-		__reflow_last_x = _x;
-		__reflow_last_y = _y;
-		__reflow_last_w = _w;
-		__reflow_last_h = _h;
-		__reflow_last_d = _d;
-		
-		// reflow the layout
-		flexpanel_calculate_layout(node_handle, _w,  _h, _d);
-		
-		// Static stacks reused across calls (no per-call allocations once warmed)
-		static __stack_node = [];
-		var _stack_node = __stack_node;
-		
-		array_push(_stack_node, self);
-		
-		while (array_length(_stack_node) > 0)
-		{
-			var _node = array_pop(_stack_node);
-			
-			var _layout = flexpanel_node_layout_get_position(_node.node_handle, false);
-			_node.__cache_layout = _layout;
-			
-			_node.x = _x + _layout.left;
-			_node.y = _y + _layout.top;
-			
-			_node.w = _layout.width;
-			_node.h = _layout.height;
-			_node.width = _layout.width;
-			_node.height = _layout.height;
-			
-			var _child_count = array_length(_node.__children);
-			if (_child_count > 0) {
-				array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
-			}
-		}
-		
-		__cache_data = undefined;
-		__cache_struct = undefined;
-		
-		return true;
-	};
-	
-	// -------------------------------------------------------------------------
 	// Minimal forwarding surface
 	// -------------------------------------------------------------------------
 	#region jsDoc
@@ -269,7 +177,6 @@ function Reflex(_data=undefined) constructor
 	///          Also rewires wrapper links:
 	///          - Detaches from the old parent if needed
 	///          - Sets child's __parent to this node
-	///          - Sets child's __root to this node's root
 	///          Mirrors the change into the underlying flexpanel tree and requests reflow.
 	/// @self    Reflex
 	/// @param   {Struct.Reflex} node : Child node to insert.
@@ -278,52 +185,30 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static insert = function(_child_node, _index_value=-1)
 	{
-		if (_child_node == undefined) { return; }
-		if (_child_node == self) { return; }
-
 		// Detach from old parent (wrapper side)
 		if (_child_node.__parent != undefined)
 		{
 			_child_node.__parent.remove(_child_node);
 		}
-
+		
 		// Choose insertion index
 		var _insert_index = _index_value;
 		if (_insert_index < 0) { _insert_index = array_length(__children); }
 		if (_insert_index > array_length(__children)) { _insert_index = array_length(__children); }
-
+		
 		// Wrapper child list
 		array_insert(__children, _insert_index, _child_node);
 		
 		_child_node.__parent = self;
 		
-		// Recursive update root and parent
-		static __stack_node = [];
-		var _stack_node = __stack_node;
-		array_push(_stack_node, _child_node);
-		
-		var _root = __root;
-		while (array_length(_stack_node) > 0)
-		{
-			var _node = array_pop(_stack_node);
-			_node.__root = _root;
-			
-			var _child_count = array_length(_node.__children);
-			if (_child_count > 0) {
-				array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
-			}
-		}
-		
 		// Flexpanel tree
 		flexpanel_node_insert_child(node_handle, _child_node.node_handle, _insert_index);
-
-		request_reflow();
 	};
 	
 	#region jsDoc
 	/// @func    remove()
 	/// @desc    Removes a child node from this node.
-	///          Clears wrapper links (child __parent becomes undefined; child __root becomes itself),
+	///          Clears wrapper links (child __parent becomes undefined),
 	///          removes the child from the flexpanel tree, and requests reflow.
 	///          Does nothing if the node is not a direct child of this node.
 	/// @self    Reflex
@@ -334,32 +219,21 @@ function Reflex(_data=undefined) constructor
 	{
 		if (_child_node == undefined) { return; }
 		if (_child_node.__parent != self) { return; }
-
-		// Wrapper child list removal
-		var _count = array_length(__children);
-		for (var i = 0; i < _count; i++)
-		{
-			if (__children[i] == _child_node)
-			{
-				array_delete(__children, i, 1);
-				break;
-			}
-		}
-
+		
+		var _index = array_get_index(__children, _child_node);
+		array_delete(__children, _index, 1);
+		
 		// Wrapper links
 		_child_node.__parent = undefined;
-		_child_node.__root = _child_node;
-
+		
 		// Flexpanel tree
-		flexpanel_node_remove_child(node_handle, _child_node.node_handle);
-
-		request_reflow();
+		flexpanel_node_remove_child(node_handle, _childnode_handle);
 	};
 	
 	#region jsDoc
 	/// @func    clear()
 	/// @desc    Removes all children from this node.
-	///          Detaches each child (clears __parent and resets __root to itself),
+	///          Detaches each child (clears __parent),
 	///          removes all flexpanel children, and requests reflow.
 	/// @self    Reflex
 	/// @returns {Undefined}
@@ -371,14 +245,11 @@ function Reflex(_data=undefined) constructor
 		{
 			var _child_node = __children[i];
 			_child_node.__parent = undefined;
-			_child_node.__root = _child_node;
 		}
-
-		__children = [];
+		
+		array_resize(__children, 0);
 
 		flexpanel_node_remove_all_children(node_handle);
-
-		request_reflow();
 	};
 	
 	#region jsDoc
@@ -431,17 +302,6 @@ function Reflex(_data=undefined) constructor
 		return undefined;
 	};
 	
-	#region jsDoc
-	/// @func    get_root()
-	/// @desc    Returns the root wrapper node for this tree. For a detached node, this is itself.
-	/// @self    Reflex
-	/// @returns {Struct.Reflex}
-	#endregion
-	static get_root = function()
-	{
-		return __root;
-	};
-
 	#region jsDoc
 	/// @func    get_parent()
 	/// @desc    Returns the parent wrapper node, or undefined if this node is a root.
@@ -555,7 +415,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Pointer.FlexpanelNode} measure_function : The node.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_measure_function = function(_measure_function) { flexpanel_node_set_measure_function(node_handle, _measure_function); request_reflow(); return self; };
+	static set_measure_function = function(_measure_function) { flexpanel_node_set_measure_function(node_handle, _measure_function); return self; };
 	#region jsDoc
 	/// @func    set_align_content()
 	/// @desc    Sets the alignment of the content of the node.
@@ -563,7 +423,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_justify} align_value : The selected alignment.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_align_content = function(_align_value) { flexpanel_node_style_set_align_content(node_handle, _align_value); request_reflow(); return self; };
+	static set_align_content = function(_align_value) { flexpanel_node_style_set_align_content(node_handle, _align_value); return self; };
 	#region jsDoc
 	/// @func    set_align_items()
 	/// @desc    Sets the alignment of the items of the node.
@@ -571,7 +431,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_align} align_value : The selected alignment.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_align_items = function(_align_value) { flexpanel_node_style_set_align_items(node_handle, _align_value); request_reflow(); return self; };
+	static set_align_items = function(_align_value) { flexpanel_node_style_set_align_items(node_handle, _align_value); return self; };
 	#region jsDoc
 	/// @func    set_align_self()
 	/// @desc    Sets the alignment of the selected node.
@@ -579,7 +439,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_align} align_value : The selected alignment.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_align_self = function(_align_value) { flexpanel_node_style_set_align_self(node_handle, _align_value); request_reflow(); return self; };
+	static set_align_self = function(_align_value) { flexpanel_node_style_set_align_self(node_handle, _align_value); return self; };
 	#region jsDoc
 	/// @func    set_aspect_ratio()
 	/// @desc    Sets the node's aspect ratio
@@ -587,7 +447,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} aspect_ratio : The value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_aspect_ratio = function(_aspect_ratio) { flexpanel_node_style_set_aspect_ratio(node_handle, _aspect_ratio); request_reflow(); return self; };
+	static set_aspect_ratio = function(_aspect_ratio) { flexpanel_node_style_set_aspect_ratio(node_handle, _aspect_ratio); return self; };
 	#region jsDoc
 	/// @func    set_display()
 	/// @desc    Sets the display setting of the selected node.
@@ -595,7 +455,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_display} display_value : The selected display.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_display = function(_display_value) { flexpanel_node_style_set_display(node_handle, _display_value); request_reflow(); return self; };
+	static set_display = function(_display_value) { flexpanel_node_style_set_display(node_handle, _display_value); return self; };
 	#region jsDoc
 	/// @func    set_flex()
 	/// @desc    Sets the flex value of the selected node.
@@ -603,7 +463,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} flex_value : The flex value for this
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex = function(_flex_value) { flexpanel_node_style_set_flex(node_handle, _flex_value); request_reflow(); return self; };
+	static set_flex = function(_flex_value) { flexpanel_node_style_set_flex(node_handle, _flex_value); return self; };
 	#region jsDoc
 	/// @func    set_flex_wrap()
 	/// @desc    Sets the flex wrap of the selected node.
@@ -611,7 +471,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_wrap} wrap_value : The selected wrap.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_wrap = function(_wrap_value) { flexpanel_node_style_set_flex_wrap(node_handle, _wrap_value); request_reflow(); return self; };
+	static set_flex_wrap = function(_wrap_value) { flexpanel_node_style_set_flex_wrap(node_handle, _wrap_value); return self; };
 	#region jsDoc
 	/// @func    set_flex_grow()
 	/// @desc    Sets the flex grow of the selected node.
@@ -619,7 +479,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} grow_value : The selected grow factor
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_grow = function(_grow_value) { flexpanel_node_style_set_flex_grow(node_handle, _grow_value); request_reflow(); return self; };
+	static set_flex_grow = function(_grow_value) { flexpanel_node_style_set_flex_grow(node_handle, _grow_value); return self; };
 	#region jsDoc
 	/// @func    set_flex_shrink()
 	/// @desc    Sets the flex shrink of the selected node.
@@ -627,7 +487,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} shrink_value : The selected shrink factor
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_shrink = function(_shrink_value) { flexpanel_node_style_set_flex_shrink(node_handle, _shrink_value); request_reflow(); return self; };
+	static set_flex_shrink = function(_shrink_value) { flexpanel_node_style_set_flex_shrink(node_handle, _shrink_value); return self; };
 	#region jsDoc
 	/// @func    set_flex_basis()
 	/// @desc    Sets the flex basis of the selected node.
@@ -636,7 +496,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_basis = function(_value, _unit_value) { flexpanel_node_style_set_flex_basis(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_flex_basis = function(_value, _unit_value) { flexpanel_node_style_set_flex_basis(node_handle, _value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_flex_direction()
 	/// @desc    Sets the flex direction of the selected node.
@@ -644,7 +504,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_flex_direction} flex_direction_value : The selected direction.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_direction = function(_flex_direction_value) { flexpanel_node_style_set_flex_direction(node_handle, _flex_direction_value); request_reflow(); return self; };
+	static set_flex_direction = function(_flex_direction_value) { flexpanel_node_style_set_flex_direction(node_handle, _flex_direction_value); return self; };
 	#region jsDoc
 	/// @func    set_gap()
 	/// @desc    Sets the gap of the selected node for the selected gutters.
@@ -653,7 +513,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} size_value : The selected gap size
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_gap = function(_gutter_value, _size_value) { flexpanel_node_style_set_gap(node_handle, _gutter_value, _size_value); request_reflow(); return self; };
+	static set_gap = function(_gutter_value, _size_value) { flexpanel_node_style_set_gap(node_handle, _gutter_value, _size_value); return self; };
 	#region jsDoc
 	/// @func    set_position()
 	/// @desc    Sets an inset position on the node.
@@ -663,7 +523,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_position = function(_edge_value, _value, _unit_value) { flexpanel_node_style_set_position(node_handle, _edge_value, _value, _unit_value); request_reflow(); return self; };
+	static set_position = function(_edge_value, _value, _unit_value) { flexpanel_node_style_set_position(node_handle, _edge_value, _value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_justify_content()
 	/// @desc    Sets the node's contents justification
@@ -671,7 +531,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_justify} justify_value : The justification to use
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_justify_content = function(_justify_value) { flexpanel_node_style_set_justify_content(node_handle, _justify_value); request_reflow(); return self; };
+	static set_justify_content = function(_justify_value) { flexpanel_node_style_set_justify_content(node_handle, _justify_value); return self; };
 	#region jsDoc
 	/// @func    set_direction()
 	/// @desc    Sets the layout direction of the selected node.
@@ -679,7 +539,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_direction} direction_value : The selected direction.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_direction = function(_direction_value) { flexpanel_node_style_set_direction(node_handle, _direction_value); request_reflow(); return self; };
+	static set_direction = function(_direction_value) { flexpanel_node_style_set_direction(node_handle, _direction_value); return self; };
 	#region jsDoc
 	/// @func    set_margin()
 	/// @desc    Sets the margin of the selected node.
@@ -689,7 +549,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_margin = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_margin(node_handle, _edge_value, _size_value, _unit_value); request_reflow(); return self; };
+	static set_margin = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_margin(node_handle, _edge_value, _size_value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_padding()
 	/// @desc    Sets the padding of the selected node.
@@ -699,7 +559,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_padding = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_padding(node_handle, _edge_value, _size_value, _unit_value); request_reflow(); return self; };
+	static set_padding = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_padding(node_handle, _edge_value, _size_value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_border()
 	/// @desc    Sets the border of the selected node.
@@ -708,7 +568,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} size_value : The selected border size
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_border = function(_edge_value, _size_value) { flexpanel_node_style_set_border(node_handle, _edge_value, _size_value); request_reflow(); return self; };
+	static set_border = function(_edge_value, _size_value) { flexpanel_node_style_set_border(node_handle, _edge_value, _size_value); return self; };
 	#region jsDoc
 	/// @func    set_position_type()
 	/// @desc    Sets the node's position type.
@@ -716,7 +576,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_position_type} position_type_value : The position type to use
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_position_type = function(_position_type_value) { flexpanel_node_style_set_position_type(node_handle, _position_type_value); request_reflow(); return self; };
+	static set_position_type = function(_position_type_value) { flexpanel_node_style_set_position_type(node_handle, _position_type_value); return self; };
 	#region jsDoc
 	/// @func    set_min_width()
 	/// @desc    Sets the node's minimum width
@@ -725,7 +585,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_min_width = function(_value, _unit_value) { flexpanel_node_style_set_min_width(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_min_width = function(_value, _unit_value) { flexpanel_node_style_set_min_width(node_handle, _value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_max_width()
 	/// @desc    Sets the node's maximum width
@@ -734,7 +594,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_min_height()
 	/// @desc    Sets the node's minimum height
@@ -743,7 +603,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_max_height()
 	/// @desc    Sets the node's maximum height
@@ -752,7 +612,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); request_reflow(); return self; };
+	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); return self; };
 	#region jsDoc
 	/// @func    set_width()
 	/// @desc    Sets the width of the selected node.
@@ -769,7 +629,6 @@ function Reflex(_data=undefined) constructor
 		}
 		
 		flexpanel_node_style_set_width(node_handle, _val, _unit_value);
-        request_reflow();
         return self;
     };
     #region jsDoc
@@ -788,7 +647,6 @@ function Reflex(_data=undefined) constructor
 		}
 		
 		flexpanel_node_style_set_height(node_handle, _val, _unit_value);
-		request_reflow();
         return self;
     };
 	#endregion
@@ -802,144 +660,112 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_layout_position = function()	{ return __cache_layout; };
+	static get_layout_position = function()	{ return flexpanel_node_layout_get_position(node_handle, false); };
 	#region jsDoc
 	/// @func    get_layout_struct()
 	/// @desc    Alias of get_layout_position(). Returns the cached flexpanel layout struct (or undefined).
 	/// @self    Reflex
 	/// @returns {Struct|Undefined}
 	#endregion
-	static get_layout_struct = function() { return __cache_layout; };
+	static get_layout_struct = function() { return flexpanel_node_get_struct(node_handle); };
 	#region jsDoc
 	/// @func    get_layout_left()
 	/// @desc    Returns the cached layout left offset (relative to the reflow origin). Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_left = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.left; };
+	static get_layout_left = function() { return flexpanel_node_layout_get_position(node_handle, false).left; };
 	#region jsDoc
 	/// @func    get_layout_top()
 	/// @desc    Returns the cached layout top offset (relative to the reflow origin). Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_top = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.top; };
+	static get_layout_top = function() { return flexpanel_node_layout_get_position(node_handle, false).top; };
 	#region jsDoc
 	/// @func    get_layout_right()
 	/// @desc    Returns the cached layout right value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_right = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.right; };
+	static get_layout_right = function() { return flexpanel_node_layout_get_position(node_handle, false).right; };
 	#region jsDoc
 	/// @func    get_layout_bottom()
 	/// @desc    Returns the cached layout bottom value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_bottom = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.bottom; };
+	static get_layout_bottom = function() { return flexpanel_node_layout_get_position(node_handle, false).bottom; };
 	#region jsDoc
 	/// @func    get_layout_padding_left()
 	/// @desc    Returns the cached layout paddingLeft value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_padding_left = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingLeft; };
+	static get_layout_padding_left = function() { return flexpanel_node_layout_get_position(node_handle, false).paddingLeft; };
 	#region jsDoc
 	/// @func    get_layout_padding_right()
 	/// @desc    Returns the cached layout paddingRight value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_padding_right = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingRight; };
+	static get_layout_padding_right = function() { return flexpanel_node_layout_get_position(node_handle, false).paddingRight; };
 	#region jsDoc
 	/// @func    get_layout_padding_top()
 	/// @desc    Returns the cached layout paddingTop value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_padding_top = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingTop; };
+	static get_layout_padding_top = function() { return flexpanel_node_layout_get_position(node_handle, false).paddingTop; };
 	#region jsDoc
 	/// @func    get_layout_padding_bottom()
 	/// @desc    Returns the cached layout paddingBottom value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_padding_bottom = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.paddingBottom; };
+	static get_layout_padding_bottom = function() { return flexpanel_node_layout_get_position(node_handle, false).paddingBottom; };
 	#region jsDoc
 	/// @func    get_layout_margin_left()
 	/// @desc    Returns the cached layout marginLeft value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_margin_left = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginLeft; };
+	static get_layout_margin_left = function() { return flexpanel_node_layout_get_position(node_handle, false).marginLeft; };
 	#region jsDoc
 	/// @func    get_layout_margin_right()
 	/// @desc    Returns the cached layout marginRight value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_margin_right = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginRight; };
+	static get_layout_margin_right = function() { return flexpanel_node_layout_get_position(node_handle, false).marginRight; };
 	#region jsDoc
 	/// @func    get_layout_margin_top()
 	/// @desc    Returns the cached layout marginTop value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_margin_top = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginTop; };
+	static get_layout_margin_top = function() { return flexpanel_node_layout_get_position(node_handle, false).marginTop; };
 	#region jsDoc
 	/// @func    get_layout_margin_bottom()
 	/// @desc    Returns the cached layout marginBottom value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_margin_bottom = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.marginBottom; };
+	static get_layout_margin_bottom = function() { return flexpanel_node_layout_get_position(node_handle, false).marginBottom; };
 	#region jsDoc
 	/// @func    get_layout_direction()
 	/// @desc    Returns the cached layout direction value. Returns 0 if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_layout_direction = function() { return (__cache_layout == undefined) ? 0 : __cache_layout.direction; };
+	static get_layout_direction = function() { return flexpanel_node_layout_get_position(node_handle, false).direction; };
 	#region jsDoc
 	/// @func    get_layout_had_overflow()
 	/// @desc    Returns whether the cached layout reported overflow. Returns false if no layout is cached.
 	/// @self    Reflex
 	/// @returns {Bool}
 	#endregion
-	static get_layout_had_overflow = function() { return (__cache_layout == undefined) ? false : __cache_layout.hadOverflow; };
-	#region jsDoc
-	/// @func    get_layout_x()
-	/// @desc    Returns this node's absolute x position as set during the most recent reflow.
-	///          This is computed as: reflow_origin_x + __cache_layout.left.
-	/// @self    Reflex
-	/// @returns {Real}
-	#endregion
-	static get_layout_x = function() { return x; };
-	#region jsDoc
-	/// @func    get_layout_y()
-	/// @desc    Returns this node's absolute y position as set during the most recent reflow.
-	///          This is computed as: reflow_origin_y + __cache_layout.top.
-	/// @self    Reflex
-	/// @returns {Real}
-	#endregion
-	static get_layout_y = function() { return y; };
-	#region jsDoc
-	/// @func    get_layout_width()
-	/// @desc    Returns this node's width as set during the most recent reflow.
-	///          This mirrors __cache_layout.width.
-	/// @self    Reflex
-	/// @returns {Real}
-	#endregion
-	static get_layout_width = function() { return width; };
-	#region jsDoc
-	/// @func    get_layout_height()
-	/// @desc    Returns this node's height as set during the most recent reflow.
-	///          This mirrors __cache_layout.height.
-	/// @self    Reflex
-	/// @returns {Real}
-	#endregion
-	static get_layout_height = function() { return height; };
+	static get_layout_had_overflow = function() { return flexpanel_node_layout_get_position(node_handle, false).hadOverflow; };
 	#endregion
 	
 	#region jsDoc
@@ -948,9 +774,8 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-		static get_data = function()	{
-		__cache_data ??= flexpanel_node_get_data(node_handle);
-		return __cache_data;
+	static get_data = function()	{
+		return flexpanel_node_get_data(node_handle);
 	};
 	#region jsDoc
 	/// @func    get_struct()
@@ -959,8 +784,7 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Struct}
 	#endregion
 	static get_struct = function()	{
-		__cache_struct ??= flexpanel_node_get_struct(node_handle);
-		return __cache_struct;
+		return flexpanel_node_get_struct(node_handle);
 	};
 
 	// Style getters are live (since style is no longer refreshed during reflow)
@@ -1174,12 +998,12 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static get_child_hash = function(_hash_or_name)	{ return flexpanel_node_get_child_hash(node_handle, _hash_or_name); };
 	#region jsDoc
-	/// @func    get_parent()
-	/// @desc    Returns the parent of the given node, undefined if no parent.
+	/// @func    get_parent_node()
+	/// @desc    Returns the flexpanel parent of the given node, undefined if no parent.
 	/// @self    Reflex
 	/// @returns {Pointer.FlexpanelNode}
 	#endregion
-	static get_parent = function()	{ return flexpanel_node_get_parent(node_handle); };
+	static get_parent_node = function()	{ return flexpanel_node_get_parent(node_handle); };
 	#region jsDoc
 	/// @func    get_name()
 	/// @desc    Returns the name of the given node, undefined if no name is set.
@@ -1207,30 +1031,9 @@ function Reflex(_data=undefined) constructor
 	
 	__uuid = __global_uuid;
 	
-	__root = self;
 	__parent = undefined;
 	__children = [];
-
-	__reflow_dirty = false;
-	__reflow_last_x = 0;
-	__reflow_last_y = 0;
-	__reflow_last_w = 0;
-	__reflow_last_h = 0;
-	__reflow_last_d = -1;
 	
-	// -------------------------------------------------------------------------
-	// Cached returns (struct/array only)
-	// -------------------------------------------------------------------------
-
-	// flexpanel_node_layout_get_position(node, [relative]) -> Struct
-	__cache_layout = undefined;
-
-	// flexpanel_node_get_data(node) -> Struct
-	__cache_data = undefined;
-
-	// flexpanel_node_get_struct(node) -> Struct
-	__cache_struct = undefined;
-     
     // -------------------------------------------------------------------------
 	// Helpers
 	// -------------------------------------------------------------------------
