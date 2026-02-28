@@ -7,7 +7,3 @@ if (keyboard_check_pressed(vk_space)) {
 if (keyboard_check_pressed(vk_escape)) {
     my_label.set_text("Short again.");
 }
-
-// 1. Calculate the math for our debug boxes
-ui_root.attempt_reflow();
-

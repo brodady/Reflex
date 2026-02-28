@@ -2,9 +2,9 @@
   "$GMRoomUI":"",
   "%Name":"RoomUI",
   "children":[
-    {"$GMRUILayer":"v1","%Name":"UI_ROOT","alignItems":2,"children":[
+    {"$GMRUILayer":"v1","%Name":"ReflexLayer","alignItems":2,"children":[
         {"$GMRFlexPanel":"","%Name":"FlexPanel","alignItems":2,"children":[],"flexDirection":0,"height":{"unit":3,"value":128.0,},"justifyContent":1,"name":"FlexPanel","nodeColour":4294102856,"resourceType":"GMRFlexPanel","resourceVersion":"2.0","width":{"unit":3,"value":128.0,},},
-      ],"flexDirection":0,"gridX":32,"gridY":32,"justifyContent":1,"name":"UI_ROOT","nodeColour":4294068310,"resourceType":"GMRUILayer","resourceVersion":"2.0",},
+      ],"flexDirection":0,"gridX":32,"gridY":32,"justifyContent":1,"name":"ReflexLayer","nodeColour":4294068310,"resourceType":"GMRUILayer","resourceVersion":"2.0",},
   ],
   "locked":false,
   "name":"RoomUI",
