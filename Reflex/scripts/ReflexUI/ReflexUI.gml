@@ -100,6 +100,62 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	// -------------------------------------------------------------------------
 	// Minimal forwarding surface
 	// -------------------------------------------------------------------------
+		#region jsDoc
+	/// @func    add_to()
+	/// @desc    Attaches this Reflex node to either:
+	///          1) Another Reflex node (as a child), or
+	///          2) The root Flex Panel Node of a UI layer (by name).
+	///          If currently parented, this will detach first (from a Reflex parent or native flexpanel parent).
+	/// @self    Reflex
+	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : UI layer name (String) or parent Reflex node.
+	/// @returns {Bool}
+	#endregion
+	static add_to = function(_parent_or_ui_layer="ReflexLayer")
+	{
+		static __base_add_to = Reflex.add_to;
+		var _value = __base_add_to(_parent_or_ui_layer);
+		request_reflow();
+		return _value;
+	}
+	
+	#region jsDoc
+	/// @func    remove_from()
+	/// @desc    Detaches this Reflex node from either:
+	///          1) A Reflex parent (if given a Reflex), or
+	///          2) A UI layer root (if given a layer name String).
+	///          If a Reflex parent is provided, this calls parent.remove(self).
+	///          If a UI layer name is provided, this removes node_handle from that UI layer root.
+	///          After detaching, this node becomes its own wrapper root (__parent=undefined, __root=self).
+	/// @self    Reflex
+	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : Defaults to (__parent==undefined) ? "ReflexLayer" : __parent.
+	/// @returns {Bool}
+	#endregion
+	static remove_from = function(_parent_or_ui_layer=(__parent == undefined) ? "ReflexLayer" : __parent)
+	{
+		static __base_remove_from = Reflex.remove_from;
+		var _value = __base_remove_from(_parent_or_ui_layer);
+		
+		// Recursive update root and parent
+		static __stack_node = [];
+		var _stack_node = __stack_node;
+		array_push(_stack_node, self);
+		
+		while (array_length(_stack_node) > 0)
+		{
+			var _node = array_pop(_stack_node);
+			_node.__root = self;
+			
+			var _child_count = array_length(_node.__children);
+			if (_child_count > 0) {
+				array_copy(_stack_node, array_length(_stack_node), _node.__children, 0, _child_count);
+			}
+		}
+		
+		request_reflow();
+		
+		return _value;
+	}
+	
 	#region jsDoc
 	/// @func    insert()
 	/// @desc    Inserts a child node at the given index (or appends if index < 0).
@@ -583,9 +639,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @returns {Bool}
 	#endregion
 	static get_layout_had_overflow = function() { return (__cache_layout == undefined) ? false : __cache_layout.hadOverflow; };
-	#endregion
 	
-	#region Layout (Output after reflow)
 	#region jsDoc
 	/// @func    get_layout_x()
 	/// @desc    Returns this node's absolute x position as set during the most recent reflow.
