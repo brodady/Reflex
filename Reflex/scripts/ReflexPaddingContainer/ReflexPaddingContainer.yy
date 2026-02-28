@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexPaddingContainer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexPaddingContainer",
+  "parent":{
+    "name":"Container",
+    "path":"folders/ReflexUI/Components/Container.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

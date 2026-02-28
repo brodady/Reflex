@@ -5,7 +5,7 @@
 /// @param {Real} [_index]=0 The initial subimage index.
 /// @return {ReflexSprite}
 #endregion
-function ReflexSprite(_sprite, _index = 0) : ReflexLeaf() constructor 
+function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor 
 {
     #region Properties
     sprite_index    = -1;
@@ -53,6 +53,8 @@ function ReflexSprite(_sprite, _index = 0) : ReflexLeaf() constructor
 
     #region Setters
     static set_sprite = function(_spr, _ind = 0) {
+		if (_spr = -1) { return self; }
+		
         sprite_index = _spr;
         image_index  = _ind;
         
@@ -65,14 +67,21 @@ function ReflexSprite(_sprite, _index = 0) : ReflexLeaf() constructor
             if (maintain_aspect) set_aspect_ratio(_info.width / _info.height);
         }
         
-        __rebuild_node(__get_layer_element());
+        //skip rebuilding because its not finished initializing yet.
+        if (sprite_index = -1) { return self; }
+		
+		__rebuild_node(__get_layer_element());
         return self;
     };
 
     static set_scale = function(_x, _y = undefined) {
         image_xscale = _x;
         image_yscale = (_y == undefined) ? _x : _y;
-        __rebuild_node(__get_layer_element());
+        
+		//skip rebuilding because its not finished initializing yet.
+        if (sprite_index = -1) { return self; }
+		
+		__rebuild_node(__get_layer_element());
         return self;
     };
 
@@ -84,26 +93,41 @@ function ReflexSprite(_sprite, _index = 0) : ReflexLeaf() constructor
         } else {
             set_aspect_ratio(0);
         }
-        
+		
+		//skip rebuilding because its not finished initializing yet.
+        if (sprite_index = -1) { return self; }
+		
         __rebuild_node(__get_layer_element());
         return self;
     };
 
     static set_rotation = function(_angle) { 
         image_angle = _angle; 
-        __rebuild_node(__get_layer_element()); 
+        
+		//skip rebuilding because its not finished initializing yet.
+        if (sprite_index = -1) { return self; }
+		
+		__rebuild_node(__get_layer_element()); 
         return self; 
     };
 
     static set_color = function(_col) { 
         image_blend = _col; 
-        __rebuild_node(__get_layer_element()); 
+        
+		//skip rebuilding because its not finished initializing yet.
+        if (sprite_index = -1) { return self; }
+		
+		__rebuild_node(__get_layer_element()); 
         return self; 
     };
 
     static set_speed = function(_spd) { 
         image_speed = _spd; 
-        __rebuild_node(__get_layer_element()); 
+        
+		//skip rebuilding because its not finished initializing yet.
+        if (sprite_index = -1) { return self; }
+		
+		__rebuild_node(__get_layer_element()); 
         return self; 
     };
     #endregion
