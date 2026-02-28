@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexObject",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexObject",
+  "parent":{
+    "name":"LeafNodes",
+    "path":"folders/Reflex/LeafNodes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

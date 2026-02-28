@@ -83,8 +83,11 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @return {ReflexText}
 	#endregion
 	static set_text_color = function(_col) { 
-		if (textColour == _col) return self;
-        textColour = _col;
+		var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
+		_unsigned -= 0x100000000;
+		
+		if (textColour == _unsigned) return self;
+        textColour = _unsigned;
         rebuild_node(to_struct()); 
         return self; 
     };

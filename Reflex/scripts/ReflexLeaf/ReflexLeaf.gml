@@ -191,7 +191,7 @@ function ReflexLeaf() : Reflex() constructor
             }
         }
         
-        flexpanel_delete_node(node_handle);
+        flexpanel_delete_node(node_handle, true);
         node_handle = _new_handle;
     };
     
@@ -258,3 +258,5 @@ function ReflexLeaf() : Reflex() constructor
 	
 	#endregion
 }
+
+

@@ -46,13 +46,13 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @return {ReflexSprite}
 	#endregion
 	static set_sprite_offsets = function(_x, _y) {
-		if (textOffsetX == _x)
-        && (textOffsetY == _y) {
+		if (spriteOffsetX == _x)
+        && (spriteOffsetY == _y) {
 			return self;
 		}
 		
-		textOffsetX = _x;
-		textOffsetY = _y;
+		spriteOffsetX = _x;
+		spriteOffsetY = _y;
 		
 		rebuild_node(to_struct());
         return self;
@@ -111,9 +111,12 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @return {ReflexSprite}
 	#endregion
     static set_sprite_color = function(_col) { 
-        if (spriteColour == _col) return self;
+        var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
+		_unsigned -= 0x100000000;
 		
-        spriteColour = _col;
+		if (spriteColour == _unsigned) return self;
+		
+        spriteColour = _unsigned;
         
 		//skip rebuilding because its not finished initializing yet.
         if (spriteIndex = -1) { return self; }
@@ -121,6 +124,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 		rebuild_node(to_struct()); 
         return self; 
     };
+	static set_sprite_colour = set_sprite_color
 	
 	#region jsDoc
 	/// @func set_sprite_image(_index)
