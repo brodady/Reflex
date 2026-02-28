@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"Script2",
+  "%Name":"ReflexUI",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"Script2",
+  "name":"ReflexUI",
   "parent":{
-    "name":"Tests",
-    "path":"folders/Tests.yy",
+    "name":"ReflexUI",
+    "path":"folders/ReflexUI.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

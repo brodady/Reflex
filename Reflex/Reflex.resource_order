@@ -9,7 +9,7 @@
     {"name":"_internal","order":1,"path":"folders/RedsTools/_Config/Settings/_internal.yy",},
     {"name":"Reflex","order":4,"path":"folders/Reflex.yy",},
     {"name":"LeafNodes","order":8,"path":"folders/Reflex/LeafNodes.yy",},
-    {"name":"Tests","order":5,"path":"folders/Tests.yy",},
+    {"name":"ReflexUI","order":7,"path":"folders/ReflexUI.yy",},
   ],
   "ResourceOrderSettings":[
     {"name":"obj_leaf_test","order":3,"path":"objects/obj_leaf_test/obj_leaf_test.yy",},

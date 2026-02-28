@@ -6,6 +6,7 @@ layout_root.set_width(100, flexpanel_unit.percent);
 layout_root.set_height(100, flexpanel_unit.percent);
 layout_root.set_align_items(flexpanel_align.stretch);
 layout_root.set_align_content(flexpanel_align.stretch);
+layout_root.add_to("ReflexLayer");
 
 // Masthead
 layout_masthead = new Reflex();

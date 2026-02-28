@@ -1,3 +1,4 @@
+
 if (__SETTINGS_AUTO_SCALE) {
 	time_source_start(time_source_create(time_source_game, 1, time_source_units_frames, function(){
 		static is_browser = (os_browser != browser_not_a_browser);
