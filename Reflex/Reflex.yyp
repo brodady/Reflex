@@ -12,6 +12,7 @@
   "Folders":[
     {"$GMFolder":"","%Name":"Examples","folderPath":"folders/Examples.yy","name":"Examples","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Grid","folderPath":"folders/Examples/Grid.yy","name":"Grid","resourceType":"GMFolder","resourceVersion":"2.0",},
+    {"$GMFolder":"","%Name":"Basic Containers","folderPath":"folders/Examples/Basic Containers.yy","name":"Basic Containers","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Leaf Nodes","folderPath":"folders/Examples/Leaf Nodes.yy","name":"Leaf Nodes","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Resources","folderPath":"folders/Examples/Leaf Nodes/Resources.yy","name":"Resources","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"YoutubeDemo","folderPath":"folders/Examples/YoutubeDemo.yy","name":"YoutubeDemo","resourceType":"GMFolder","resourceVersion":"2.0",},
@@ -48,9 +49,11 @@
   "name":"Reflex",
   "resources":[
     {"id":{"name":"fnt_lbl","path":"fonts/fnt_lbl/fnt_lbl.yy",},},
+    {"id":{"name":"obj_basic_container_demo","path":"objects/obj_basic_container_demo/obj_basic_container_demo.yy",},},
     {"id":{"name":"obj_leaf_test","path":"objects/obj_leaf_test/obj_leaf_test.yy",},},
     {"id":{"name":"obj_test_grid","path":"objects/obj_test_grid/obj_test_grid.yy",},},
     {"id":{"name":"obj_youtube_demo","path":"objects/obj_youtube_demo/obj_youtube_demo.yy",},},
+    {"id":{"name":"rm_basic_container_demo","path":"rooms/rm_basic_container_demo/rm_basic_container_demo.yy",},},
     {"id":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},
     {"id":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
     {"id":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
@@ -124,6 +127,7 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
+    {"roomId":{"name":"rm_basic_container_demo","path":"rooms/rm_basic_container_demo/rm_basic_container_demo.yy",},},
     {"roomId":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
     {"roomId":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
     {"roomId":{"name":"rm_leaf_demo","path":"rooms/rm_leaf_demo/rm_leaf_demo.yy",},},

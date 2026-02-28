@@ -801,21 +801,21 @@ function ReflexGridContainer() : ReflexUI() constructor
 		for (var _j = 0; _j < _count; _j++)
 		{
 			var _track2 = _tracks[_j];
-			var _size_value = 0;
+			var _value = 0;
 
 			if (_track2.mode == "px")
 			{
-				_size_value = max(0, _track2.value);
+				_value = max(0, _track2.value);
 			}
 			else
 			{
-				_size_value = (_frac_total > 0) ? ((_remaining * max(0, _track2.value)) / _frac_total) : 0;
+				_value = (_frac_total > 0) ? ((_remaining * max(0, _track2.value)) / _frac_total) : 0;
 			}
 
-			_sizes_out[_j] = _size_value;
+			_sizes_out[_j] = _value;
 			_offsets_out[_j] = _cursor;
 
-			_cursor += _size_value;
+			_cursor += _value;
 			if (_j < _count - 1)
 			{
 				_cursor += _gap_value;

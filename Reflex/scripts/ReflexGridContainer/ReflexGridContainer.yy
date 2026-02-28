@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexGridContainer",
   "parent":{
-    "name":"ReflexUI",
-    "path":"folders/ReflexUI.yy",
+    "name":"Container",
+    "path":"folders/ReflexUI/Components/Container.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

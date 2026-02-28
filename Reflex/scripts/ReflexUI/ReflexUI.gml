@@ -394,7 +394,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @param   {Real} size_value : The selected gap size
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_gap = function(_gutter_value, _size_value) { static __base_set_gap = Reflex.set_gap; __base_set_gap(_gutter_value, _size_value); request_reflow(); return self; };
+	static set_gap = function(_gutter_value, _value) { static __base_set_gap = Reflex.set_gap; __base_set_gap(_gutter_value, _value); request_reflow(); return self; };
 	#region jsDoc
 	/// @func    set_position()
 	/// @desc    Sets an inset position on the node.
@@ -404,7 +404,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_position = function(_edge_value, _value, _unit_value) { static __base_set_position = Reflex.set_position; __base_set_position(_edge_value, _value, _unit_value); request_reflow(); return self; };
+	static set_position = function(_edge, _value, _unit_value) { static __base_set_position = Reflex.set_position; __base_set_position(_edge, _value, _unit_value); request_reflow(); return self; };
 	#region jsDoc
 	/// @func    set_justify_content()
 	/// @desc    Sets the node's contents justification
@@ -430,7 +430,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_margin = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { static __base_set_margin = Reflex.set_margin; __base_set_margin(_edge_value, _size_value, _unit_value); request_reflow(); return self; };
+	static set_margin = function(_edge, _value, _unit_value=flexpanel_unit.point) { static __base_set_margin = Reflex.set_margin; __base_set_margin(_edge, _value, _unit_value); request_reflow(); return self; };
 	#region jsDoc
 	/// @func    set_padding()
 	/// @desc    Sets the padding of the selected node.
@@ -440,7 +440,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_padding = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { static __base_set_padding = Reflex.set_padding; __base_set_padding(_edge_value, _size_value, _unit_value); request_reflow(); return self; };
+	static set_padding = function(_edge, _value, _unit_value=flexpanel_unit.point) { static __base_set_padding = Reflex.set_padding; __base_set_padding(_edge, _value, _unit_value); request_reflow(); return self; };
 	#region jsDoc
 	/// @func    set_border()
 	/// @desc    Sets the border of the selected node.
@@ -449,7 +449,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @param   {Real} size_value : The selected border size
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_border = function(_edge_value, _size_value) { static __base_set_border = Reflex.set_border; __base_set_border(_edge_value, _size_value); request_reflow(); return self; };
+	static set_border = function(_edge, _value) { static __base_set_border = Reflex.set_border; __base_set_border(_edge, _value); request_reflow(); return self; };
 	#region jsDoc
 	/// @func    set_position_type()
 	/// @desc    Sets the node's position type.

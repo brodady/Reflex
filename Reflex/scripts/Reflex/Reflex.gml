@@ -487,7 +487,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Pointer.FlexpanelNode} name_value : The node.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_name = function(_name_value) { flexpanel_node_set_name(node_handle, _name_value); return self; };
+	static set_name = function(_name_value) {
+        flexpanel_node_set_name(node_handle, _name_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_measure_function()
 	/// @desc    Sets the measure function of the node. When a layout is calculated and a measurement
@@ -499,7 +502,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Pointer.FlexpanelNode} measure_function : The node.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_measure_function = function(_measure_function) { flexpanel_node_set_measure_function(node_handle, _measure_function); return self; };
+	static set_measure_function = function(_measure_function) {
+        flexpanel_node_set_measure_function(node_handle, _measure_function);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_align_content()
 	/// @desc    Sets the alignment of the content of the node.
@@ -507,7 +513,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_justify} align_value : The selected alignment.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_align_content = function(_align_value) { flexpanel_node_style_set_align_content(node_handle, _align_value); return self; };
+	static set_align_content = function(_align_value) {
+        flexpanel_node_style_set_align_content(node_handle, _align_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_align_items()
 	/// @desc    Sets the alignment of the items of the node.
@@ -515,7 +524,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_align} align_value : The selected alignment.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_align_items = function(_align_value) { flexpanel_node_style_set_align_items(node_handle, _align_value); return self; };
+	static set_align_items = function(_align_value) {
+        flexpanel_node_style_set_align_items(node_handle, _align_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_align_self()
 	/// @desc    Sets the alignment of the selected node.
@@ -523,7 +535,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_align} align_value : The selected alignment.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_align_self = function(_align_value) { flexpanel_node_style_set_align_self(node_handle, _align_value); return self; };
+	static set_align_self = function(_align_value) {
+		flexpanel_node_style_set_align_self(node_handle, _align_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_aspect_ratio()
 	/// @desc    Sets the node's aspect ratio
@@ -531,7 +546,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} aspect_ratio : The value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_aspect_ratio = function(_aspect_ratio) { flexpanel_node_style_set_aspect_ratio(node_handle, _aspect_ratio); return self; };
+	static set_aspect_ratio = function(_aspect_ratio) {
+        flexpanel_node_style_set_aspect_ratio(node_handle, _aspect_ratio);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_display()
 	/// @desc    Sets the display setting of the selected node.
@@ -539,7 +557,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_display} display_value : The selected display.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_display = function(_display_value) { flexpanel_node_style_set_display(node_handle, _display_value); return self; };
+	static set_display = function(_display_value) {
+        flexpanel_node_style_set_display(node_handle, _display_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_flex()
 	/// @desc    Sets the flex value of the selected node.
@@ -547,7 +568,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} flex_value : The flex value for this
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex = function(_flex_value) { flexpanel_node_style_set_flex(node_handle, _flex_value); return self; };
+	static set_flex = function(_flex_value) {
+        flexpanel_node_style_set_flex(node_handle, _flex_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_flex_wrap()
 	/// @desc    Sets the flex wrap of the selected node.
@@ -555,7 +579,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_wrap} wrap_value : The selected wrap.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_wrap = function(_wrap_value) { flexpanel_node_style_set_flex_wrap(node_handle, _wrap_value); return self; };
+	static set_flex_wrap = function(_wrap_value) {
+        flexpanel_node_style_set_flex_wrap(node_handle, _wrap_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_flex_grow()
 	/// @desc    Sets the flex grow of the selected node.
@@ -563,7 +590,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} grow_value : The selected grow factor
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_grow = function(_grow_value) { flexpanel_node_style_set_flex_grow(node_handle, _grow_value); return self; };
+	static set_flex_grow = function(_grow_value) {
+        flexpanel_node_style_set_flex_grow(node_handle, _grow_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_flex_shrink()
 	/// @desc    Sets the flex shrink of the selected node.
@@ -571,16 +601,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} shrink_value : The selected shrink factor
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_shrink = function(_shrink_value) { flexpanel_node_style_set_flex_shrink(node_handle, _shrink_value); return self; };
-	#region jsDoc
-	/// @func    set_flex_basis()
-	/// @desc    Sets the flex basis of the selected node.
-	/// @self    Reflex
-	/// @param   {Real} value : The selected flex basis value
-	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
-	/// @returns {Struct.Reflex}
-	#endregion
-	static set_flex_basis = function(_value, _unit_value) { flexpanel_node_style_set_flex_basis(node_handle, _value, _unit_value); return self; };
+	static set_flex_shrink = function(_shrink_value) {
+        flexpanel_node_style_set_flex_shrink(node_handle, _shrink_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_flex_direction()
 	/// @desc    Sets the flex direction of the selected node.
@@ -588,7 +612,10 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_flex_direction} flex_direction_value : The selected direction.
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_flex_direction = function(_flex_direction_value) { flexpanel_node_style_set_flex_direction(node_handle, _flex_direction_value); return self; };
+	static set_flex_direction = function(_flex_direction_value) {
+        flexpanel_node_style_set_flex_direction(node_handle, _flex_direction_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_gap()
 	/// @desc    Sets the gap of the selected node for the selected gutters.
@@ -597,7 +624,74 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Real} size_value : The selected gap size
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_gap = function(_gutter_value, _size_value) { flexpanel_node_style_set_gap(node_handle, _gutter_value, _size_value); return self; };
+	static set_gap = function(_gutter_value, _value) {
+        flexpanel_node_style_set_gap(node_handle, _gutter_value, _value);
+		return self;
+	};
+	#region jsDoc
+	/// @func    set_justify_content()
+	/// @desc    Sets the node's contents justification
+	/// @self    Reflex
+	/// @param   {Enum.flexpanel_justify} justify_value : The justification to use
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_justify_content = function(_justify_value) {
+        flexpanel_node_style_set_justify_content(node_handle, _justify_value);
+		return self;
+	};
+	#region jsDoc
+	/// @func    set_direction()
+	/// @desc    Sets the layout direction of the selected node.
+	/// @self    Reflex
+	/// @param   {Enum.flexpanel_direction} direction_value : The selected direction.
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_direction = function(_direction_value) {
+        flexpanel_node_style_set_direction(node_handle, _direction_value);
+		return self;
+	};
+	#region jsDoc
+	/// @func    set_border()
+	/// @desc    Sets the border of the selected node.
+	/// @self    Reflex
+	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
+	/// @param   {Real} size_value : The selected border size
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_border = function(_edge, _value) {
+        flexpanel_node_style_set_border(node_handle, _edge, _value);
+		return self;
+	};
+	#region jsDoc
+	/// @func    set_position_type()
+	/// @desc    Sets the node's position type.
+	/// @self    Reflex
+	/// @param   {Enum.flexpanel_position_type} position_type_value : The position type to use
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_position_type = function(_position_type_value) {
+        flexpanel_node_style_set_position_type(node_handle, _position_type_value);
+		return self;
+	};
+	
+	#region jsDoc
+	/// @func    set_flex_basis()
+	/// @desc    Sets the flex basis of the selected node.
+	/// @self    Reflex
+	/// @param   {Real} value : The selected flex basis value
+	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_flex_basis = function(_value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_flex_basis(node_handle, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_position()
 	/// @desc    Sets an inset position on the node.
@@ -607,23 +701,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_position = function(_edge_value, _value, _unit_value) { flexpanel_node_style_set_position(node_handle, _edge_value, _value, _unit_value); return self; };
-	#region jsDoc
-	/// @func    set_justify_content()
-	/// @desc    Sets the node's contents justification
-	/// @self    Reflex
-	/// @param   {Enum.flexpanel_justify} justify_value : The justification to use
-	/// @returns {Struct.Reflex}
-	#endregion
-	static set_justify_content = function(_justify_value) { flexpanel_node_style_set_justify_content(node_handle, _justify_value); return self; };
-	#region jsDoc
-	/// @func    set_direction()
-	/// @desc    Sets the layout direction of the selected node.
-	/// @self    Reflex
-	/// @param   {Enum.flexpanel_direction} direction_value : The selected direction.
-	/// @returns {Struct.Reflex}
-	#endregion
-	static set_direction = function(_direction_value) { flexpanel_node_style_set_direction(node_handle, _direction_value); return self; };
+	static set_position = function(_edge, _value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_position(node_handle, _edge, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_margin()
 	/// @desc    Sets the margin of the selected node.
@@ -633,7 +720,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_margin = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_margin(node_handle, _edge_value, _size_value, _unit_value); return self; };
+	static set_margin = function(_edge, _value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_margin(node_handle, _edge, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_padding()
 	/// @desc    Sets the padding of the selected node.
@@ -643,24 +739,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to be used
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_padding = function(_edge_value, _size_value, _unit_value=flexpanel_unit.point) { flexpanel_node_style_set_padding(node_handle, _edge_value, _size_value, _unit_value); return self; };
-	#region jsDoc
-	/// @func    set_border()
-	/// @desc    Sets the border of the selected node.
-	/// @self    Reflex
-	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
-	/// @param   {Real} size_value : The selected border size
-	/// @returns {Struct.Reflex}
-	#endregion
-	static set_border = function(_edge_value, _size_value) { flexpanel_node_style_set_border(node_handle, _edge_value, _size_value); return self; };
-	#region jsDoc
-	/// @func    set_position_type()
-	/// @desc    Sets the node's position type.
-	/// @self    Reflex
-	/// @param   {Enum.flexpanel_position_type} position_type_value : The position type to use
-	/// @returns {Struct.Reflex}
-	#endregion
-	static set_position_type = function(_position_type_value) { flexpanel_node_style_set_position_type(node_handle, _position_type_value); return self; };
+	static set_padding = function(_edge, _value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_val);
+			_val = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_padding(node_handle, _edge, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_min_width()
 	/// @desc    Sets the node's minimum width
@@ -669,7 +757,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_min_width = function(_value, _unit_value) { flexpanel_node_style_set_min_width(node_handle, _value, _unit_value); return self; };
+	static set_min_width = function(_value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_min_width(node_handle, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_max_width()
 	/// @desc    Sets the node's maximum width
@@ -678,7 +775,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_max_width = function(_value, _unit_value) { flexpanel_node_style_set_max_width(node_handle, _value, _unit_value); return self; };
+	static set_max_width = function(_value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_max_width(node_handle, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_min_height()
 	/// @desc    Sets the node's minimum height
@@ -687,7 +793,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_min_height = function(_value, _unit_value) { flexpanel_node_style_set_min_height(node_handle, _value, _unit_value); return self; };
+	static set_min_height = function(_value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_min_height(node_handle, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_max_height()
 	/// @desc    Sets the node's maximum height
@@ -696,7 +811,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_max_height = function(_value, _unit_value) { flexpanel_node_style_set_max_height(node_handle, _value, _unit_value); return self; };
+	static set_max_height = function(_value, _unit_value=undefined) {
+        if (_unit_value == undefined) {
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
+			_unit_value = _res.unit
+		}
+		
+		flexpanel_node_style_set_max_height(node_handle, _value, _unit_value);
+		return self;
+	};
 	#region jsDoc
 	/// @func    set_width()
 	/// @desc    Sets the width of the selected node.
@@ -705,14 +829,14 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_width = function(_val, _unit_value) {
+	static set_width = function(_value, _unit_value=undefined) {
         if (_unit_value == undefined) {
-			var _res = __resolve_unit(_val);
-			_val = _res.value;
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
 			_unit_value = _res.unit
 		}
 		
-		flexpanel_node_style_set_width(node_handle, _val, _unit_value);
+		flexpanel_node_style_set_width(node_handle, _value, _unit_value);
         return self;
     };
     #region jsDoc
@@ -723,14 +847,13 @@ function Reflex(_data=undefined) constructor
     /// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
     /// @returns {Struct.Reflex}
     #endregion
-    static set_height = function(_val, _unit_value) {
+    static set_height = function(_value, _unit_value=undefined) {
         if (_unit_value == undefined) {
-			var _res = __resolve_unit(_val);
-			_val = _res.value;
+			var _res = __resolve_unit(_value);
+			_value = _res.value;
 			_unit_value = _res.unit
 		}
-		
-		flexpanel_node_style_set_height(node_handle, _val, _unit_value);
+		flexpanel_node_style_set_height(node_handle, _value, _unit_value);
         return self;
     };
 	#endregion
@@ -929,7 +1052,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Struct}
 	#endregion
-	static get_margin = function(_edge_value)	{ return flexpanel_node_style_get_margin(node_handle, _edge_value); };
+	static get_margin = function(_edge)	{ return flexpanel_node_style_get_margin(node_handle, _edge); };
 	#region jsDoc
 	/// @func    get_padding()
 	/// @desc    Gets the padding of the selected node.
@@ -937,7 +1060,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Struct}
 	#endregion
-	static get_padding = function(_edge_value)	{ return flexpanel_node_style_get_padding(node_handle, _edge_value); };
+	static get_padding = function(_edge)	{ return flexpanel_node_style_get_padding(node_handle, _edge); };
 	#region jsDoc
 	/// @func    get_border()
 	/// @desc    Gets the border of the selected node.
@@ -945,7 +1068,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Real}
 	#endregion
-	static get_border = function(_edge_value)	{ return flexpanel_node_style_get_border(node_handle, _edge_value); };
+	static get_border = function(_edge)	{ return flexpanel_node_style_get_border(node_handle, _edge); };
 	#region jsDoc
 	/// @func    get_position()
 	/// @desc    Gets the node's style position.
@@ -953,7 +1076,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Struct}
 	#endregion
-	static get_position = function(_edge_value)	{ return flexpanel_node_style_get_position(node_handle, _edge_value); };
+	static get_position = function(_edge)	{ return flexpanel_node_style_get_position(node_handle, _edge); };
 
 	#region jsDoc
 	/// @func    get_align_content()
@@ -1131,24 +1254,24 @@ function Reflex(_data=undefined) constructor
     /// @returns {Bool}
     /// @ignore
 	#endregion
-    static __resolve_unit = function(_val) {
+    static __resolve_unit = function(_value) {
 		//avoid garbage collecter
 		static __struct = {};
 		
-        if (is_real(_val)) {
-			__struct.value = _val;
+        if (is_real(_value)) {
+			__struct.value = _value;
 	        __struct.unit = flexpanel_unit.point;
 			return __struct;
 		}
-        if (is_string(_val)) {
-            if (_val == "auto") {
+        if (is_string(_value)) {
+            if (_value == "auto") {
 				__struct.value = 0;
 		        __struct.unit = flexpanel_unit.auto;
 				return __struct;
 			}
 			
-            if (string_ends_with(_val, "%")) {
-				__struct.value = real(string_copy(_val, 1, string_length(_val) - 1));
+            if (string_ends_with(_value, "%")) {
+				__struct.value = real(string_copy(_value, 1, string_length(_value) - 1));
 		        __struct.unit = flexpanel_unit.percent;
 				return __struct;
             }
