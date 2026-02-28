@@ -54,5 +54,5 @@ if (keyboard_check_pressed(ord("C")))
 	}
 }
 
-// Single normal reflow path (no overrides in ReflexGrid)
+// Single normal reflow path (no overrides in ReflexGridContainer)
 grid_root.attempt_reflow(0, 0, _gui_w, _gui_h, flexpanel_direction.LTR, false);

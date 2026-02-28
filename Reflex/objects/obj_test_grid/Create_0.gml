@@ -1,6 +1,6 @@
 show_debug_overlay(true)
 
-grid_root = new ReflexGrid();
+grid_root = new ReflexGridContainer();
 grid_root.set_grid_counts(2, 2);
 grid_root.set_grid_gap(16, 16);
 grid_root.set_cell_align("stretch", "stretch");
@@ -8,7 +8,7 @@ grid_root.set_cell_align("stretch", "stretch");
 // -----------------------------------------------------------------------------
 // Subgrid 1) 4x4 inventory grid
 // -----------------------------------------------------------------------------
-grid_inventory = new ReflexGrid();
+grid_inventory = new ReflexGridContainer();
 grid_inventory.set_grid_counts(4, 4);
 grid_inventory.set_grid_gap(6, 6);
 grid_inventory.set_cell_align("stretch", "stretch");
@@ -23,7 +23,7 @@ for (var i = 0; i < 16; i++)
 // -----------------------------------------------------------------------------
 // Subgrid 2) auto grid (sqrt-based counts, reshuffles as child count changes)
 // -----------------------------------------------------------------------------
-grid_auto = new ReflexGrid();
+grid_auto = new ReflexGridContainer();
 grid_auto.set_auto_grid(true);
 grid_auto.set_grid_gap(6, 6);
 grid_auto.set_cell_align("stretch", "stretch");
@@ -39,7 +39,7 @@ for (var j = 0; j < 11; j++)
 // Subgrid 3) CSS-like span layout (header/left/body/right/footer)
 // Using fixed cell anchors + spans.
 // -----------------------------------------------------------------------------
-grid_span = new ReflexGrid();
+grid_span = new ReflexGridContainer();
 grid_span.set_grid_counts(4, 4);
 grid_span.set_grid_gap(6, 6);
 grid_span.set_cell_align("stretch", "stretch");
@@ -64,7 +64,7 @@ grid_span.set_span(node_footer, 0, 3, 3, 3);	// footer spans full width
 // - auto placement skipping occupied cells
 // - clear_cell at runtime to see re-pack
 // -----------------------------------------------------------------------------
-grid_mixed = new ReflexGrid();
+grid_mixed = new ReflexGridContainer();
 grid_mixed.set_grid_counts(6, 4);
 grid_mixed.set_grid_gap(6, 6);
 grid_mixed.set_cell_align("stretch", "stretch");

@@ -502,12 +502,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
 	/// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
 	/// @returns {Struct.Reflex}
 	#endregion
-	static set_width = function(_val, _unit_value) {
-		static __base_set_width = Reflex.set_width;
-		__base_set_width(_val, _unit_value);
-        request_reflow();
-        return self;
-    };
+	static set_width = function(_val, _unit_value) { static __base_set_width = Reflex.set_width; __base_set_width(_val, _unit_value); request_reflow(); return self; };
     #region jsDoc
     /// @func    set_height()
     /// @desc    Sets the height of the selected node.
@@ -516,12 +511,7 @@ function ReflexUI(_data=undefined) : Reflex(_data) constructor
     /// @param   {Enum.flexpanel_unit} unit_value : The units to use for the value
     /// @returns {Struct.Reflex}
     #endregion
-    static set_height = function(_val, _unit_value) {
-        static __base_set_height = Reflex.set_height;
-		__base_set_height(_val, _unit_value);
-        request_reflow();
-        return self;
-    };
+    static set_height = function(_val, _unit_value) { static __base_set_height = Reflex.set_height; __base_set_height(_val, _unit_value); request_reflow(); return self; };
 	#endregion
 	
 	#region Getters
