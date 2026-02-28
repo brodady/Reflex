@@ -1,20 +1,34 @@
 #region jsDoc
 /// @func ReflexLeaf()
-/// @desc Base wrapper for native layerElement leaf nodes.
+/// @desc Base wrapper for native layerElement leaf nodes. Prohibits children.
 /// @return {ReflexLeaf}
 #endregion
 function ReflexLeaf() : Reflex() constructor 
 {
-    static add = function(_child_node) { throw("ReflexLeaf: Cannot add children to a leaf node."); };
-    static insert = function(_child_node, _index_value=-1) { throw("ReflexLeaf: Cannot insert children into a leaf node."); };
+    #region Child Prohibition
+    #region jsDoc
+    /// @func add()
+    /// @desc Prohibited on leaf nodes.
+    #endregion
+    static add = function() { throw("ReflexLeaf: Cannot add children to a leaf node."); };
 
+    #region jsDoc
+    /// @func insert()
+    /// @desc Prohibited on leaf nodes.
+    #endregion
+    static insert = function() { throw("ReflexLeaf: Cannot insert children into a leaf node."); };
+    #endregion
+
+    #region Native Node Recreation
     #region jsDoc
     /// @func __rebuild_node(_element_struct)
     /// @desc Recreates the native Flexpanel node to apply layerElement changes.
+    /// @param {Struct} _element_struct The layerElements struct defining the type (Sprite/Text).
     #endregion
     static __rebuild_node = function(_element_struct) {
         var _s = flexpanel_node_get_struct(node_handle);
         
+        // Ensure the array exists before assignment
         if (!variable_struct_exists(_s, "layerElements") || !is_array(_s.layerElements)) {
             _s.layerElements = [];
         }
@@ -22,6 +36,7 @@ function ReflexLeaf() : Reflex() constructor
         
         var _new_handle = flexpanel_create_node(_s);
         
+        // Swap handles in the parent's native tree
         if (__parent != undefined) {
             var _idx = array_get_index(__parent.__children, self);
             if (_idx != -1) {
@@ -32,7 +47,6 @@ function ReflexLeaf() : Reflex() constructor
         
         flexpanel_delete_node(node_handle);
         node_handle = _new_handle;
-        
-        request_reflow();
     };
+    #endregion
 }
