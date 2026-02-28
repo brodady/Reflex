@@ -239,7 +239,6 @@ function Reflex(_data=undefined) constructor
 		flexpanel_node_remove_child(_ui_root_node, node_handle);
 		
 		__parent = undefined;
-		__root = self;
 		
 		return true;
 	};
