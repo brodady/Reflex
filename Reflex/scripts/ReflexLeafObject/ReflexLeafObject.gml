@@ -259,7 +259,7 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	///          - If the instance does not exist yet, this function schedules a one-frame retry and
 	///            returns undefined.
 	///          - When the instance becomes available, any callbacks registered via
-	///            `call_when_instance_exists()` are executed (in original registration order),
+	///            `call_on_instance_ready()` are executed (in original registration order),
 	///            and the internal retry time source is cleaned up.
 	///
 	/// @self    ReflexObject
@@ -304,7 +304,7 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	};
 	
 	#region jsDoc
-	/// @func    call_when_instance_exists()
+	/// @func    call_on_instance_ready()
 	/// @desc    Registers a callback to run once the UI layer Instance element has created its backing instance.
 	///
 	///          - If the instance already exists, the callback runs immediately.
@@ -319,7 +319,7 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	/// @param   {Method|Function} _fn : Function to run when the instance exists. Called as _fn(_instance_id).
 	/// @returns {Struct.ReflexObject}
 	#endregion
-	static call_when_instance_exists = function(_fn){
+	static call_on_instance_ready = function(_fn){
 		if (instanceId == noone || instanceId == -1) {
 			array_push(__call_on_inst_exist, _fn);
 		}
@@ -404,7 +404,7 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		
 		//trigger the fetch process for instance caching,
 		// because instances wont be created on the first frame of the game,
-		// but this will allow us to expose a `call_when_instance_exists` api
+		// but this will allow us to expose a `call_on_instance_ready` api
 		get_instance_id();
 		
 	}

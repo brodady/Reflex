@@ -16,7 +16,7 @@ function ReflexLeafLogic(_helper_object=obj_reflex_logic_handler) : ReflexLeafOb
 	static set_step = function(_method)
 	{
 		__step = _method;
-		call_when_instance_exists(function(_inst) {
+		call_on_instance_ready(function(_inst) {
 			_inst.step = __step;
 		})
 		return self;
@@ -32,7 +32,7 @@ function ReflexLeafLogic(_helper_object=obj_reflex_logic_handler) : ReflexLeafOb
 	static set_draw = function(_method)
 	{
 		__draw = _method;
-		call_when_instance_exists(function(_inst) {
+		call_on_instance_ready(function(_inst) {
 			_inst.draw = __draw;
 		})
 		return self;

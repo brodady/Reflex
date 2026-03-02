@@ -10,7 +10,6 @@ demo_label.set_width("auto").set_height("auto");
 ui_root.add(demo_label);
 
 demo_count = 0;
-demo_last_down = false;
 
 demo_logic_leaf = new ReflexLeafLogic();
 demo_logic_leaf.set_width("auto").set_height("auto");
@@ -22,17 +21,13 @@ demo_logic_leaf.set_step(function()
 	var _mx = device_mouse_x_to_gui(0);
 	var _my = device_mouse_y_to_gui(0);
 
-	var _lx = demo_label.get_layout_x();
-	var _ly = demo_label.get_layout_y();
-	var _lw = demo_label.get_layout_width();
-	var _lh = demo_label.get_layout_height();
-
-	var _hover = (_mx >= _lx) && (_mx <= (_lx + _lw)) && (_my >= _ly) && (_my <= (_ly + _lh));
-
-	var _down = mouse_check_button(mb_left);
-	var _pressed = _down && (!demo_last_down);
-
-	if (_hover && _pressed)
+	var _x = demo_label.get_layout_left();
+	var _y = demo_label.get_layout_top();
+	var _w = demo_label.get_layout_width();
+	var _h = demo_label.get_layout_height();
+	
+	if (point_in_rectangle(_mx, _my, _x, _y,  _x+_w, _y+_h))
+	&& (mouse_check_button_pressed(mb_left))
 	{
 		demo_count += 1;
 		demo_label.set_text_text("Click Count: " + string(demo_count));
@@ -47,8 +42,6 @@ demo_logic_leaf.set_step(function()
 			demo_label.set_text_color(c_lime);
 		}
 	}
-
-	demo_last_down = _down;
 });
 demo_logic_leaf.set_draw(function()
 {
@@ -56,15 +49,15 @@ demo_logic_leaf.set_draw(function()
 	var _mx = device_mouse_x_to_gui(0);
 	var _my = device_mouse_y_to_gui(0);
 
-	var _lx = demo_label.get_layout_x();
-	var _ly = demo_label.get_layout_y();
-	var _lw = demo_label.get_layout_width();
-	var _lh = demo_label.get_layout_height();
-
-	var _hover = (_mx >= _lx) && (_mx <= (_lx + _lw)) && (_my >= _ly) && (_my <= (_ly + _lh));
+	var _x = demo_label.get_layout_left();
+	var _y = demo_label.get_layout_top();
+	var _w = demo_label.get_layout_width();
+	var _h = demo_label.get_layout_height();
+	
+	var _hover = point_in_rectangle(_mx, _my, _x, _y,  _x+_w, _y+_h);
 
 	draw_set_alpha(0.35);
 	draw_set_color(_hover ? c_aqua : c_dkgray);
-	draw_rectangle(_lx - 4, _ly - 4, _lx + _lw + 4, _ly + _lh + 4, true);
+	draw_rectangle(_x - 4, _y - 4, _x+_w + 4, _y+_h + 4, true);
 	draw_set_alpha(1);
 });
