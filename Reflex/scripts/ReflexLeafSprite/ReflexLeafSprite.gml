@@ -1,11 +1,11 @@
 #region jsDoc
-/// @func ReflexSprite(_sprite, _index)
+/// @func ReflexLeafSprite(_sprite, _index)
 /// @desc Specialized leaf node for native GameMaker sprite rendering.
 /// @param {Asset.GMSprite} _sprite The sprite asset to assign.
 /// @param {Real} [_index]=0 The initial subimage index.
-/// @return {ReflexSprite}
+/// @return {ReflexLeafSprite}
 #endregion
-function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor 
+function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor 
 {
     #region Setters
 	
@@ -14,7 +14,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @desc Sets the sprite asset, optionally updating the initial frame. IDE: "Frame".
 	/// @param {Asset.GMSprite} spr : Sprite asset.
 	/// @param {Real} ind : Subimage index.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
     static set_sprite_sprite = function(_spr, _ind=undefined) {
 		if (spriteIndex == _spr) {
@@ -43,7 +43,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @desc Sets sprite position offsets. IDE: "Position - X", "Position - Y".
 	/// @param {Real} x : X value.
 	/// @param {Real} y : Y value.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
 	static set_sprite_offsets = function(_x, _y) {
 		if (spriteOffsetX == _x)
@@ -63,7 +63,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @desc Sets sprite scale. IDE: "Scale - X", "Scale - Y".
 	/// @param {Real} x : X value.
 	/// @param {Real} y : Y value.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
     static set_sprite_scale = function(_x, _y = undefined) {
         if (spriteScaleX == _x) {
@@ -90,7 +90,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @func set_sprite_rotation(_angle)
 	/// @desc Sets sprite rotation in degrees. IDE: "Rotation".
 	/// @param {Real} angle : Rotation angle in degrees.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
     static set_sprite_rotation = function(_angle) { 
         if (spriteAngle == _angle) return self;
@@ -108,7 +108,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @func set_sprite_color(_col)
 	/// @desc Sets sprite color tint. IDE: "Colour".
 	/// @param {Int} col : Color value.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
     static set_sprite_color = function(_col) { 
         var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
@@ -130,7 +130,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @func set_sprite_image(_index)
 	/// @desc Sets the sprite frame (subimage). IDE: "Frame".
 	/// @param {Real} index : Subimage index.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
 	static set_sprite_image = function(_index) {
 		if (spriteImageIndex == _index) return self;
@@ -149,7 +149,7 @@ function ReflexSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @desc Sets sprite animation speed, optionally overriding speed type. IDE: "Animation Speed".
 	/// @param {Real} spd : Animation speed.
 	/// @param {Real} speed_type : Speed type override.
-	/// @return {ReflexSprite}
+	/// @return {ReflexLeafSprite}
 	#endregion
     static set_sprite_speed = function(_spd, _speed_type=undefined) { 
 		if (spriteImageSpeed == _spd) {

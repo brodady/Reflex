@@ -1,10 +1,10 @@
 #region jsDoc
 /// @desc
 ///		ReflexPanelContainer provides a background panel behind its children.
-///		Layout-wise it is a normal container; rendering is handled by a private ReflexSprite.
+///		Layout-wise it is a normal container; rendering is handled by a private ReflexLeafSprite.
 ///
 ///		Implementation:
-///		- A private ReflexSprite child is inserted at index 0 and set to absolute fill.
+///		- A private ReflexLeafSprite child is inserted at index 0 and set to absolute fill.
 ///		- All user children appear above it.
 ///
 #endregion
@@ -28,9 +28,9 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 
 	#region jsDoc
 	/// @func    get_panel_sprite_node()
-	/// @desc    Returns the internal ReflexSprite used for the panel background.
+	/// @desc    Returns the internal ReflexLeafSprite used for the panel background.
 	/// @self    ReflexPanelContainer
-	/// @returns {Struct.ReflexSprite}
+	/// @returns {Struct.ReflexLeafSprite}
 	#endregion
 	static get_panel_sprite_node = function()
 	{
@@ -55,7 +55,7 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 	set_display(flexpanel_display.flex);
 	
 	// Background sprite node
-	__panel_sprite = new ReflexSprite();
+	__panel_sprite = new ReflexLeafSprite();
 	__panel_sprite.set_name("PanelSprite" + string(__panel_sprite.__uuid));
 	insert(__panel_sprite, 0);
 	

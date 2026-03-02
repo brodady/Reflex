@@ -1,18 +1,18 @@
 #region jsDoc
-/// @func ReflexText(_text, _font)
+/// @func ReflexLeafText(_text, _font)
 /// @desc Specialized leaf node for native GameMaker text rendering.
 /// @param {String} [_text]="" The initial text string.
 /// @param {Asset.GMFont} [_font]=-1 The font asset to use.
-/// @return {ReflexText}
+/// @return {ReflexLeafText}
 #endregion
-function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor 
+function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor 
 {
     #region Setters
 	#region jsDoc
 	/// @func set_text_font(_font)
 	/// @desc Sets the font asset used for rendering.
 	/// @param {Asset.GMFont} font : Font asset.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
     static set_text_font = function(_font) { 
 		if (textFontIndex == _font) return self;
@@ -27,7 +27,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @desc Sets text position offsets relative to the origin. IDE: "Position - X", "Position - Y".
 	/// @param {Real} x : X value.
 	/// @param {Real} y : Y value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_offsets = function(_x, _y) {
 		if (textOffsetX == _x)
@@ -47,7 +47,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @desc Sets text scale. IDE: "Scale - X", "Scale - Y".
 	/// @param {Real} x : X value.
 	/// @param {Real} y : Y value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_scale = function(_x, _y = undefined) { 
         _y = (_y == undefined) ? _x : _y;
@@ -67,7 +67,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_rotation(_angle)
 	/// @desc Sets text rotation in degrees. IDE: "Rotation".
 	/// @param {Real} angle : Rotation angle in degrees.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_rotation = function(_angle) { 
         if (textAngle == _angle) return self;
@@ -80,7 +80,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_color(_col)
 	/// @desc Sets text color tint. IDE: "Colour".
 	/// @param {Int} col : Color value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_color = function(_col) { 
 		var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
@@ -97,7 +97,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_text(_str)
 	/// @desc Sets the rendered text string. IDE: "Text".
 	/// @param {String} str : Text string.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_text = function(_str) {
         if (textText == _str) return self;
@@ -112,7 +112,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @desc Sets text justification alignment. IDE: "Justification".
 	/// @param {Int} halign : Horizontal alignment value.
 	/// @param {Int} valign : Vertical alignment value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
     static set_text_justification = function(_halign, _valign) {
 		// a value of _halign = -1 or 4 will result in a justification span horz.
@@ -139,7 +139,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @desc Sets the frame origin preset. IDE: "Frame Origin".
 	/// @param {Int} halign : Horizontal alignment value.
 	/// @param {Int} valign : Vertical alignment value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_origin = function(_halign, _valign) {
 		// These values are hard to read, but imagine they are like a book 0 = top left; 8 = bottoms right
@@ -181,7 +181,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @desc Sets origin offsets, used to offset rotation pivot. IDE: "Origin Offset - X", "Origin Offset - Y".
 	/// @param {Real} x : X value.
 	/// @param {Real} y : Y value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_origin_offsets = function(_x, _y) {
 		textOriginX = _x;
@@ -195,7 +195,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_character_spacing(_sep)
 	/// @desc Sets additional spacing between characters. IDE: "Character Spacing".
 	/// @param {Real} sep : Spacing value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
     static set_text_character_spacing = function(_sep) {
 		if (textCharacterSpacing == _sep) return self;
@@ -208,7 +208,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_line_spacing(_sep)
 	/// @desc Sets additional spacing between lines. IDE: "Line Spacing".
 	/// @param {Real} sep : Spacing value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_line_spacing = function(_sep) {
 		if (textLineSpacing == _sep) return self;
@@ -221,7 +221,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_paragraph_spacing(_sep)
 	/// @desc Sets additional spacing between paragraphs. IDE: "Paragraph Spacing".
 	/// @param {Real} sep : Spacing value.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_paragraph_spacing = function(_sep) {
 		if (textParagraphSpacing == _sep) return self;
@@ -236,7 +236,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @desc Sets the text frame size. IDE: "Frame - W", "Frame - H".
 	/// @param {Bool} width : Whether width stretches.
 	/// @param {Bool} height : Whether height stretches.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_frame = function(_width, _height) {
 		if (textFrameWidth  == _width)
@@ -255,7 +255,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_wrap(_bool)
 	/// @desc Sets whether wrapping is enabled. IDE: "Wrap".
 	/// @param {Bool} bool : Enabled state.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_wrap = function(_bool) {
 		if (textWrap == _bool) return self;
@@ -268,7 +268,7 @@ function ReflexText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @func set_text_split_words(_bool)
 	/// @desc Sets wrap mode for splitting words. IDE: "Split words".
 	/// @param {Bool} bool : Enabled state.
-	/// @return {ReflexText}
+	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_split_words = function(_bool) {
 		if (textWrapMode == _bool) return self;

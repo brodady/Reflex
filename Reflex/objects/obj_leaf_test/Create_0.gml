@@ -9,9 +9,9 @@ demo_font_asset = fnt_lbl; // replace
 demo_object_asset = obj_demo; // replace
 
 // Create leaf nodes
-demo_leaf_sprite = new ReflexSprite(demo_sprite_asset, 0);
-demo_leaf_text = new ReflexText("Reflex Demo", demo_font_asset);
-demo_leaf_object = new ReflexObject(demo_object_asset);
+demo_leaf_sprite = new ReflexLeafSprite(demo_sprite_asset, 0);
+demo_leaf_text = new ReflexLeafText("Reflex Demo", demo_font_asset);
+demo_leaf_object = new ReflexLeafObject(demo_object_asset);
 
 // Add them to the root in a known order
 root.add(demo_leaf_sprite);

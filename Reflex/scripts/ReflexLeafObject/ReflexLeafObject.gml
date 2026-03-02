@@ -1,13 +1,10 @@
-LookoutResources()
-LookoutInstances()
-
 #region jsDoc
-/// @func ReflexObject(_object)
+/// @func ReflexLeafObject(_object)
 /// @desc Specialized leaf node for native GameMaker instance rendering ("Instance" layer element).
 /// @param {Asset.GMObject} [_object]=noone Object asset to assign.
-/// @return {ReflexObject}
+/// @return {ReflexLeafObject}
 #endregion
-function ReflexObject(_object=noone) : ReflexLeaf() constructor 
+function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor 
 {
 	#region Setters
 	
@@ -15,7 +12,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @func set_instance_object(_obj)
 	/// @desc Sets the instance object asset. IDE: "Object".
 	/// @param {Asset.GMObject} _obj Object asset.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_object = function(_obj) {
 		if (instanceObjectIndex == _obj) { return self; }
@@ -34,7 +31,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @desc Sets instance position offsets. IDE: "Position - X", "Position - Y".
 	/// @param {Real} _x X value.
 	/// @param {Real} _y Y value.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_offsets = function(_x, _y) {
 		if (instanceOffsetX == _x)
@@ -57,7 +54,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @desc Sets instance scale. IDE: "Scale - X", "Scale - Y".
 	/// @param {Real} _x X value.
 	/// @param {Real} [_y]=undefined Y value. If undefined, uses _x.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_scale = function(_x, _y=undefined) {
 		if (instanceScaleX == _x) {
@@ -84,7 +81,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @func set_instance_image_speed(_spd)
 	/// @desc Sets instance animation speed. IDE: "Animation Speed".
 	/// @param {Real} _spd Animation speed.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_image_speed = function(_spd) {
 		if (instanceImageSpeed == _spd) { return self; }
@@ -102,7 +99,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @func set_instance_image_index(_ind)
 	/// @desc Sets instance image index (frame). IDE: "Frame".
 	/// @param {Real} _ind Image index.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_image_index = function(_ind) {
 		if (instanceImageIndex == _ind) { return self; }
@@ -120,7 +117,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @func set_instance_colour(_col)
 	/// @desc Sets instance color tint. IDE: "Colour".
 	/// @param {Int} _col Color value.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_colour = function(_col) {
 		var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
@@ -142,7 +139,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @func set_instance_angle(_ang)
 	/// @desc Sets instance angle in degrees. IDE: "Rotation".
 	/// @param {Real} _ang Angle in degrees.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_angle = function(_ang) {
 		if (instanceAngle == _ang) { return self; }
@@ -160,7 +157,7 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
 	/// @func set_instance_id(_id)
 	/// @desc Sets the instance id reference value. IDE: "Instance".
 	/// @param {Real} _id Instance id.
-	/// @return {ReflexObject}
+	/// @return {ReflexLeafObject}
 	#endregion
 	static set_instance_id = function(_id) {
 		if (instanceId == _id) { return self; }
@@ -326,21 +323,38 @@ function ReflexObject(_object=noone) : ReflexLeaf() constructor
     /// @param {Struct} _element_struct The layerElements struct defining the type (Sprite/Text).
     #endregion
     static rebuild_node = function(_element_struct) {
-		var _s = flexpanel_node_get_struct(node_handle);
-		if (struct_exists(_s,  "layerElements") && is_array(_s.layerElements)) {
-			var _elem = _s.layerElements[0]
-		
-			if (string(_elem.instanceId) != "ref instance -1")
-			&& (instance_exists(_elem.instanceId)) {
-				instance_destroy(_elem.instanceId);
-				if (instance_exists(_elem.instanceId)) {
-					show_debug_message("still exists")
-				}
-			}
-		}
+		// NOTE: After importing lookup to check for memory leaks, it appears this code wasnt needed after all
+		//var _s = flexpanel_node_get_struct(node_handle);
+		//if (struct_exists(_s,  "layerElements") && is_array(_s.layerElements)) {
+		//	var _elem = _s.layerElements[0]
+		//
+		//	if (_elem.instanceId == -1)
+		//	&& (instance_exists(_elem.instanceId)) {
+		//		instance_destroy(_elem.instanceId);
+		//		if (instance_exists(_elem.instanceId)) {
+		//			show_debug_message("still exists")
+		//		}
+		//	}
+		//}
 		
 		static __base_rebuild_node = ReflexLeaf.rebuild_node;
 		__base_rebuild_node(_element_struct);
+		
+		// Fetch the instance id, and set our value
+		var _s = flexpanel_node_get_struct(node_handle);
+		var _elem = _s.layerElements[0]
+		//if (instanceId != _elem.instanceId) {
+		//	show_debug_message($"Instance changed from [{instanceId}] to [{_elem.instanceId}]")
+		//}
+		
+		// instance id gets changed every single rebuild, there is currently no way around this.
+		instanceId = _elem.instanceId;
+		
+		if (instanceId == -1) {
+			call_later(1, time_source_units_frames, function(){
+				rebuild_node(to_struct());
+			}, false)
+		}
 	}
 	
 	// Init

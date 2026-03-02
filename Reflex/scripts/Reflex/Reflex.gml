@@ -875,6 +875,7 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Struct|Undefined}
 	#endregion
 	static get_layout_struct = function() { return flexpanel_node_get_struct(node_handle); };
+	
 	#region jsDoc
 	/// @func    get_layout_left()
 	/// @desc    Returns the cached layout left offset (relative to the reflow origin). Returns 0 if no layout is cached.
@@ -903,6 +904,26 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Real}
 	#endregion
 	static get_layout_bottom = function() { return flexpanel_node_layout_get_position(node_handle, false).bottom; };
+	
+	static get_layout_x = get_layout_left;
+	static get_layout_y = get_layout_top;
+	#region jsDoc
+	/// @func    get_layout_width()
+	/// @desc    Returns this node's width as set during the most recent reflow.
+	///          This mirrors __cache_layout.width.
+	/// @self    Reflex
+	/// @returns {Real}
+	#endregion
+	static get_layout_width = function() { return flexpanel_node_layout_get_position(node_handle, false).width; };
+	#region jsDoc
+	/// @func    get_layout_height()
+	/// @desc    Returns this node's height as set during the most recent reflow.
+	///          This mirrors __cache_layout.height.
+	/// @self    Reflex
+	/// @returns {Real}
+	#endregion
+	static get_layout_height = function() { return flexpanel_node_layout_get_position(node_handle, false).height; };
+	
 	#region jsDoc
 	/// @func    get_layout_padding_left()
 	/// @desc    Returns the cached layout paddingLeft value. Returns 0 if no layout is cached.
@@ -931,6 +952,7 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Real}
 	#endregion
 	static get_layout_padding_bottom = function() { return flexpanel_node_layout_get_position(node_handle, false).paddingBottom; };
+	
 	#region jsDoc
 	/// @func    get_layout_margin_left()
 	/// @desc    Returns the cached layout marginLeft value. Returns 0 if no layout is cached.
@@ -959,6 +981,7 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Real}
 	#endregion
 	static get_layout_margin_bottom = function() { return flexpanel_node_layout_get_position(node_handle, false).marginBottom; };
+	
 	#region jsDoc
 	/// @func    get_layout_direction()
 	/// @desc    Returns the cached layout direction value. Returns 0 if no layout is cached.
@@ -966,6 +989,7 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Real}
 	#endregion
 	static get_layout_direction = function() { return flexpanel_node_layout_get_position(node_handle, false).direction; };
+	
 	#region jsDoc
 	/// @func    get_layout_had_overflow()
 	/// @desc    Returns whether the cached layout reported overflow. Returns false if no layout is cached.
