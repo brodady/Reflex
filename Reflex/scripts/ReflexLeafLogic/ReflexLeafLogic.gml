@@ -16,7 +16,9 @@ function ReflexLeafLogic(_helper_object=obj_reflex_logic_handler) : ReflexLeafOb
 	static set_step = function(_method)
 	{
 		__step = _method;
-		__sync_helper();
+		call_when_instance_exists(function(_inst) {
+			_inst.step = __step;
+		})
 		return self;
 	};
 
@@ -30,7 +32,9 @@ function ReflexLeafLogic(_helper_object=obj_reflex_logic_handler) : ReflexLeafOb
 	static set_draw = function(_method)
 	{
 		__draw = _method;
-		__sync_helper();
+		call_when_instance_exists(function(_inst) {
+			_inst.draw = __draw;
+		})
 		return self;
 	};
 
@@ -57,33 +61,9 @@ function ReflexLeafLogic(_helper_object=obj_reflex_logic_handler) : ReflexLeafOb
 	};
 	
 	#region Private
+	
 	__step = undefined;
 	__draw = undefined;
 	
-	#region jsDoc
-	/// @func    __sync_helper()
-	/// @desc    Re-applies stored __step/__draw to the current helper instance (if it exists).
-	///          Call this after any rebuild that may recreate the instance.
-	/// @self    ReflexLeafLogic
-	/// @returns {Bool}
-	/// @ignore
-	#endregion
-	static __sync_helper = function()
-	{
-		var _inst = get_instance_id();
-		if (_inst == undefined) { return false; }
-		if (!instance_exists(_inst)) { return false; }
-		
-		if (_inst == -1) {
-			call_later(1, time_source_units_frames, method(self, __sync_helper), false)
-			return false;
-		}
-		
-		_inst.step = __step;
-		_inst.draw = __draw;
-		
-		return true;
-	};
-
 	#endregion
 }

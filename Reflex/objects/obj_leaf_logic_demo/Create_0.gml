@@ -16,8 +16,8 @@ demo_logic_leaf = new ReflexLeafLogic();
 demo_logic_leaf.set_width("auto").set_height("auto");
 ui_root.add(demo_logic_leaf);
 
-// Methods injected into obj_reflex_logic_handler
-__logic_step_impl = function()
+// Inject callbacks into handler instance via ReflexLeafLogic
+demo_logic_leaf.set_step(function()
 {
 	var _mx = device_mouse_x_to_gui(0);
 	var _my = device_mouse_y_to_gui(0);
@@ -49,9 +49,8 @@ __logic_step_impl = function()
 	}
 
 	demo_last_down = _down;
-};
-
-__logic_draw_impl = function()
+});
+demo_logic_leaf.set_draw(function()
 {
 	// Simple hover outline (runs in handler Draw)
 	var _mx = device_mouse_x_to_gui(0);
@@ -68,8 +67,4 @@ __logic_draw_impl = function()
 	draw_set_color(_hover ? c_aqua : c_dkgray);
 	draw_rectangle(_lx - 4, _ly - 4, _lx + _lw + 4, _ly + _lh + 4, true);
 	draw_set_alpha(1);
-};
-
-// Inject callbacks into handler instance via ReflexLeafLogic
-demo_logic_leaf.set_step(method(self, __logic_step_impl));
-demo_logic_leaf.set_draw(method(self, __logic_draw_impl));
+});

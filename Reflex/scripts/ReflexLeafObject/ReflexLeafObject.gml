@@ -251,18 +251,90 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	static get_instance_angle = function() { return instanceAngle; };
 	
 	#region jsDoc
-	/// @func get_instance_id()
-	/// @desc Gets the instance id.
-	/// @returns {Real}
+	/// @func    get_instance_id()
+	/// @desc    Returns the UI layer Instance element's instance id once it exists.
+	///
+	///          Important:
+	///          - UI layer Instance elements may not create their backing instance on the first frame.
+	///          - If the instance does not exist yet, this function schedules a one-frame retry and
+	///            returns undefined.
+	///          - When the instance becomes available, any callbacks registered via
+	///            `call_when_instance_exists()` are executed (in original registration order),
+	///            and the internal retry time source is cleaned up.
+	///
+	/// @self    ReflexObject
+	/// @returns {Real|Undefined}
 	#endregion
-	static get_instance_id = function() { return instanceId; };
+	static get_instance_id = function() {
+		if (instanceId == noone || instanceId == -1) {
+			var _s = flexpanel_node_get_struct(node_handle);
+			var _elem = _s.layerElements[0]
+			var _inst = _elem.instanceId;
+			
+			// if instance still doesnt exist
+			if (_inst == -1) {
+				__my_timesource = call_later(
+					1,
+					time_source_units_frames,
+					function() { get_instance_id(); },
+					false
+				)
+				return undefined;
+			}
+			
+			// clean up timesource
+			if (__my_timesource != undefined) {
+				if (time_source_exists(__my_timesource)) {
+					time_source_destroy(__my_timesource);
+				}
+				__my_timesource = undefined;
+			}
+			
+			//instance now exists, run the pending requests
+			array_reverse(__call_on_inst_exist);
+			repeat(array_length(__call_on_inst_exist)) {
+				var _fn = array_pop(__call_on_inst_exist)
+				_fn(_inst);
+			}
+			
+			instanceId = _inst;
+		}
+		
+		return instanceId;
+	};
 	
+	#region jsDoc
+	/// @func    call_when_instance_exists()
+	/// @desc    Registers a callback to run once the UI layer Instance element has created its backing instance.
+	///
+	///          - If the instance already exists, the callback runs immediately.
+	///          - If it does not exist yet, the callback is queued and will run automatically the first
+	///            time get_instance_id() observes a valid instance id.
+	///          - This is intended for initialization that must touch instance variables (step/draw
+	///            injection, input handlers, etc.) without requiring the caller to manually poll.
+	///
+	///          Note:
+	///          - The callback is invoked as _fn(_instance_id) where _instance_id is the instance id.
+	/// @self    ReflexObject
+	/// @param   {Method|Function} _fn : Function to run when the instance exists. Called as _fn(_instance_id).
+	/// @returns {Struct.ReflexObject}
+	#endregion
+	static call_when_instance_exists = function(_fn){
+		if (instanceId == noone || instanceId == -1) {
+			array_push(__call_on_inst_exist, _fn);
+		}
+		else {
+			_fn(instanceId);
+		}
+		return self;
+	}
 	#endregion
 	
 	
 	#region Private
 	
 	#region Properties
+	
 	type = "Instance";
 	
 	// Instance element specific
@@ -284,6 +356,10 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	instanceId = noone; // "Instance"
 	
 	#endregion
+	
+	//array used to allow for calling when the instance finally exists.
+	__my_timesource = undefined;
+	__call_on_inst_exist = [];
 	
 	#region jsDoc
 	/// @func    to_struct()
@@ -323,38 +399,14 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
     /// @param {Struct} _element_struct The layerElements struct defining the type (Sprite/Text).
     #endregion
     static rebuild_node = function(_element_struct) {
-		// NOTE: After importing lookup to check for memory leaks, it appears this code wasnt needed after all
-		//var _s = flexpanel_node_get_struct(node_handle);
-		//if (struct_exists(_s,  "layerElements") && is_array(_s.layerElements)) {
-		//	var _elem = _s.layerElements[0]
-		//
-		//	if (_elem.instanceId == -1)
-		//	&& (instance_exists(_elem.instanceId)) {
-		//		instance_destroy(_elem.instanceId);
-		//		if (instance_exists(_elem.instanceId)) {
-		//			show_debug_message("still exists")
-		//		}
-		//	}
-		//}
-		
 		static __base_rebuild_node = ReflexLeaf.rebuild_node;
 		__base_rebuild_node(_element_struct);
 		
-		// Fetch the instance id, and set our value
-		var _s = flexpanel_node_get_struct(node_handle);
-		var _elem = _s.layerElements[0]
-		//if (instanceId != _elem.instanceId) {
-		//	show_debug_message($"Instance changed from [{instanceId}] to [{_elem.instanceId}]")
-		//}
+		//trigger the fetch process for instance caching,
+		// because instances wont be created on the first frame of the game,
+		// but this will allow us to expose a `call_when_instance_exists` api
+		get_instance_id();
 		
-		// instance id gets changed every single rebuild, there is currently no way around this.
-		instanceId = _elem.instanceId;
-		
-		if (instanceId == -1) {
-			call_later(1, time_source_units_frames, function(){
-				rebuild_node(to_struct());
-			}, false)
-		}
 	}
 	
 	// Init
