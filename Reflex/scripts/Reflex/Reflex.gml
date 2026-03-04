@@ -168,13 +168,16 @@ function Reflex(_data=undefined) constructor
 	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : UI layer name (String) or parent Reflex node.
 	/// @returns {Bool}
 	#endregion
-	static add_to = function(_parent_or_ui_layer="ReflexLayer")
+	static add_to = function(_parent_or_ui_layer)
 	{
 		// Parent Reflex case
 		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
-			// Detach first (handles both wrapper + UI layer parenting)
-			remove_from((__parent == undefined) ? "ReflexLayer" : __parent);
-
+			var _ui_layer = flexpanel_node_get_parent(node_handle);
+			if (_ui_layer != undefined) {
+				// Detach first (handles both wrapper + UI layer parenting)
+				remove_from((__parent == undefined) ? "ReflexLayer" : __parent);
+			}
+			
 			_parent_or_ui_layer.add(self);
 			return true;
 		}
@@ -199,7 +202,6 @@ function Reflex(_data=undefined) constructor
 		
 		// Become a top-level wrapper node
 		__parent = undefined;
-		__root = self;
 		
 		// Insert into UI layer root as last child
 		var _child_count = flexpanel_node_get_num_children(_ui_root_node);
@@ -215,12 +217,12 @@ function Reflex(_data=undefined) constructor
 	///          2) A UI layer root (if given a layer name String).
 	///          If a Reflex parent is provided, this calls parent.remove(self).
 	///          If a UI layer name is provided, this removes node_handle from that UI layer root.
-	///          After detaching, this node becomes its own wrapper root (__parent=undefined, __root=self).
+	///          After detaching, this node becomes its own wrapper root (__parent=undefined).
 	/// @self    Reflex
 	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : Defaults to (__parent==undefined) ? "ReflexLayer" : __parent.
 	/// @returns {Bool}
 	#endregion
-	static remove_from = function(_parent_or_ui_layer=(__parent == undefined) ? "ReflexLayer" : __parent)
+	static remove_from = function(_parent_or_ui_layer)
 	{
 		// Reflex parent case
 		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
@@ -974,7 +976,9 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_layout_position = function() { return flexpanel_node_layout_get_position(node_handle, false); };
+	static get_layout_position = function() {
+		return flexpanel_node_layout_get_position(node_handle, false);
+	};
 	#region jsDoc
 	/// @func    get_layout_struct()
 	/// @desc    Alias of get_layout_position(). Returns the cached flexpanel layout struct (or undefined).

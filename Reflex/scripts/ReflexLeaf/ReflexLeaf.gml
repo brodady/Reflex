@@ -220,7 +220,7 @@ function ReflexLeaf() : Reflex() constructor
 	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : UI layer name (String) or parent Reflex node.
 	/// @returns {Bool}
 	#endregion
-	static add_to = function(_parent_or_ui_layer="ReflexLayer")
+	static add_to = function(_parent_or_ui_layer)
 	{
 		static __base_add_to = Reflex.add_to;
 		var _value = __base_add_to(_parent_or_ui_layer);
@@ -240,7 +240,7 @@ function ReflexLeaf() : Reflex() constructor
 	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : Defaults to (__parent==undefined) ? "ReflexLayer" : __parent.
 	/// @returns {Bool}
 	#endregion
-	static remove_from = function(_parent_or_ui_layer=(__parent == undefined) ? "ReflexLayer" : __parent)
+	static remove_from = function(_parent_or_ui_layer)
 	{
 		static __base_remove_from = Reflex.remove_from;
 		var _value = __base_remove_from(_parent_or_ui_layer);
