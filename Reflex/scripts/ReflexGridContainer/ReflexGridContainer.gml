@@ -38,7 +38,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_size_h = max(0, _h);
 		__grid_has_size = true;
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -53,7 +53,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_gapy = max(0, _v);
 		__grid_gapx = max(0, _h);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -66,7 +66,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 	{
 		__grid_auto_flow = (_flow_value == "column") ? "column" : "row";
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -79,7 +79,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 	{
 		__grid_auto_grid = (_enabled == true);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -97,7 +97,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_set_track_counts(__grid_col_count, __grid_row_count);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -132,7 +132,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_align_horz = __grid_sanitize_align(default_horz);
 		__grid_align_vert = __grid_sanitize_align(default_vert);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -167,7 +167,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 			insert(_node, -1);
 		}
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -192,7 +192,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 			insert(reflex, -1);
 		}
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -226,7 +226,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_span_clear_fixed(_node);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -247,7 +247,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_span_records[_idx].col_span = max(1, floor(_col_span));
 		__grid_span_records[_idx].row_span = max(1, floor(_row_span));
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 		return self;
 	};
 
@@ -266,7 +266,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_span_get_index(_node);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 	};
 	
 	#region jsDoc
@@ -282,7 +282,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_span_get_index(_node);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 	};
 	
 	#region jsDoc
@@ -301,7 +301,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		static __base_remove = Reflex.remove;
 		__base_remove(_node);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 	};
 	
 	#region jsDoc
@@ -315,7 +315,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		static __base_clear = Reflex.clear;
 		__base_clear(true);
 
-		__grid_mark_dirty();
+		__grid_apply_auto_placement();
 	};
 	
 	#region Private
@@ -323,11 +323,6 @@ function ReflexGridContainer() : ReflexUI() constructor
 	// -------------------------------------------------------------------------
 	// Grid State
 	// -------------------------------------------------------------------------
-	__grid_dirty = true;
-	__grid_last_w = -1;
-	__grid_last_h = -1;
-	__grid_logic = undefined; // initialized after all variables
-	
 	__grid_gapx = 0;
 	__grid_gapy = 0;
 
@@ -369,55 +364,10 @@ function ReflexGridContainer() : ReflexUI() constructor
 	// Each record: { node, col_span, row_span, has_fixed, col, row }
 	__grid_span_records = [];
 	
-	__grid_logic = new ReflexLeafLogic()
-		.set_step(function() {
-			__grid_step();
-		})
-		.set_visible(false);
-	add(__grid_logic);
 	
 	// -------------------------------------------------------------------------
 	// Private helpers (segmented at bottom as requested)
 	// -------------------------------------------------------------------------
-	#region jsDoc
-	/// @func __grid_mark_dirty()
-	/// @desc Marks layout dirty so placement is re-applied once size is available.
-	/// @return {Undefined}
-	#endregion
-	static __grid_mark_dirty = function()
-	{
-		__grid_dirty = true;
-	};
-
-	#region jsDoc
-	/// @func __grid_step()
-	/// @desc Step tick used to re-apply grid placement when required.
-	///       Does not rely on any reflow system.
-	/// @return {Undefined}
-	#endregion
-	static __grid_step = function()
-	{
-		// If container has no size yet, wait
-		var _w = get_layout_width();
-		var _h = get_layout_height();
-
-		if (_w <= 0 || _h <= 0) {
-			return;
-		}
-
-		// Re-apply if size changed or dirty
-		if (_w != __grid_last_w)
-		|| (_h != __grid_last_h)
-		|| (__grid_dirty)
-		{
-			__grid_last_w = _w;
-			__grid_last_h = _h;
-			__grid_dirty = false;
-
-			__grid_apply_auto_placement();
-		}
-	};
-
 	#region jsDoc
 	/// @desc Sanitizes an alignment token.
 	/// @param {Any} _value
