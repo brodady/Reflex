@@ -43,7 +43,7 @@ function ReflexBoxContainer(_data=undefined) : ReflexContainer(_data) constructo
 	#endregion
 	static is_vertical = function()
 	{
-		return (__vertical == true);
+		return __vertical;
 	};
 	
 	#region jsDoc
@@ -113,7 +113,7 @@ function ReflexBoxContainer(_data=undefined) : ReflexContainer(_data) constructo
 		_spacer.set_flex_shrink(1);
 		_spacer.set_flex_basis(0);
 		
-		if (_begin == true) {
+		if (_begin) {
 			insert(_spacer, 0);
 		}
 		else {

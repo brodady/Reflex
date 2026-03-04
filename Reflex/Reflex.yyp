@@ -170,8 +170,8 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
     {"roomId":{"name":"rm_basic_container_demo","path":"rooms/rm_basic_container_demo/rm_basic_container_demo.yy",},},
+    {"roomId":{"name":"rm_test_grid","path":"rooms/rm_test_grid/rm_test_grid.yy",},},
     {"roomId":{"name":"rm_reference_containers_demo","path":"rooms/rm_reference_containers_demo/rm_reference_containers_demo.yy",},},
     {"roomId":{"name":"rm_youtube_demo","path":"rooms/rm_youtube_demo/rm_youtube_demo.yy",},},
     {"roomId":{"name":"rm_scrollbar_demo","path":"rooms/rm_scrollbar_demo/rm_scrollbar_demo.yy",},},

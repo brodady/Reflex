@@ -77,7 +77,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 	#endregion
 	static set_auto_grid = function(_enabled)
 	{
-		__grid_auto_grid = (_enabled == true);
+		__grid_auto_grid = _enabled;
 
 		__grid_apply_auto_placement();
 		return self;
@@ -595,7 +595,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 				return {
 					col_span: max(1, _rec.col_span),
 					row_span: max(1, _rec.row_span),
-					has_fixed: (_rec.has_fixed == true),
+					has_fixed: _rec.has_fixed,
 					col: _rec.col,
 					row: _rec.row
 				};
