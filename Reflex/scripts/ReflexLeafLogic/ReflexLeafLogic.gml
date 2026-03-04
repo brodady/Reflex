@@ -1,10 +1,10 @@
 #region jsDoc
 /// @func ReflexLeafLogic(_helper_object)
-/// @desc Instance leaf that injects Step/Draw behavior into obj_reflex_logic_handler.
+/// @desc Instance leaf that injects Step/Draw behavior into __obj_reflex_logic_handler.
 ///       Stores callbacks in __step/__draw so they can be re-applied after rebuilds.
-/// @param {Asset.GMObject} [_helper_object]=obj_reflex_logic_handler
+/// @param {Asset.GMObject} [_helper_object]=__obj_reflex_logic_handler
 #endregion
-function ReflexLeafLogic(_helper_object=obj_reflex_logic_handler) : ReflexLeafObject(_helper_object) constructor
+function ReflexLeafLogic(_helper_object=__obj_reflex_logic_handler) : ReflexLeafObject(_helper_object) constructor
 {
 	#region jsDoc
 	/// @func    set_step()

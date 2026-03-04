@@ -63,7 +63,5 @@ function ReflexContainer(_data=undefined) : ReflexUI(_data) constructor
 		_child.set_position(flexpanel_edge.top, _y, flexpanel_unit.point);
 		_child.set_width(_w, flexpanel_unit.point);
 		_child.set_height(_h, flexpanel_unit.point);
-
-		request_reflow();
 	};
 }

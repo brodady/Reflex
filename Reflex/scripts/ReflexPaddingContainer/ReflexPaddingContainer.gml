@@ -83,8 +83,6 @@ function ReflexPaddingContainer(_data=undefined) : ReflexContainer(_data) constr
 		set_padding(flexpanel_edge.top, __padding_top, flexpanel_unit.point);
 		set_padding(flexpanel_edge.right, __padding_right, flexpanel_unit.point);
 		set_padding(flexpanel_edge.bottom, __padding_bottom, flexpanel_unit.point);
-
-		request_reflow();
 	};
 
 	__apply_padding();

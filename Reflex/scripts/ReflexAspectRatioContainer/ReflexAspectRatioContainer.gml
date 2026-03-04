@@ -29,7 +29,6 @@ function ReflexAspectRatioContainer(_data=undefined) : ReflexContainer(_data) co
 	static set_ratio = function(_value)
 	{
 		__ratio = max(0.000001, _value);
-		request_reflow();
 		return self;
 	};
 
@@ -54,7 +53,6 @@ function ReflexAspectRatioContainer(_data=undefined) : ReflexContainer(_data) co
 	static set_stretch_mode = function(_mode)
 	{
 		__stretch_mode = clamp(floor(_mode), 0, 3);
-		request_reflow();
 		return self;
 	};
 
@@ -79,7 +77,6 @@ function ReflexAspectRatioContainer(_data=undefined) : ReflexContainer(_data) co
 	static set_alignment_horizontal = function(_mode)
 	{
 		__align_horz = clamp(floor(_mode), 0, 2);
-		request_reflow();
 		return self;
 	};
 
@@ -93,7 +90,6 @@ function ReflexAspectRatioContainer(_data=undefined) : ReflexContainer(_data) co
 	static set_alignment_vertical = function(_mode)
 	{
 		__align_vert = clamp(floor(_mode), 0, 2);
-		request_reflow();
 		return self;
 	};
 
@@ -143,8 +139,9 @@ function ReflexAspectRatioContainer(_data=undefined) : ReflexContainer(_data) co
 		var _child = get_primary_child();
 		if (_child == undefined) { return false; }
 		
-		var _cw = max(0, w);
-		var _ch = max(0, h);
+		var _layout = get_layout_position();
+		var _cw = max(0, _layout.width);
+		var _ch = max(0, _layout.height);
 		if (_cw <= 0 || _ch <= 0) { return false; }
 		
 		var _target_w = _cw;

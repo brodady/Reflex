@@ -4,6 +4,8 @@ show_debug_overlay(true);
 ui_root = new ReflexVBoxContainer();
 ui_root.set_name("UIRoot");
 ui_root.set_separation(12);
+ui_root.set_width("80%");
+ui_root.set_height("80%");
 ui_root.set_padding(flexpanel_edge.all_edges, 16, flexpanel_unit.point);
 
 // A top "toolbar" row

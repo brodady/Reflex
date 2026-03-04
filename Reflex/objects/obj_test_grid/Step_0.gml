@@ -53,6 +53,3 @@ if (keyboard_check_pressed(ord("C")))
 		grid_mixed.set_cell(1, 1, node_lock_a);
 	}
 }
-
-// Single normal reflow path (no overrides in ReflexGridContainer)
-grid_root.attempt_reflow(0, 0, _gui_w, _gui_h, flexpanel_direction.LTR, false);

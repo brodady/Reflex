@@ -1,17 +1,17 @@
 {
   "$GMObject":"",
-  "%Name":"obj_reflex_logic_handler",
+  "%Name":"obj_scrollbar_demo",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"obj_reflex_logic_handler",
+  "name":"obj_scrollbar_demo",
   "overriddenProperties":[],
   "parent":{
-    "name":"LeafNodes",
-    "path":"folders/Reflex/LeafNodes.yy",
+    "name":"Scrollbar",
+    "path":"folders/Examples/Scrollbar.yy",
   },
   "parentObjectId":null,
   "persistent":false,

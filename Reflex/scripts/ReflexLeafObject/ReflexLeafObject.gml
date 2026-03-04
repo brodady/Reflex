@@ -17,12 +17,9 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	static set_instance_object = function(_obj) {
 		if (instanceObjectIndex == _obj) { return self; }
 		
-		instanceObjectIndex = _obj;
-		
 		// Skip rebuilding because its not finished initializing yet.
 		if (instanceObjectIndex == noone) { return self; }
 		
-		rebuild_node(to_struct());
 		return self;
 	};
 	
@@ -42,10 +39,11 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		instanceOffsetX = _x;
 		instanceOffsetY = _y;
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
+		call_on_instance_ready(function(_inst) {
+			instanceId.x = instanceOffsetX;
+			instanceId.y = instanceOffsetY;
+		});
 		
-		rebuild_node(to_struct());
 		return self;
 	};
 	
@@ -70,10 +68,11 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		instanceScaleX = _x;
 		instanceScaleY = (_y != undefined) ? _y : _x;
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
+		call_on_instance_ready(function(_inst) {
+			_inst.image_xscale = instanceScaleX;
+			_inst.image_yscale = instanceScaleY;
+		});
 		
-		rebuild_node(to_struct());
 		return self;
 	};
 	
@@ -85,13 +84,12 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	#endregion
 	static set_instance_image_speed = function(_spd) {
 		if (instanceImageSpeed == _spd) { return self; }
-		
 		instanceImageSpeed = _spd;
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
+		call_on_instance_ready(function(_inst) {
+			_inst.image_speed = instanceImageSpeed;
+		});
 		
-		rebuild_node(to_struct());
 		return self;
 	};
 	
@@ -103,37 +101,37 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	#endregion
 	static set_instance_image_index = function(_ind) {
 		if (instanceImageIndex == _ind) { return self; }
-		
 		instanceImageIndex = _ind;
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
+		call_on_instance_ready(function(_inst) {
+			_inst.image_index = instanceImageIndex;
+		});
 		
-		rebuild_node(to_struct());
 		return self;
 	};
-	
+
 	#region jsDoc
-	/// @func set_instance_colour(_col)
+	/// @func set_instance_color(_col)
 	/// @desc Sets instance color tint. IDE: "Colour".
 	/// @param {Int} _col Color value.
 	/// @return {ReflexLeafObject}
 	#endregion
-	static set_instance_colour = function(_col) {
+	static set_instance_color = function(_col) {
 		var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
 		_unsigned -= 0x100000000;
 		
 		if (instanceColour == _unsigned) { return self; }
 		
 		instanceColour = _unsigned;
+		image_blend = _col;
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
+		call_on_instance_ready(function(_inst) {
+			instanceId.image_blend = image_blend;
+		});
 		
-		rebuild_node(to_struct());
 		return self;
 	};
-	static set_instance_color = set_instance_colour;
+	static set_instance_colour = set_instance_color;
 	
 	#region jsDoc
 	/// @func set_instance_angle(_ang)
@@ -143,37 +141,71 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	#endregion
 	static set_instance_angle = function(_ang) {
 		if (instanceAngle == _ang) { return self; }
-		
 		instanceAngle = _ang;
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
+		call_on_instance_ready(function(_inst) {
+			_inst.image_angle = instanceAngle;
+		});
 		
-		rebuild_node(to_struct());
 		return self;
 	};
 	
+	/// TODO:
+	/// GM BUG: This is disabled until one of the two following bugs are resolved by GM
+	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14199
+	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14200
 	#region jsDoc
-	/// @func set_instance_id(_id)
-	/// @desc Sets the instance id reference value. IDE: "Instance".
-	/// @param {Real} _id Instance id.
-	/// @return {ReflexLeafObject}
+	/// @func set_visible(_enabled)
+	/// @desc Enables/disables layout participation for this node by setting its flexpanel display.
+	///        true  -> display flex
+	///        false -> display none (removed from layout calculations)
+	/// @param {Bool} _enabled
+	/// @return {Struct.Reflex}
 	#endregion
-	static set_instance_id = function(_id) {
-		if (instanceId == _id) { return self; }
+	static set_visible = function(_enabled) {
+		if (flexVisible == _enabled) { return self; }
 		
-		if (instance_exists(instanceId)) {
-			instance_destroy(instanceId);
-		}
+		static __base_set_visible = Reflex.set_visible;
+		__base_set_visible(_enabled);
 		
-		instanceId = _id;
+		call_on_instance_ready(function(_inst) {
+			_inst.visible = flexVisible;
+		});
 		
-		// Skip rebuilding because its not finished initializing yet.
-		if (instanceObjectIndex == noone) { return self; }
-		
-		rebuild_node(to_struct());
 		return self;
 	};
+	
+	//#region jsDoc
+	///// @func set_instance_id(_id)
+	///// @desc Sets the instance id reference value. IDE: "Instance".
+	///// @param {Real} _id Instance id.
+	///// @return {ReflexLeafObject}
+	//#endregion
+	//static set_instance_id = function(_id) {
+	//	if (instanceId == _id) { return self; }
+		
+	//	if (instance_exists(instanceId)) {
+	//		instance_destroy(instanceId);
+	//	}
+		
+	//	instanceId = _id;
+		
+	//	call_on_instance_ready(function(_inst) {
+	//		_inst.x = instanceOffsetX;
+	//		_inst.y = instanceOffsetY;
+
+	//		_inst.image_xscale = instanceScaleX;
+	//		_inst.image_yscale = instanceScaleY;
+
+	//		_inst.image_speed = instanceImageSpeed;
+	//		_inst.image_index = instanceImageIndex;
+
+	//		_inst.image_blend = instanceColour;
+	//		_inst.image_angle = instanceAngle;
+	//	});
+		
+	//	return self;
+	//};
 	
 	#endregion
 	
@@ -265,43 +297,11 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	/// @self    ReflexObject
 	/// @returns {Real|Undefined}
 	#endregion
-	static get_instance_id = function() {
-		if (instanceId == noone || instanceId == -1) {
-			var _s = flexpanel_node_get_struct(node_handle);
-			var _elem = _s.layerElements[0]
-			var _inst = _elem.instanceId;
-			
-			// if instance still doesnt exist
-			if (_inst == -1) {
-				__my_timesource = call_later(
-					1,
-					time_source_units_frames,
-					function() { get_instance_id(); },
-					false
-				)
-				return undefined;
-			}
-			
-			// clean up timesource
-			if (__my_timesource != undefined) {
-				if (time_source_exists(__my_timesource)) {
-					time_source_destroy(__my_timesource);
-				}
-				__my_timesource = undefined;
-			}
-			
-			//instance now exists, run the pending requests
-			array_reverse(__call_on_inst_exist);
-			repeat(array_length(__call_on_inst_exist)) {
-				var _fn = array_pop(__call_on_inst_exist)
-				_fn(_inst);
-			}
-			
-			instanceId = _inst;
-		}
-		
-		return instanceId;
-	};
+	static get_instance_id = function() { return instanceId; };
+	
+	#endregion
+	
+	#region Functions
 	
 	#region jsDoc
 	/// @func    call_on_instance_ready()
@@ -320,16 +320,17 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	/// @returns {Struct.ReflexObject}
 	#endregion
 	static call_on_instance_ready = function(_fn){
-		if (instanceId == noone || instanceId == -1) {
-			array_push(__call_on_inst_exist, _fn);
-		}
-		else {
+		if (__inst_valid) {
 			_fn(instanceId);
+			return self;
 		}
+		
+		array_push(__call_on_inst_exist, _fn);
+		__ensure_inst_polling();
 		return self;
-	}
-	#endregion
+	};
 	
+	#endregion
 	
 	#region Private
 	
@@ -358,7 +359,10 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	#endregion
 	
 	//array used to allow for calling when the instance finally exists.
-	__my_timesource = undefined;
+	__inst_timesource = undefined;
+	__is_polling_inst = false;
+	__inst_valid = false;
+	__inst_valid_delay = 10;
 	__call_on_inst_exist = [];
 	
 	#region jsDoc
@@ -394,24 +398,142 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	};
 	
 	#region jsDoc
-    /// @func rebuild_node(_element_struct)
-    /// @desc Recreates the native Flexpanel node to apply layerElement changes.
-    /// @param {Struct} _element_struct The layerElements struct defining the type (Sprite/Text).
-    #endregion
-    static rebuild_node = function(_element_struct) {
+	/// @func rebuild_node(_element_struct)
+	/// @desc Recreates the native Flexpanel node to apply layerElement changes.
+	///        Important:
+	///        - Does not write elementId or instanceId.
+	///        - Invalidates instance and restarts polling.
+	/// @param {Struct} _element_struct
+	#endregion
+	#endregion
+	static rebuild_node = function(_element_struct)
+	{
+		//if (__parent == undefined && __in_ui_layer = false) {
+		//	__invalidate_inst();
+		//	return;
+		//}
+		
 		static __base_rebuild_node = ReflexLeaf.rebuild_node;
 		__base_rebuild_node(_element_struct);
 		
-		//trigger the fetch process for instance caching,
-		// because instances wont be created on the first frame of the game,
-		// but this will allow us to expose a `call_on_instance_ready` api
-		get_instance_id();
+		//invalidate elementId and re-poll for existance again
+		var _s = flexpanel_node_get_struct(node_handle);
+		var _inst = _s.layerElements[0].instanceId;
 		
-	}
+		if (!instance_exists(_inst) || _inst == -1) {
+			__invalidate_inst();
+			__ensure_inst_polling();
+		}
+		else {
+			__validate_inst(_inst);
+		}
+		
+		
+	};
+	
+	#region jsDoc
+	/// @func __ensure_inst_polling()
+	/// @desc Ensures a one-frame polling loop exists until instanceId becomes valid.
+	/// @returns {Undefined}
+	#endregion
+	#endregion
+	static __ensure_inst_polling = function() {
+		// ensure that we have done our first build, as some functions directly use rebuild,
+		// while others attempt to simply set an instance or layer value
+		var _s = flexpanel_node_get_struct(node_handle);
+		if (!variable_struct_exists(_s, "layerElements"))
+		|| (!is_array(_s.layerElements))
+		|| (array_length(_s.layerElements) == 0) {
+			rebuild_node(to_struct());
+			return;
+		}
+		
+		if (__inst_valid) { return; }
+		if (__is_polling_inst) { return; }
+		
+		
+		__is_polling_inst = true;
+		
+		__inst_timesource ??= call_later(
+			1,
+			time_source_units_frames,
+			function() {
+				var _s = flexpanel_node_get_struct(node_handle);
+				var _inst = _s.layerElements[0].instanceId;
+			
+				if (_inst == -1 || _inst == noone) { return -1; }
+				
+				__validate_inst(_inst);
+				
+				return instanceId;
+			},
+			true
+		);
+	};
+	
+	#region jsDoc
+	/// @func __validate_inst()
+	/// @desc Marks element id valid changing instanceId.
+	///        instanceId is only written by __poll_elem().
+	/// @returns {Undefined}
+	#endregion
+	static __validate_inst = function(_inst)
+	{
+		if (!instance_exists(_inst) || _inst == -1 || _inst == noone) { return; }
+		
+		instanceId = _inst;
+		__inst_valid = true;
+		__is_polling_inst = false;
+		
+		if (__inst_timesource != undefined) {
+			//if (time_source_exists(__inst_timesource)) {
+			//	time_source_stop(__inst_timesource);
+				time_source_destroy(__inst_timesource);
+			//}
+			__inst_timesource = undefined;
+		}
+		
+		array_reverse(__call_on_inst_exist);
+		repeat (array_length(__call_on_inst_exist)) {
+			var _fn = array_pop(__call_on_inst_exist);
+			_fn(_inst);
+		}
+		
+		// TODO:
+		// Ideally this wouldnt be needed,
+		// but currently there is no way to disable visibility of an object,
+		// please see linked bugs in set_visible in both this script and base Reflex script
+		_inst.visible = flexVisible;
+		
+	};
+	
+	#region jsDoc
+	/// @func __invalidate_inst()
+	/// @desc Marks element id invalid without changing instanceId.
+	///        instanceId is only written by __poll_elem().
+	/// @returns {Undefined}
+	#endregion
+	static __invalidate_inst = function()
+	{
+		__inst_valid_delay = 10;
+		instanceId = noone;
+		__inst_valid = false;
+		__is_polling_inst = false;
+
+		if (__inst_timesource != undefined)
+		{
+			if (time_source_exists(__inst_timesource))
+			{
+				time_source_stop(__inst_timesource);
+				time_source_destroy(__inst_timesource);
+			}
+			__inst_timesource = undefined;
+		}
+	};
+	
+	
 	
 	// Init
-	//instanceObjectIndex = _object;
-	//set_instance_id(instance_create_depth(0, 0, 0, _object));
-	set_instance_object(_object);
+	instanceObjectIndex = _object;
 	#endregion
 }

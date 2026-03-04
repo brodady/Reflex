@@ -5,7 +5,7 @@
 /// @param {Real} [_index]=0 The initial subimage index.
 /// @return {ReflexLeafSprite}
 #endregion
-function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor 
+function ReflexLeafSprite(_sprite=__spr_reflex, _index = 0) : ReflexLeaf() constructor 
 {
     #region Setters
 	
@@ -27,15 +27,16 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 			}
 		}
 		
-        spriteIndex = _spr;
-		spriteImageIndex  = (_ind != undefined) ? _ind : 0;
+		spriteIndex = _spr;
+		spriteImageIndex = (_ind != undefined) ? _ind : 0;
 		
-		//skip rebuilding because its not finished initializing yet.
-        if (spriteIndex = -1) { return self; }
-		
-		rebuild_node(to_struct());
-        return self;
-    };
+		call_on_element_ready(function(_elem) {
+			layer_sprite_change(elementId, spriteIndex);
+			layer_sprite_index(elementId, spriteImageIndex);
+		})
+
+		return self;
+	};
 	
 	///////////////////////////////////////////////////
 	#region jsDoc
@@ -47,16 +48,21 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	#endregion
 	static set_sprite_offsets = function(_x, _y) {
 		if (spriteOffsetX == _x)
-        && (spriteOffsetY == _y) {
+		&& (spriteOffsetY == _y) {
 			return self;
 		}
 		
 		spriteOffsetX = _x;
 		spriteOffsetY = _y;
 		
-		rebuild_node(to_struct());
-        return self;
-	}
+		// This does not keep relativity to flex panels, once set it becomes perminate
+		call_on_element_ready(function(_elem) {
+			layer_sprite_x(elementId, spriteOffsetX + get_layout_left());
+			layer_sprite_y(elementId, spriteOffsetY + get_layout_top());
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_sprite_scale(_x, _y)
@@ -65,10 +71,10 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @param {Real} y : Y value.
 	/// @return {ReflexLeafSprite}
 	#endregion
-    static set_sprite_scale = function(_x, _y = undefined) {
-        if (spriteScaleX == _x) {
-	        if (_y == undefined)
-	        && (spriteScaleY == _x) {
+	static set_sprite_scale = function(_x, _y = undefined) {
+		if (spriteScaleX == _x) {
+			if (_y == undefined)
+			&& (spriteScaleY == _x) {
 				return self;
 			}
 			if (spriteScaleY == _y) {
@@ -77,14 +83,15 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 		}
 		
 		spriteScaleX = _x;
-        spriteScaleY = (_y != undefined) ? _y : _x;
-        
-		//skip rebuilding because its not finished initializing yet.
-        if (spriteIndex = -1) { return self; }
+		spriteScaleY = (_y != undefined) ? _y : _x;
 		
-		rebuild_node(to_struct());
-        return self;
-    };
+		call_on_element_ready(function(_elem) {
+			layer_sprite_xscale(elementId, spriteScaleX);
+			layer_sprite_yscale(elementId, spriteScaleY);
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_sprite_rotation(_angle)
@@ -92,17 +99,17 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @param {Real} angle : Rotation angle in degrees.
 	/// @return {ReflexLeafSprite}
 	#endregion
-    static set_sprite_rotation = function(_angle) { 
-        if (spriteAngle == _angle) return self;
+	static set_sprite_rotation = function(_angle) {
+		if (spriteAngle == _angle) { return self; }
 		
-        spriteAngle = _angle;
-        
-		//skip rebuilding because its not finished initializing yet.
-        if (spriteIndex = -1) { return self; }
+		spriteAngle = _angle;
 		
-		rebuild_node(to_struct()); 
-        return self; 
-    };
+		call_on_element_ready(function(_elem) {
+			layer_sprite_angle(elementId, spriteAngle);
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_sprite_color(_col)
@@ -110,21 +117,22 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @param {Int} col : Color value.
 	/// @return {ReflexLeafSprite}
 	#endregion
-    static set_sprite_color = function(_col) { 
-        var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
+	static set_sprite_color = function(_col) {
+		var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
 		_unsigned -= 0x100000000;
+		_col = _unsigned
 		
-		if (spriteColour == _unsigned) return self;
+		if (spriteColour == _col) { return self; }
 		
-        spriteColour = _unsigned;
-        
-		//skip rebuilding because its not finished initializing yet.
-        if (spriteIndex = -1) { return self; }
+		spriteColour = _col;
 		
-		rebuild_node(to_struct()); 
-        return self; 
-    };
-	static set_sprite_colour = set_sprite_color
+		call_on_element_ready(function(_elem) {
+			layer_sprite_blend(elementId, spriteColour);
+		})
+		
+		return self;
+	};
+	static set_sprite_colour = set_sprite_color;
 	
 	#region jsDoc
 	/// @func set_sprite_image(_index)
@@ -133,17 +141,17 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @return {ReflexLeafSprite}
 	#endregion
 	static set_sprite_image = function(_index) {
-		if (spriteImageIndex == _index) return self;
+		if (spriteImageIndex == _index) { return self; }
 		
-        spriteImageIndex  = _index;
+		spriteImageIndex = _index;
 		
-		//skip rebuilding because its not finished initializing yet.
-        if (spriteIndex = -1) { return self; }
+		call_on_element_ready(function(_elem) {
+			layer_sprite_index(elementId, spriteImageIndex);
+		})
 		
-		rebuild_node(to_struct());
-        return self;
-    };
-	
+		return self;
+	};
+
 	#region jsDoc
 	/// @func set_sprite_speed(_spd, _speed_type)
 	/// @desc Sets sprite animation speed, optionally overriding speed type. IDE: "Animation Speed".
@@ -151,24 +159,41 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	/// @param {Real} speed_type : Speed type override.
 	/// @return {ReflexLeafSprite}
 	#endregion
-    static set_sprite_speed = function(_spd, _speed_type=undefined) { 
-		if (spriteImageSpeed == _spd) {
-			if (_speed_type == undefined)
-			|| (spriteImageIndex == _speed_type) {
-				return self;
-			}
-		}
+	static set_sprite_speed = function(_spd, _speed_type=undefined) {
+		if (spriteImageSpeed == _spd) { return self; }
 		
-        spriteImageSpeed = _spd; 
-        if (_speed_type != undefined) { spriteImageSpeed_type = _speed_type; }
+		spriteImageSpeed = _spd;
 		
-		//skip rebuilding because its not finished initializing yet.
-        if (spriteIndex = -1) { return self; }
+		call_on_element_ready(function(_elem) {
+			layer_sprite_speed(elementId, spriteImageSpeed);
+		})
 		
-		rebuild_node(to_struct()); 
-        return self; 
-    };
+		return self;
+	};
     
+	/// TODO:
+	/// GM BUG: This is disabled until one of the two following bugs are resolved by GM
+	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14199
+	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14200
+	#region jsDoc
+	/// @func set_visible(_enabled)
+	/// @desc Enables/disables layout participation for this node by setting its flexpanel display.
+	///        true  -> display flex
+	///        false -> display none (removed from layout calculations)
+	/// @param {Bool} _enabled
+	/// @return {Struct.Reflex}
+	#endregion
+	static set_visible = function(_enabled) {
+		if (flexVisible == _enabled) { return self; }
+		
+		static __base_set_visible = Reflex.set_visible;
+		__base_set_visible(_enabled);
+		
+		rebuild_node(to_struct());
+		
+		return self;
+	};
+	
 	#endregion
 	
 	#region Getters
@@ -252,18 +277,18 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 	#region Properties
 	type = "Sprite";
 	
-	spriteIndex = -1; // -1 will prevent rebuilds until defiend
+	spriteIndex = _sprite; // -1 will prevent rebuilds until defiend
 	
-	spriteOffsetX = -1; // "Position - X"
+	spriteOffsetX = 0; // "Position - X"
 	spriteOffsetY = 0; // "Position - Y"
 	spriteScaleX = 1; // "Scale - X"
 	spriteScaleY = 1; // "Scale - Y"
 	spriteAngle = 0; // "Rotation"
 	spriteColour = -1; // "Colour" -1 is used for unset, so it could adopt the current `draw_set_color`
 	// THERE IS NO "FLIP", you must use Scale for this, this is also what the IDE actually does.
-	spriteImageIndex = 0.0; // "Frame"
-	spriteImageSpeed = 1.0; // "Animation Speed"
-	spriteSpeedType = -1; // Not defined in IDE, a value of -1 will interpret from sprite on rebuild; 0 = fps, 1 = frames per gameframe
+	spriteImageIndex = _index; // "Frame"
+	spriteImageSpeed = sprite_get_speed(_sprite); // "Animation Speed"
+	spriteSpeedType = sprite_get_speed_type(_sprite); // Not defined in IDE, a value of -1 will interpret from sprite on rebuild; 0 = fps, 1 = frames per gameframe
 	#endregion
 	
 	#region jsDoc
@@ -294,15 +319,16 @@ function ReflexLeafSprite(_sprite=-1, _index = 0) : ReflexLeaf() constructor
 		_base_struct.spriteSpeedType = (spriteImageSpeed == -1) ? sprite_get_speed_type(spriteIndex) : spriteImageSpeed; // 0 = fps, 1 = frames per gameframe
 		
 		// The internal flex panel should do this, but not sure, leaving this hear if bugs arrise
-		//if (flexStretchWidth || flexStretchHeight) {
-		//	flexTileHorizontal = false;
-		//	flexTileVertical = false;
-		//}
+		if (flexStretchWidth) { _base_struct.flexTileHorizontal = false; }
+		if (flexStretchHeight) { _base_struct.flexTileVertical = false; }
+		
+		if (!flexVisible) {
+			_base_struct.flexStretchWidth  = false;
+			_base_struct.flexStretchHeight = false;
+		}
 		
 		return _base_struct;
 	};
 	
-    // Init
-    set_sprite_sprite(_sprite, _index);
 	#endregion
 }

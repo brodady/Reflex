@@ -4,6 +4,10 @@ grid_root = new ReflexGridContainer();
 grid_root.set_grid_counts(2, 2);
 grid_root.set_grid_gap(16, 16);
 grid_root.set_cell_align("stretch", "stretch");
+grid_root.set_grid_gap(16, 16);
+grid_root.set_width("100%");
+grid_root.set_height("100%");
+grid_root.add_to("ReflexLayer");
 
 // -----------------------------------------------------------------------------
 // Subgrid 1) 4x4 inventory grid
@@ -77,6 +81,18 @@ node_lock_c = new Reflex();
 grid_mixed.set_cell(1, 1, node_lock_a);			// single-cell lock
 grid_mixed.set_span(node_lock_b, 3, 0, 5, 0);	// top bar lock
 grid_mixed.set_span(node_lock_c, 0, 3, 2, 3);	// bottom bar lock
+
+grid_inventory.set_width("100%");
+grid_inventory.set_height("100%");
+
+grid_auto.set_width("100%");
+grid_auto.set_height("100%");
+
+grid_span.set_width("100%");
+grid_span.set_height("100%");
+
+grid_mixed.set_width("100%");
+grid_mixed.set_height("100%");
 
 // Auto-placed items (some with spans)
 for (var k = 0; k < 10; k++)

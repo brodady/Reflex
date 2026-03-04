@@ -1,9 +1,10 @@
 show_debug_overlay(true);
-
+//call_later(1, time_source_units_seconds, function(){
 root = new Reflex();
+root.set_max_width(400);
+root.set_max_height(200);
 root.add_to("ReflexLayer");
 
-// Pick demo assets (replace these with real assets in your project)
 demo_sprite_asset = spr_test; // replace
 demo_font_asset = fnt_lbl; // replace
 demo_object_asset = obj_demo; // replace
@@ -27,13 +28,13 @@ demo_leaf_sprite.set_keep_aspect(true);
 demo_leaf_text.set_keep_aspect(true);
 demo_leaf_object.set_keep_aspect(true);
 
-demo_leaf_sprite.set_stretch(false, false);
-demo_leaf_text.set_stretch(false, false);
-demo_leaf_object.set_stretch(false, false);
+demo_leaf_sprite.set_stretch(false, true);
+demo_leaf_text.set_stretch(false, true);
+demo_leaf_object.set_stretch(false, true);
 
-demo_leaf_sprite.set_tiling(false, false);
-demo_leaf_text.set_tiling(false, false);
-demo_leaf_object.set_tiling(false, false);
+demo_leaf_sprite.set_tiling(true, true);
+demo_leaf_text.set_tiling(true, true);
+demo_leaf_object.set_tiling(true, true);
 
 demo_leaf_sprite.set_anchor(fa_left, fa_top);
 demo_leaf_text.set_anchor(fa_center, fa_middle);
@@ -55,7 +56,7 @@ demo_leaf_text.set_text_color(c_white);
 demo_leaf_object.set_instance_offsets(0, 0);
 demo_leaf_object.set_instance_scale(1, 1);
 demo_leaf_object.set_instance_angle(0);
-demo_leaf_object.set_instance_colour(c_white);
+demo_leaf_object.set_instance_color(c_white);
 demo_leaf_object.set_instance_image_index(0);
 demo_leaf_object.set_instance_image_speed(1);
 
@@ -80,3 +81,8 @@ demo_order_span = 30.0;
 
 // For debug text
 demo_debug_font = demo_font_asset;
+
+_time = 0;
+_amp = 300;
+
+//}, false)

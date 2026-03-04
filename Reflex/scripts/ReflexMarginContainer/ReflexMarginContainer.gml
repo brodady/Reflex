@@ -83,8 +83,6 @@ function ReflexMarginContainer(_data=undefined) : ReflexContainer(_data) constru
 		set_margin(flexpanel_edge.top, __margin_top, flexpanel_unit.point);
 		set_margin(flexpanel_edge.right, __margin_right, flexpanel_unit.point);
 		set_margin(flexpanel_edge.bottom, __margin_bottom, flexpanel_unit.point);
-
-		request_reflow();
 	};
 
 	__apply_margin();

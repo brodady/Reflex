@@ -38,8 +38,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_size_h = max(0, _h);
 		__grid_has_size = true;
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -54,8 +53,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_gapy = max(0, _v);
 		__grid_gapx = max(0, _h);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -68,8 +66,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 	{
 		__grid_auto_flow = (_flow_value == "column") ? "column" : "row";
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -82,8 +79,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 	{
 		__grid_auto_grid = (_enabled == true);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -101,8 +97,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_set_track_counts(__grid_col_count, __grid_row_count);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -137,8 +132,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_align_horz = __grid_sanitize_align(default_horz);
 		__grid_align_vert = __grid_sanitize_align(default_vert);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -173,8 +167,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 			insert(_node, -1);
 		}
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -199,8 +192,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 			insert(reflex, -1);
 		}
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -234,8 +226,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_span_clear_fixed(_node);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
@@ -256,30 +247,28 @@ function ReflexGridContainer() : ReflexUI() constructor
 		__grid_span_records[_idx].col_span = max(1, floor(_col_span));
 		__grid_span_records[_idx].row_span = max(1, floor(_row_span));
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 		return self;
 	};
 
 	// -------------------------------------------------------------------------
 	// Override: child management (grid placement is based on insertion order)
 	// -------------------------------------------------------------------------
-
+	
 	#region jsDoc
 	/// @desc Adds a node (append). If the node has no fixed placement, it will be auto-placed.
 	/// @param {Reflex} _node
 	#endregion
 	static add = function(_node)
 	{
-		static __base_add = Reflex.add;
+		static __base_add = ReflexUI.add;
 		__base_add(_node);
 
 		__grid_span_get_index(_node);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 	};
-
+	
 	#region jsDoc
 	/// @desc Inserts a node. If the node has no fixed placement, it will be auto-placed.
 	/// @param {Reflex} _node
@@ -287,16 +276,15 @@ function ReflexGridContainer() : ReflexUI() constructor
 	#endregion
 	static insert = function(_node, _index=-1)
 	{
-		// Let base Reflex do the flexpanel insert + wrapper links + request_reflow
+		// Let base Reflex do the flexpanel insert + wrapper links
 		static __base_insert = Reflex.insert;
 		__base_insert(_node, _index);
 
 		__grid_span_get_index(_node);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 	};
-
+	
 	#region jsDoc
 	/// @desc Removes a node from this grid and clears any stored placement info for it.
 	/// @param {Reflex} _node
@@ -313,10 +301,9 @@ function ReflexGridContainer() : ReflexUI() constructor
 		static __base_remove = Reflex.remove;
 		__base_remove(_node);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 	};
-
+	
 	#region jsDoc
 	/// @desc Clears all nodes and all grid metadata.
 	#endregion
@@ -328,15 +315,19 @@ function ReflexGridContainer() : ReflexUI() constructor
 		static __base_clear = Reflex.clear;
 		__base_clear(true);
 
-		__grid_apply_auto_placement();
-		request_reflow();
+		__grid_mark_dirty();
 	};
-
+	
 	#region Private
 	
 	// -------------------------------------------------------------------------
 	// Grid State
 	// -------------------------------------------------------------------------
+	__grid_dirty = true;
+	__grid_last_w = -1;
+	__grid_last_h = -1;
+	__grid_logic = undefined; // initialized after all variables
+	
 	__grid_gapx = 0;
 	__grid_gapy = 0;
 
@@ -378,10 +369,55 @@ function ReflexGridContainer() : ReflexUI() constructor
 	// Each record: { node, col_span, row_span, has_fixed, col, row }
 	__grid_span_records = [];
 	
+	__grid_logic = new ReflexLeafLogic()
+		.set_step(function() {
+			__grid_step();
+		})
+		.set_visible(false);
+	add(__grid_logic);
 	
 	// -------------------------------------------------------------------------
 	// Private helpers (segmented at bottom as requested)
 	// -------------------------------------------------------------------------
+	#region jsDoc
+	/// @func __grid_mark_dirty()
+	/// @desc Marks layout dirty so placement is re-applied once size is available.
+	/// @return {Undefined}
+	#endregion
+	static __grid_mark_dirty = function()
+	{
+		__grid_dirty = true;
+	};
+
+	#region jsDoc
+	/// @func __grid_step()
+	/// @desc Step tick used to re-apply grid placement when required.
+	///       Does not rely on any reflow system.
+	/// @return {Undefined}
+	#endregion
+	static __grid_step = function()
+	{
+		// If container has no size yet, wait
+		var _w = get_layout_width();
+		var _h = get_layout_height();
+
+		if (_w <= 0 || _h <= 0) {
+			return;
+		}
+
+		// Re-apply if size changed or dirty
+		if (_w != __grid_last_w)
+		|| (_h != __grid_last_h)
+		|| (__grid_dirty)
+		{
+			__grid_last_w = _w;
+			__grid_last_h = _h;
+			__grid_dirty = false;
+
+			__grid_apply_auto_placement();
+		}
+	};
+
 	#region jsDoc
 	/// @desc Sanitizes an alignment token.
 	/// @param {Any} _value
@@ -536,18 +572,12 @@ function ReflexGridContainer() : ReflexUI() constructor
 	#endregion
 	static __grid_get_size = function()
 	{
-		if (__grid_has_size)
-		{
+		if (__grid_has_size) {
 			return { w: __grid_size_w, h: __grid_size_h };
 		}
-
-		var _layout = __cache_layout;
-		if (_layout != undefined)
-		{
-			return { w: max(0, _layout.width), h: max(0, _layout.height) };
-		}
-
-		return { w: 0, h: 0 };
+		
+		var _layout = get_layout_position();
+		return { w: _layout.width, h: _layout.height };
 	};
 
 	#region jsDoc

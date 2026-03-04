@@ -22,8 +22,6 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 	static set_panel_sprite = function(_sprite, _index=0)
 	{
 		__panel_sprite.set_sprite_sprite(_sprite, _index);
-		request_reflow();
-		return self;
 	};
 
 	#region jsDoc
@@ -46,7 +44,7 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 	#endregion
 	static set_panel_maintain_aspect = function(_enabled)
 	{
-		__panel_sprite.set_maintain_aspect(_enabled == true);
+		__panel_sprite.set_keep_aspect(_enabled);
 		return self;
 	};
 	
@@ -67,7 +65,7 @@ function ReflexPanelContainer(_data=undefined) : ReflexContainer(_data) construc
 	__panel_sprite.set_height(100, flexpanel_unit.percent);
 	
 	// Default: preserve sprite aspect if desired (caller can change)
-	__panel_sprite.set_maintain_aspect(false);
+	__panel_sprite.set_keep_aspect(false);
 	
 	#endregion
 }

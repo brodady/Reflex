@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__ReflexRange",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__ReflexRange",
+  "parent":{
+    "name":"Range",
+    "path":"folders/ReflexUI/Components/Range.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

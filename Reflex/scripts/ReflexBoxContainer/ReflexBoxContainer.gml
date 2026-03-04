@@ -161,8 +161,6 @@ function ReflexBoxContainer(_data=undefined) : ReflexContainer(_data) constructo
 			case true: set_gap(flexpanel_gutter.row, __separation); break;
 			case false: set_gap(flexpanel_gutter.column, __separation); break;
 		}
-		
-		request_reflow();
 	};
 	
 	// Apply defaults once

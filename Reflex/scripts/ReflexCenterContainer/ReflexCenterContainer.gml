@@ -31,8 +31,7 @@ function ReflexCenterContainer(_data=undefined) : ReflexContainer(_data) constru
 			set_align_items(flexpanel_align.center);
 			set_justify_content(flexpanel_justify.center);
 		}
-
-		request_reflow();
+		
 		return self;
 	};
 

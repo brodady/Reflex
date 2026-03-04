@@ -14,12 +14,17 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Asset.GMFont} font : Font asset.
 	/// @return {ReflexLeafText}
 	#endregion
-    static set_text_font = function(_font) { 
-		if (textFontIndex == _font) return self;
+	static set_text_font = function(_font) {
+		if (textFontIndex == _font) { return self; }
+	
 		textFontIndex = _font;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+		
+		call_on_element_ready(function(_elem) {
+			layer_text_font(elementId, textFontIndex);
+		})
+	
+		return self;
+	};
 	
 	///////////////////////////////////////////////////
 	#region jsDoc
@@ -31,16 +36,20 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	#endregion
 	static set_text_offsets = function(_x, _y) {
 		if (textOffsetX == _x)
-        && (textOffsetY == _y) {
+		&& (textOffsetY == _y) {
 			return self;
 		}
 		
 		textOffsetX = _x;
 		textOffsetY = _y;
 		
-		rebuild_node(to_struct());
-        return self;
-	}
+		call_on_element_ready(function(_elem) {
+			layer_text_x(elementId, textOffsetX + get_layout_left());
+			layer_text_y(elementId, textOffsetY + get_layout_top());
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_scale(_x, _y)
@@ -49,19 +58,27 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Real} y : Y value.
 	/// @return {ReflexLeafText}
 	#endregion
-	static set_text_scale = function(_x, _y = undefined) { 
-        _y = (_y == undefined) ? _x : _y;
-		
-		if (textScaleX == _x)
-        && (textScaleX == _y) {
-			return self;
+	static set_text_scale = function(_x, _y=undefined) {
+		if (textScaleX == _x) {
+			if (_y == undefined)
+			&& (textScaleY == _x) {
+				return self;
+			}
+			if (textScaleY == _y) {
+				return self;
+			}
 		}
 		
-		textScaleX = _x; 
-        textScaleY = _y;
-		rebuild_node(to_struct()); 
-        return self; 
-    };
+		textScaleX = _x;
+		textScaleY = (_y != undefined) ? _y : _x;
+		
+		call_on_element_ready(function(_elem) {
+			layer_text_xscale(elementId, textScaleX);
+			layer_text_yscale(elementId, textScaleY);
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_rotation(_angle)
@@ -69,12 +86,17 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Real} angle : Rotation angle in degrees.
 	/// @return {ReflexLeafText}
 	#endregion
-	static set_text_rotation = function(_angle) { 
-        if (textAngle == _angle) return self;
-        textAngle = _angle;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+	static set_text_rotation = function(_angle) {
+		if (textAngle == _angle) { return self; }
+		
+		textAngle = _angle;
+		
+		call_on_element_ready(function(_elem) {
+			layer_text_angle(elementId, textAngle);
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_color(_col)
@@ -82,15 +104,20 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Int} col : Color value.
 	/// @return {ReflexLeafText}
 	#endregion
-	static set_text_color = function(_col) { 
+	static set_text_color = function(_col) {
 		var _unsigned = (_col & 0x00FFFFFF) | 0xFF000000;
 		_unsigned -= 0x100000000;
 		
-		if (textColour == _unsigned) return self;
-        textColour = _unsigned;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+		if (textColour == _unsigned) { return self; }
+		
+		textColour = _unsigned;
+		
+		call_on_element_ready(function(_elem) {
+			layer_text_blend(elementId, textColour);
+		})
+		
+		return self;
+	};
     static set_text_colour = set_text_color;
 	
 	#region jsDoc
@@ -99,12 +126,17 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {String} str : Text string.
 	/// @return {ReflexLeafText}
 	#endregion
-	static set_text_text = function(_str) {
-        if (textText == _str) return self;
-        textText = _str;
-        rebuild_node(to_struct());
-        return self;
-    };
+	static set_text_text = function(_text_value) {
+		if (textText == _text_value) { return self; }
+		
+		textText = _text_value;
+		
+		call_on_element_ready(function(_elem) {
+			layer_text_text(elementId, textText);
+		})
+		
+		return self;
+	};
 	
     ///////////////////////////////////////////////////
 	#region jsDoc
@@ -114,25 +146,29 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Int} valign : Vertical alignment value.
 	/// @return {ReflexLeafText}
 	#endregion
-    static set_text_justification = function(_halign, _valign) {
-		// a value of _halign = -1 or 4 will result in a justification span horz.
-		// i see no visual changes to this, but exposing anyways.
-		var _just_val = 0;
-		switch(_valign) {
-			case fa_top   : _just_val += 0; break;
-			case fa_middle: _just_val += 256; break;
-			case fa_bottom: _just_val += 512; break;
+	static set_text_justification = function(_halign, _valign) {
+		var _halign_const = textalign_left;
+		switch (_halign) {
+			case fa_left:   _halign_const = textalign_left; break;
+			case fa_center: _halign_const = textalign_center; break;
+			case fa_right:  _halign_const = textalign_right; break;
+			default:        _halign_const = textalign_justify; break;
 		}
-		switch(_halign) {
-			case fa_left  : _just_val += 0; break;
-			case fa_center: _just_val += 1; break;
-			case fa_right : _just_val += 2; break;
-			default: _just_val += 3; break;
+
+		var _valign_const = textalign_top;
+		switch (_valign) {
+			case fa_top:    _valign_const = textalign_top; break;
+			case fa_middle: _valign_const = textalign_middle; break;
+			case fa_bottom: _valign_const = textalign_bottom; break;
 		}
 		
-		rebuild_node(to_struct());
-        return self;
-	}
+		call_on_element_ready(function(_elem) {
+			layer_text_halign(elementId, _halign_const);
+			layer_text_valign(elementId, _valign_const);
+		})
+		
+		return self;
+	};
     
 	#region jsDoc
 	/// @func set_text_origin(_halign, _valign)
@@ -142,39 +178,42 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_origin = function(_halign, _valign) {
-		// These values are hard to read, but imagine they are like a book 0 = top left; 8 = bottoms right
-		// 0 1 2
-		// 3 4 5
-		// 6 7 8
-		// This is just what YYG decided was best.
-		
-        switch(_valign) {
-			case fa_top:{
-				switch(_halign) {
-					case fa_left  : flexAnchor = 0; break;
-					case fa_center: flexAnchor = 1; break;
-					case fa_right : flexAnchor = 2; break;
+		var _origin = origin_topleft;
+
+		switch (_valign) {
+			case fa_top:
+				switch (_halign) {
+					case fa_left:   _origin = origin_topleft; break;
+					case fa_center: _origin = origin_topcentre; break;
+					case fa_right:  _origin = origin_topright; break;
 				}
-			break;}
-			case fa_middle:{
-				switch(_halign) {
-					case fa_left  : flexAnchor = 3; break;
-					case fa_center: flexAnchor = 4; break;
-					case fa_right : flexAnchor = 5; break;
+			break;
+
+			case fa_middle:
+				switch (_halign) {
+					case fa_left:   _origin = origin_middleleft; break;
+					case fa_center: _origin = origin_middlecentre; break;
+					case fa_right:  _origin = origin_middleright; break;
 				}
-			break;}
-			case fa_bottom:{
-				switch(_halign) {
-					case fa_left  : flexAnchor = 6; break;
-					case fa_center: flexAnchor = 7; break;
-					case fa_right : flexAnchor = 8; break;
+			break;
+
+			case fa_bottom:
+				switch (_halign) {
+					case fa_left:   _origin = origin_bottomleft; break;
+					case fa_center: _origin = origin_bottomcentre; break;
+					case fa_right:  _origin = origin_bottomright; break;
 				}
-			break;}
+			break;
 		}
+
+		textOrigin = _origin;
 		
-		rebuild_node(to_struct());
-        return self;
-    };
+		call_on_element_ready(function(_elem) {
+			layer_text_origin(elementId, textOrigin);
+		})
+
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_origin_offsets(_x, _y)
@@ -184,12 +223,21 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_origin_offsets = function(_x, _y) {
+		if (textOriginX == _x)
+		&& (textOriginY == _y) {
+			return self;
+		}
+		
 		textOriginX = _x;
 		textOriginY = _y;
 		
-		rebuild_node(to_struct());
-        return self;
-	}
+		call_on_element_ready(function(_elem) {
+			layer_text_xorigin(elementId, textOriginX);
+			layer_text_yorigin(elementId, textOriginY);
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_character_spacing(_sep)
@@ -197,12 +245,14 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Real} sep : Spacing value.
 	/// @return {ReflexLeafText}
 	#endregion
-    static set_text_character_spacing = function(_sep) {
-		if (textCharacterSpacing == _sep) return self;
-        textCharacterSpacing = _sep;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+	static set_text_character_spacing = function(_sep) {
+		if (textCharacterSpacing == _sep) { return self; }
+		textCharacterSpacing = _sep;
+		call_on_element_ready(function(_elem) {
+			layer_text_charspacing(elementId, textCharacterSpacing);
+		})
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_line_spacing(_sep)
@@ -211,11 +261,13 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_line_spacing = function(_sep) {
-		if (textLineSpacing == _sep) return self;
-        textLineSpacing = _sep;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+		if (textLineSpacing == _sep) { return self; }
+		textLineSpacing = _sep;
+		call_on_element_ready(function(_elem) {
+			layer_text_linespacing(elementId, textLineSpacing);
+		})
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_paragraph_spacing(_sep)
@@ -224,11 +276,13 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_paragraph_spacing = function(_sep) {
-		if (textParagraphSpacing == _sep) return self;
-        textParagraphSpacing = _sep;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+		if (textParagraphSpacing == _sep) { return self; }
+		textParagraphSpacing = _sep;
+		call_on_element_ready(function(_elem) {
+			layer_text_paragraphspacing(elementId, textParagraphSpacing);
+		})
+		return self;
+	};
 	
 	///////////////////////////////////////////////////
 	#region jsDoc
@@ -239,17 +293,21 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @return {ReflexLeafText}
 	#endregion
 	static set_text_frame = function(_width, _height) {
-		if (textFrameWidth  == _width)
+		if (textFrameWidth == _width)
 		&& (textFrameHeight == _height) {
 			return self;
 		}
 		
-		textFrameWidth  = _width;
+		textFrameWidth = _width;
 		textFrameHeight = _height;
 		
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+		call_on_element_ready(function(_elem) {
+			layer_text_framew(elementId, textFrameWidth);
+			layer_text_frameh(elementId, textFrameHeight);
+		})
+		
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_wrap(_bool)
@@ -257,12 +315,14 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Bool} bool : Enabled state.
 	/// @return {ReflexLeafText}
 	#endregion
-	static set_text_wrap = function(_bool) {
-		if (textWrap == _bool) return self;
-        textWrap = _bool;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+	static set_text_wrap = function(_wrap) {
+		if (textWrap == _wrap) { return self; }
+		textWrap = _wrap;
+		call_on_element_ready(function(_elem) {
+			layer_text_wrap(elementId, textWrap);
+		})
+		return self;
+	};
 	
 	#region jsDoc
 	/// @func set_text_split_words(_bool)
@@ -270,12 +330,18 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	/// @param {Bool} bool : Enabled state.
 	/// @return {ReflexLeafText}
 	#endregion
-	static set_text_split_words = function(_bool) {
-		if (textWrapMode == _bool) return self;
-        textWrapMode = _bool;
-        rebuild_node(to_struct()); 
-        return self; 
-    };
+	static set_text_split_words = function(_split) {
+		var _mode = (_split) ? textwrap_splitwords : textwrap_default;
+
+		if (textWrapMode == _mode) { return self; }
+		textWrapMode = _mode;
+		
+		call_on_element_ready(function(_elem) {
+			layer_text_wrapmode(elementId, textWrapMode);
+		})
+
+		return self;
+	};
 	
 	#endregion
 	
@@ -490,7 +556,5 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 		return _base_struct;
 	};
 	
-	// Seed Native Struct
-    rebuild_node(to_struct());
 	#endregion
 }

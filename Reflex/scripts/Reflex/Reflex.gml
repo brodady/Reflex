@@ -252,7 +252,9 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static add = function(_child_node)
 	{
-		insert(_child_node, -1);
+		//prevent overwrites when using super
+		static __my_insert = Reflex.insert;
+		__my_insert(_child_node, -1);
 	};
 	
 	#region jsDoc
@@ -270,8 +272,7 @@ function Reflex(_data=undefined) constructor
 	static insert = function(_child_node, _index_value=-1)
 	{
 		// Detach from old parent (wrapper side)
-		if (_child_node.__parent != undefined)
-		{
+		if (_child_node.__parent != undefined) {
 			_child_node.__parent.remove(_child_node);
 		}
 		
@@ -387,17 +388,6 @@ function Reflex(_data=undefined) constructor
 	};
 	
 	#region jsDoc
-	/// @func    get_parent()
-	/// @desc    Returns the parent wrapper node, or undefined if this node is a root.
-	/// @self    Reflex
-	/// @returns {Struct.Reflex|Undefined}
-	#endregion
-	static get_parent = function()
-	{
-		return __parent;
-	};
-
-	#region jsDoc
 	/// @func    get_child_count()
 	/// @desc    Returns the number of direct children.
 	/// @self    Reflex
@@ -407,7 +397,7 @@ function Reflex(_data=undefined) constructor
 	{
 		return array_length(__children);
 	};
-
+	
 	#region jsDoc
 	/// @func    get_child_at()
 	/// @desc    Returns the child at the given index, or undefined if out of range.
@@ -422,7 +412,7 @@ function Reflex(_data=undefined) constructor
 		if (_index_value >= array_length(__children)) { return undefined; }
 		return __children[_index_value];
 	};
-
+	
 	#region jsDoc
 	/// @func    get_children_array()
 	/// @desc    Returns the internal children array. This is a live reference; modifying it directly
@@ -434,7 +424,7 @@ function Reflex(_data=undefined) constructor
 	{
 		return __children;
 	};
-
+	
 	#region jsDoc
 	/// @func    contains()
 	/// @desc    Returns whether the given node exists in this node's subtree.
@@ -475,11 +465,52 @@ function Reflex(_data=undefined) constructor
 		
 		return false;
 	};
-
+	
+	#region jsDoc
+	/// @func    get_parent()
+	/// @desc    Returns the parent wrapper node, or undefined if this node is a root.
+	/// @self    Reflex
+	/// @returns {Struct.Reflex|Undefined}
+	#endregion
+	static get_parent = function()
+	{
+		return __parent;
+	};
+	
 	// -------------------------------------------------------------------------
 	// Flexpanel API
 	// -------------------------------------------------------------------------
 	#region Setters
+	
+	/// TODO:
+	/// GM BUG: This is disabled until one of the two following bugs are resolved by GM
+	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14199
+	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14200
+	#region jsDoc
+	/// @func set_visible(_enabled)
+	/// @desc Enables/disables layout participation for this node by setting its flexpanel display.
+	///        true  -> display flex
+	///        false -> display none (removed from layout calculations)
+	/// @param {Bool} _enabled
+	/// @return {Struct.Reflex}
+	#endregion
+	static set_visible = function(_enabled) {
+		if (flexVisible == _enabled) { return self; }
+		
+		if (_enabled) {
+			flexpanel_node_style_set_display(node_handle, flexpanel_display.flex);
+		}
+		else {
+			flexpanel_node_style_set_display(node_handle, flexpanel_display.none);
+		}
+		
+		flexVisible = _enabled;
+		
+		return self;
+	};
+	
+	#region Wrappers
+	
 	#region jsDoc
 	/// @func    set_name()
 	/// @desc    Sets the name of the node.
@@ -856,9 +887,85 @@ function Reflex(_data=undefined) constructor
 		flexpanel_node_style_set_height(node_handle, _value, _unit_value);
         return self;
     };
+	
+	#region jsDoc
+	/// @func set_clip_content(_enabled)
+	/// @desc Enables or disables flexpanel clipping for this node by rebuilding the underlying node,
+	///       since clipContent is a struct property (no style setter in the Flex Panel API).
+	/// @param {Bool} _enabled
+	/// @return {Struct.Reflex}
+	#endregion
+	static set_clip_content = function(_enabled) {
+		var _old_node = node_handle;
+		var _node_struct = flexpanel_node_get_struct(_old_node);
+		
+		// No-op if unchanged
+		if (struct_exists(_node_struct, "clipContent") && _node_struct.clipContent == _enabled) { return self; }
+		
+		// Update struct properties
+		_node_struct.nodes = [];
+		_node_struct.clipContent = bool(_enabled);
+		
+		// This is required for when setting clipping.
+		/// TODO: GM BUG: https://github.com/YoYoGames/GameMaker-Bugs/issues/14186
+		if (!struct_exists(_node_struct, "layerElements")) {
+			_node_struct.layerElements = []; 
+		}
+		
+		// Create replacement node
+		var _new_node = flexpanel_create_node(_node_struct);
+		
+		var _after = flexpanel_node_get_struct(_new_node);
+		
+		// Move children from old to new (preserve order by always removing index 0)
+		var _child_count = flexpanel_node_get_num_children(_old_node);
+		repeat (_child_count) {
+			var _child_node = flexpanel_node_get_child(_old_node, 0);
+			flexpanel_node_remove_child(_old_node, _child_node);
+			flexpanel_node_insert_child(_new_node, _child_node, -1);
+		}
+		
+		// Swap into parent at same index, if parent exists
+		var _parent_node = flexpanel_node_get_parent(_old_node);
+		if (_parent_node != undefined) {
+			var _parent_count = flexpanel_node_get_num_children(_parent_node);
+			var _parent_index = 0;
+			var _insert_index = -1;
+			
+			repeat (_parent_count) {
+				var _test_node = flexpanel_node_get_child(_parent_node, _parent_index);
+				if (_test_node == _old_node) {
+					_insert_index = _parent_index;
+					break;
+				}
+				_parent_index += 1;
+			}
+			
+			flexpanel_node_remove_child(_parent_node, _old_node);
+			flexpanel_node_insert_child(_parent_node, _new_node, _insert_index);
+		}
+		
+		// Update handle and delete old node
+		node_handle = _new_node;
+		flexpanel_delete_node(_old_node);
+		
+		return self;
+	};
+	
+	#endregion
+	
 	#endregion
 	
 	#region Getters
+	
+	#region jsDoc
+	/// @func get_visible()
+	/// @desc Returns true if this node participates in layout (display != none).
+	/// @return {Bool}
+	#endregion
+	static get_visible = function() {
+		return flexpanel_node_style_get_display(node_handle) != flexpanel_display.none;
+	};
 	
 	#region Layout (Output after reflow)
 	#region jsDoc
@@ -867,7 +974,7 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_layout_position = function()	{ return flexpanel_node_layout_get_position(node_handle, false); };
+	static get_layout_position = function() { return flexpanel_node_layout_get_position(node_handle, false); };
 	#region jsDoc
 	/// @func    get_layout_struct()
 	/// @desc    Alias of get_layout_position(). Returns the cached flexpanel layout struct (or undefined).
@@ -999,13 +1106,15 @@ function Reflex(_data=undefined) constructor
 	static get_layout_had_overflow = function() { return flexpanel_node_layout_get_position(node_handle, false).hadOverflow; };
 	#endregion
 	
+	#region Wrappers
+	
 	#region jsDoc
 	/// @func    get_data()
 	/// @desc    Returns the data struct of the flexpanel node.
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_data = function()	{
+	static get_data = function() {
 		return flexpanel_node_get_data(node_handle);
 	};
 	#region jsDoc
@@ -1014,10 +1123,10 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_struct = function()	{
+	static get_struct = function() {
 		return flexpanel_node_get_struct(node_handle);
 	};
-
+	
 	// Style getters are live (since style is no longer refreshed during reflow)
 	#region jsDoc
 	/// @func    get_width()
@@ -1025,50 +1134,50 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_width = function()	{ return flexpanel_node_style_get_width(node_handle); };
+	static get_width = function() { return flexpanel_node_style_get_width(node_handle); };
 	#region jsDoc
 	/// @func    get_height()
 	/// @desc    Gets the height of the selected node.
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_height = function()	{ return flexpanel_node_style_get_height(node_handle); };
+	static get_height = function() { return flexpanel_node_style_get_height(node_handle); };
 	#region jsDoc
 	/// @func    get_min_width()
 	/// @desc    Gets the node's minimum width
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_min_width = function()	{ return flexpanel_node_style_get_min_width(node_handle); };
+	static get_min_width = function() { return flexpanel_node_style_get_min_width(node_handle); };
 	#region jsDoc
 	/// @func    get_max_width()
 	/// @desc    Gets the node's maximum width
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_max_width = function()	{ return flexpanel_node_style_get_max_width(node_handle); };
+	static get_max_width = function() { return flexpanel_node_style_get_max_width(node_handle); };
 	#region jsDoc
 	/// @func    get_min_height()
 	/// @desc    Gets the node's minimum height
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_min_height = function()	{ return flexpanel_node_style_get_min_height(node_handle); };
+	static get_min_height = function() { return flexpanel_node_style_get_min_height(node_handle); };
 	#region jsDoc
 	/// @func    get_max_height()
 	/// @desc    Gets the node's maximum height
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_max_height = function()	{ return flexpanel_node_style_get_max_height(node_handle); };
+	static get_max_height = function() { return flexpanel_node_style_get_max_height(node_handle); };
 	#region jsDoc
 	/// @func    get_flex_basis()
 	/// @desc    Gets the flex basis of the selected node.
 	/// @self    Reflex
 	/// @returns {Struct}
 	#endregion
-	static get_flex_basis = function()	{ return flexpanel_node_style_get_flex_basis(node_handle); };
-
+	static get_flex_basis = function() { return flexpanel_node_style_get_flex_basis(node_handle); };
+	
 	#region jsDoc
 	/// @func    get_margin()
 	/// @desc    Gets the margin of the selected node.
@@ -1076,7 +1185,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Struct}
 	#endregion
-	static get_margin = function(_edge)	{ return flexpanel_node_style_get_margin(node_handle, _edge); };
+	static get_margin = function(_edge) { return flexpanel_node_style_get_margin(node_handle, _edge); };
 	#region jsDoc
 	/// @func    get_padding()
 	/// @desc    Gets the padding of the selected node.
@@ -1084,7 +1193,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Struct}
 	#endregion
-	static get_padding = function(_edge)	{ return flexpanel_node_style_get_padding(node_handle, _edge); };
+	static get_padding = function(_edge) { return flexpanel_node_style_get_padding(node_handle, _edge); };
 	#region jsDoc
 	/// @func    get_border()
 	/// @desc    Gets the border of the selected node.
@@ -1092,7 +1201,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Real}
 	#endregion
-	static get_border = function(_edge)	{ return flexpanel_node_style_get_border(node_handle, _edge); };
+	static get_border = function(_edge) { return flexpanel_node_style_get_border(node_handle, _edge); };
 	#region jsDoc
 	/// @func    get_position()
 	/// @desc    Gets the node's style position.
@@ -1100,99 +1209,99 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Enum.flexpanel_edge} edge_value : The selected edge.
 	/// @returns {Struct}
 	#endregion
-	static get_position = function(_edge)	{ return flexpanel_node_style_get_position(node_handle, _edge); };
-
+	static get_position = function(_edge) { return flexpanel_node_style_get_position(node_handle, _edge); };
+	
 	#region jsDoc
 	/// @func    get_align_content()
 	/// @desc    Gets the alignment of the content of the node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_justify}
 	#endregion
-	static get_align_content = function()	{ return flexpanel_node_style_get_align_content(node_handle); };
+	static get_align_content = function() { return flexpanel_node_style_get_align_content(node_handle); };
 	#region jsDoc
 	/// @func    get_align_items()
 	/// @desc    Gets the alignment of the items of the node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_align}
 	#endregion
-	static get_align_items = function()	{ return flexpanel_node_style_get_align_items(node_handle); };
+	static get_align_items = function() { return flexpanel_node_style_get_align_items(node_handle); };
 	#region jsDoc
 	/// @func    get_align_self()
 	/// @desc    Gets the alignment of the selected node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_align}
 	#endregion
-	static get_align_self = function()	{ return flexpanel_node_style_get_align_self(node_handle); };
+	static get_align_self = function() { return flexpanel_node_style_get_align_self(node_handle); };
 	#region jsDoc
 	/// @func    get_aspect_ratio()
 	/// @desc    Gets the node's aspect ratio
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_aspect_ratio = function()	{ return flexpanel_node_style_get_aspect_ratio(node_handle); };
+	static get_aspect_ratio = function() { return flexpanel_node_style_get_aspect_ratio(node_handle); };
 	#region jsDoc
 	/// @func    get_display()
 	/// @desc    Gets the display setting of the selected node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_display}
 	#endregion
-	static get_display = function()	{ return flexpanel_node_style_get_display(node_handle); };
+	static get_display = function() { return flexpanel_node_style_get_display(node_handle); };
 	#region jsDoc
 	/// @func    get_flex()
 	/// @desc    Gets the flex value of the selected node.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_flex = function()	{ return flexpanel_node_style_get_flex(node_handle); };
+	static get_flex = function() { return flexpanel_node_style_get_flex(node_handle); };
 	#region jsDoc
 	/// @func    get_flex_wrap()
 	/// @desc    Gets the flex wrap of the selected node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_wrap}
 	#endregion
-	static get_flex_wrap = function()	{ return flexpanel_node_style_get_flex_wrap(node_handle); };
+	static get_flex_wrap = function() { return flexpanel_node_style_get_flex_wrap(node_handle); };
 	#region jsDoc
 	/// @func    get_flex_grow()
 	/// @desc    Gets the flex grow of the selected node.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_flex_grow = function()	{ return flexpanel_node_style_get_flex_grow(node_handle); };
+	static get_flex_grow = function() { return flexpanel_node_style_get_flex_grow(node_handle); };
 	#region jsDoc
 	/// @func    get_flex_shrink()
 	/// @desc    Gets the flex shrink of the selected node.
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_flex_shrink = function()	{ return flexpanel_node_style_get_flex_shrink(node_handle); };
+	static get_flex_shrink = function() { return flexpanel_node_style_get_flex_shrink(node_handle); };
 	#region jsDoc
 	/// @func    get_flex_direction()
 	/// @desc    Gets the flex direction of the selected node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_flex_direction}
 	#endregion
-	static get_flex_direction = function()	{ return flexpanel_node_style_get_flex_direction(node_handle); };
+	static get_flex_direction = function() { return flexpanel_node_style_get_flex_direction(node_handle); };
 	#region jsDoc
 	/// @func    get_justify_content()
 	/// @desc    Gets the node's contents justification
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_justify}
 	#endregion
-	static get_justify_content = function()	{ return flexpanel_node_style_get_justify_content(node_handle); };
+	static get_justify_content = function() { return flexpanel_node_style_get_justify_content(node_handle); };
 	#region jsDoc
 	/// @func    get_direction()
 	/// @desc    Gets the direction of the selected node.
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_direction}
 	#endregion
-	static get_direction = function()	{ return flexpanel_node_style_get_direction(node_handle); };
+	static get_direction = function() { return flexpanel_node_style_get_direction(node_handle); };
 	#region jsDoc
 	/// @func    get_position_type()
 	/// @desc    Gets the nodes position type
 	/// @self    Reflex
 	/// @returns {Enum.flexpanel_position_type}
 	#endregion
-	static get_position_type = function()	{ return flexpanel_node_style_get_position_type(node_handle); };
+	static get_position_type = function() { return flexpanel_node_style_get_position_type(node_handle); };
 	#region jsDoc
 	/// @func    get_gap()
 	/// @desc    Gets the gap of the selected node on the selected side.
@@ -1201,7 +1310,7 @@ function Reflex(_data=undefined) constructor
 	/// @returns {Real}
 	#endregion
 	static get_gap = function(_gutter_value) { return flexpanel_node_style_get_gap(node_handle, _gutter_value); };
-
+	
 	// Tree/node info getters stay live
 	#region jsDoc
 	/// @func    get_num_children()
@@ -1209,7 +1318,7 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Real}
 	#endregion
-	static get_num_children = function()	{ return flexpanel_node_get_num_children(node_handle); };
+	static get_num_children = function() { return flexpanel_node_get_num_children(node_handle); };
 	#region jsDoc
 	/// @func    get_child()
 	/// @desc    Returns the child node of the given node either by index or name, undefined if out of
@@ -1219,7 +1328,7 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Pointer.FlexpanelNode} index_or_name : The node.
 	/// @returns {Pointer.FlexpanelNode}
 	#endregion
-	static get_child = function(_index_or_name)	{ return flexpanel_node_get_child(node_handle, _index_or_name); };
+	static get_child = function(_index_or_name) { return flexpanel_node_get_child(node_handle, _index_or_name); };
 	#region jsDoc
 	/// @func    get_child_hash()
 	/// @desc    Returns the child node of the given node by its name or the hash of its name.
@@ -1227,21 +1336,21 @@ function Reflex(_data=undefined) constructor
 	/// @param   {Pointer.FlexpanelNode} hash_or_name : The node.
 	/// @returns {Pointer.FlexpanelNode}
 	#endregion
-	static get_child_hash = function(_hash_or_name)	{ return flexpanel_node_get_child_hash(node_handle, _hash_or_name); };
+	static get_child_hash = function(_hash_or_name) { return flexpanel_node_get_child_hash(node_handle, _hash_or_name); };
 	#region jsDoc
 	/// @func    get_parent_node()
 	/// @desc    Returns the flexpanel parent of the given node, undefined if no parent.
 	/// @self    Reflex
 	/// @returns {Pointer.FlexpanelNode}
 	#endregion
-	static get_parent_node = function()	{ return flexpanel_node_get_parent(node_handle); };
+	static get_parent_node = function() { return flexpanel_node_get_parent(node_handle); };
 	#region jsDoc
 	/// @func    get_name()
 	/// @desc    Returns the name of the given node, undefined if no name is set.
 	/// @self    Reflex
 	/// @returns {String}
 	#endregion
-	static get_name = function()	{ return flexpanel_node_get_name(node_handle); };
+	static get_name = function() { return flexpanel_node_get_name(node_handle); };
 	#region jsDoc
 	/// @func    get_measure_function()
 	/// @desc    Returns the measure function of the given node. `undefined` means that measure
@@ -1249,7 +1358,21 @@ function Reflex(_data=undefined) constructor
 	/// @self    Reflex
 	/// @returns {Function}
 	#endregion
-	static get_measure_function = function()	{ return flexpanel_node_get_measure_function(node_handle); };
+	static get_measure_function = function() { return flexpanel_node_get_measure_function(node_handle); };
+	
+	#region jsDoc
+	/// @func get_clip_content()
+	/// @desc Returns whether this node clips its contents (clipContent).
+	/// @return {Bool}
+	#endregion
+	static get_clip_content = function() {
+		var _node_struct = flexpanel_node_get_struct(node_handle);
+		if (_node_struct.clipContent == undefined) { return false; }
+		return _node_struct.clipContent;
+	};
+	
+	#endregion
+	
 	#endregion
 	
 	// -------------------------------------------------------------------------
@@ -1265,6 +1388,7 @@ function Reflex(_data=undefined) constructor
 	__parent = undefined;
 	__children = [];
 	
+	flexVisible = true;
     // -------------------------------------------------------------------------
 	// Helpers
 	// -------------------------------------------------------------------------
