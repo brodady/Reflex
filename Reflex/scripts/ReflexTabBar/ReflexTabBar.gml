@@ -89,7 +89,7 @@ function ReflexTabBar(_data=undefined) : ReflexUI(_data) constructor
 	#endregion
 	static set_deselect_enabled = function(_enabled)
 	{
-		__deselect_enabled = (_enabled == true);
+		__deselect_enabled = _enabled;
 		return self;
 	};
 	
@@ -101,7 +101,7 @@ function ReflexTabBar(_data=undefined) : ReflexUI(_data) constructor
 	#endregion
 	static set_drag_reorder_enabled = function(_enabled)
 	{
-		__drag_reorder_enabled = (_enabled == true);
+		__drag_reorder_enabled = _enabled;
 		return self;
 	};
 	
@@ -125,7 +125,7 @@ function ReflexTabBar(_data=undefined) : ReflexUI(_data) constructor
 	#endregion
 	static set_tabs_closable = function(_enabled)
 	{
-		__tabs_closable = (_enabled == true);
+		__tabs_closable = _enabled;
 		__layout_dirty = true;
 		return self;
 	};
@@ -633,28 +633,41 @@ function ReflexTabBar(_data=undefined) : ReflexUI(_data) constructor
 	
 	#region jsDoc
 	/// @func __compute_layout()
-	/// @desc Computes tab widths and left positions, updates scroller content size.
+	/// @desc Computes derived layout for uniform-width tabs.
+	///       Updates:
+	///       - __total_width (full tab strip width, including gaps)
+	///       - __canvas size (scroll content size)
+	///       - __tab_lefts_anim length (preserves existing anim where possible)
 	#endregion
 	static __compute_layout = function()
 	{
-		var _tabs = __tabs;
-		var _count = array_length(_tabs);
-
-		// If anim array mismatches, seed from computed lefts instead of zeroing.
+		var _count = array_length(__tabs);
+		
+		// Ensure anim array matches tab count
 		var _seed_anim = false;
 		if (array_length(__tab_lefts_anim) != _count) {
 			__tab_lefts_anim = array_create(_count, 0);
 			_seed_anim = true;
 		}
-
-		var _pad_x = __theme.tab_padding_x;
+		
 		var _gap = __theme.tab_gap;
-		var _close_size = __theme.close_size;
-		var _close_pad = __theme.close_padding;
 		var _tab_w = __theme.tab_width;
 		var _tab_h = __theme.tab_height;
 		
 		var _pitch = _tab_w + _gap;
+		
+		// Total width of the strip (no trailing gap)
+		if (_count <= 0) {
+			__total_width = 0;
+		}
+		else {
+			__total_width = (_count * _tab_w) + ((_count - 1) * _gap);
+		}
+		
+		// Update scroll content size (this is what enables mouse wheel scrolling)
+		//__canvas.set_width(__total_width);
+		//__canvas.set_height(_tab_h);
+		__scroller.set_content_size(__total_width, _tab_h);
 		
 		// Seed anim positions if recreated
 		if (_seed_anim) {
