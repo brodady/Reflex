@@ -416,7 +416,7 @@ function ReflexLeaf() : Reflex() constructor
 		elementId = _elem;
 		__elem_valid = true;
 		__is_polling_elem = false;
-
+		
 		if (__elem_timesource != undefined) {
 			if (time_source_exists(__elem_timesource)) {
 				time_source_stop(__elem_timesource);
@@ -443,7 +443,7 @@ function ReflexLeaf() : Reflex() constructor
 		elementId = -1;
 		__elem_valid = false;
 		__is_polling_elem = false;
-
+		
 		if (__elem_timesource != undefined)
 		{
 			if (time_source_exists(__elem_timesource))

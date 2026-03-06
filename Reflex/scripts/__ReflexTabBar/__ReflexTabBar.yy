@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"ReflexTabContainer",
+  "%Name":"__ReflexTabBar",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ReflexTabContainer",
+  "name":"__ReflexTabBar",
   "parent":{
     "name":"TabContainer",
     "path":"folders/ReflexUI/Components/Container/TabContainer.yy",

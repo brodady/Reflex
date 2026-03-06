@@ -486,10 +486,10 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		__is_polling_inst = false;
 		
 		if (__inst_timesource != undefined) {
-			//if (time_source_exists(__inst_timesource)) {
-			//	time_source_stop(__inst_timesource);
+			if (time_source_exists(__inst_timesource)) {
+				time_source_stop(__inst_timesource);
 				time_source_destroy(__inst_timesource);
-			//}
+			}
 			__inst_timesource = undefined;
 		}
 		

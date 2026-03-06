@@ -177,7 +177,22 @@ function ReflexScrollContainer() : ReflexUI() constructor
 		enable_mouse_wheel = _value;
 		return self;
 	};
-
+	
+	#region jsDoc
+	/// @func set_mouse_wheel_primary_axis(_axis)
+	/// @desc
+	///		Sets the primary axis for mouse wheel scrolling.
+	///		- 0: Vertical primary (default). Shift + wheel scrolls horizontal.
+	///		- 1: Horizontal primary. Shift + wheel scrolls vertical.
+	/// @param {Real} _axis
+	/// @return {Struct.ReflexScrollContainer}
+	#endregion
+	static set_mouse_wheel_primary_axis = function(_axis)
+	{
+		mouse_wheel_primary_axis = _axis;
+		return self;
+	};
+	
 	#region jsDoc
 	/// @func set_enable_keyboard(_value)
 	/// @desc Enable/disable keyboard navigation when focused.
@@ -225,7 +240,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 		mouse_wheel_speed = _value;
 		return self;
 	};
-
+	
 	#endregion
 
 	#region Getters
@@ -557,31 +572,34 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	};
 	
 	#region Private
-
+	
 	scrollbar_size = 16;
-
+	
 	content_width = 0;
 	content_height = 0;
-
+	
 	__need_h = false;
 	__need_v = false;
-
+	
 	enable_momentum = true;
 	momentum_friction = 0.95; // iOS standard
 	overscroll_mode = "resistance"; // "none", "bounce", "resistance"
+	is_focusable = true;
+	mouse_wheel_speed = 30;
+	mouse_wheel_primary_axis = 0; // 0 vertical primary (default), 1 horizontal primary
+	
+	// input types
 	enable_drag_scroll = true;
 	enable_mouse_wheel = true;
 	enable_keyboard = true;
 	enable_touch = true;
-	is_focusable = true;
-	mouse_wheel_speed = 30;
 	
 	// Scroll State
 	__velocity_x = 0.0;
 	__velocity_y = 0.0;
 	__is_momentum_active = false;
 	__momentum_stop_threshold = 0.5;
-
+	
 	// Drag State
 	__is_dragging = false;
 	__drag_start_x = 0;
@@ -592,11 +610,11 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	__last_drag_x = 0;
 	__last_drag_y = 0;
 	__drag_device = -1;
-
+	
 	// Focus State
 	__has_focus = false;
 	__was_scrolling = false;
-
+	
 	// Smooth Scroll Animation
 	__smooth_scroll_active = false;
 	__smooth_scroll_start_x = 0;
@@ -859,22 +877,34 @@ function ReflexScrollContainer() : ReflexUI() constructor
 		
 		// === MOUSE WHEEL ===
 		if (enable_mouse_wheel && _viewport_hot && !__is_dragging) {
-			var _wheel_delta_y = 0;
+			var _wheel_step = 0;
 			var _wheel_delta_x = 0;
-			
+			var _wheel_delta_y = 0;
+	
 			if (mouse_wheel_up()) {
-				_wheel_delta_y = -mouse_wheel_speed;
+				_wheel_step = -mouse_wheel_speed;
 			}
 			else if (mouse_wheel_down()) {
-				_wheel_delta_y = mouse_wheel_speed;
+				_wheel_step = mouse_wheel_speed;
 			}
-			
-			// Shift + wheel = horizontal scroll
-			if (keyboard_check(vk_shift)) {
-				_wheel_delta_x = _wheel_delta_y;
-				_wheel_delta_y = 0;
+	
+			if (_wheel_step != 0) {
+				// Primary axis selection:
+				// 0 = vertical primary (default), 1 = horizontal primary
+				var _primary_is_horizontal = (mouse_wheel_primary_axis == 1);
+		
+				// Shift swaps axis (keeps legacy behavior available)
+				if (keyboard_check(vk_shift)) {
+					_primary_is_horizontal = !_primary_is_horizontal;
+				}
+		
+				if (_primary_is_horizontal) {
+					_wheel_delta_x = _wheel_step;
+				} else {
+					_wheel_delta_y = _wheel_step;
+				}
 			}
-			
+	
 			if (_wheel_delta_x != 0 || _wheel_delta_y != 0) {
 				h_scroll.set_value(h_scroll.get_value() + _wheel_delta_x);
 				v_scroll.set_value(v_scroll.get_value() + _wheel_delta_y);
@@ -941,7 +971,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 		}
 		__was_scrolling = _is_scrolling_now;
 	};
-
+	
 	#region jsDoc
 	/// @func __is_over_scrollbar(_x, _y)
 	/// @desc Check if point is over a visible scrollbar.
