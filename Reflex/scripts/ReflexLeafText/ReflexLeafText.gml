@@ -149,22 +149,39 @@ function ReflexLeafText(_text = "", _font = -1) : ReflexLeaf() constructor
 	static set_text_justification = function(_halign, _valign) {
 		var _halign_const = textalign_left;
 		switch (_halign) {
-			case fa_left:   _halign_const = textalign_left; break;
-			case fa_center: _halign_const = textalign_center; break;
-			case fa_right:  _halign_const = textalign_right; break;
-			default:        _halign_const = textalign_justify; break;
-		}
-
-		var _valign_const = textalign_top;
-		switch (_valign) {
-			case fa_top:    _valign_const = textalign_top; break;
-			case fa_middle: _valign_const = textalign_middle; break;
-			case fa_bottom: _valign_const = textalign_bottom; break;
+			case fa_left:
+			case textalign_left: _halign_const = textalign_left; break;
+			
+			case fa_center:
+			case textalign_center: _halign_const = textalign_center; break;
+			
+			case fa_right:
+			case textalign_right: _halign_const = textalign_right; break;
+			
+			case textalign_justify:
+			default: _halign_const = textalign_justify; break;
 		}
 		
+		var _valign_const = textalign_top;
+		switch (_valign) {
+			case fa_top:
+			case textalign_top: _valign_const = textalign_top; break;
+			
+			case fa_middle:
+			case textalign_middle: _valign_const = textalign_middle; break;
+			
+			case fa_bottom:
+			case textalign_bottom: _valign_const = textalign_bottom; break;
+		}
+		
+		textAlignment = (_valign_const * 256) + _halign_const
+		
 		call_on_element_ready(function(_elem) {
-			layer_text_halign(elementId, _halign_const);
-			layer_text_valign(elementId, _valign_const);
+			var _halign = textAlignment mod 256;
+			var _valign = textAlignment div 256;
+			
+			layer_text_halign(elementId, _halign);
+			layer_text_valign(elementId, _valign);
 		})
 		
 		return self;
