@@ -954,6 +954,277 @@ function Reflex(_data=undefined) constructor
 		return self;
 	};
 	
+	#region Edge Specific Functions
+	
+	#region jsDoc
+	/// @func    set_border_left()
+	/// @desc    Sets left border size.
+	/// @self    Reflex
+	/// @param   {Real} size_value
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_border_left = function(_value) {
+		set_border(flexpanel_edge.left, _value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_border_right()
+	/// @desc    Sets right border size.
+	/// @self    Reflex
+	/// @param   {Real} size_value
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_border_right = function(_value) {
+		set_border(flexpanel_edge.right, _value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_border_top()
+	/// @desc    Sets top border size.
+	/// @self    Reflex
+	/// @param   {Real} size_value
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_border_top = function(_value) {
+		set_border(flexpanel_edge.top, _value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_border_bottom()
+	/// @desc    Sets bottom border size.
+	/// @self    Reflex
+	/// @param   {Real} size_value
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_border_bottom = function(_value) {
+		set_border(flexpanel_edge.bottom, _value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_border_all()
+	/// @desc    Sets border size on all edges.
+	/// @self    Reflex
+	/// @param   {Real} size_value
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_border_all = function(_value) {
+		set_border(flexpanel_edge.left, _value);
+		set_border(flexpanel_edge.right, _value);
+		set_border(flexpanel_edge.top, _value);
+		set_border(flexpanel_edge.bottom, _value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_position_left()
+	/// @desc    Sets left inset position.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_position_left = function(_value, _unit_value=undefined) {
+		set_position(flexpanel_edge.left, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_position_right()
+	/// @desc    Sets right inset position.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_position_right = function(_value, _unit_value=undefined) {
+		set_position(flexpanel_edge.right, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_position_top()
+	/// @desc    Sets top inset position.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_position_top = function(_value, _unit_value=undefined) {
+		set_position(flexpanel_edge.top, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_position_bottom()
+	/// @desc    Sets bottom inset position.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_position_bottom = function(_value, _unit_value=undefined) {
+		set_position(flexpanel_edge.bottom, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_position_all()
+	/// @desc    Sets inset position on all edges.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_position_all = function(_value, _unit_value=undefined) {
+		set_position(flexpanel_edge.left, _value, _unit_value);
+		set_position(flexpanel_edge.right, _value, _unit_value);
+		set_position(flexpanel_edge.top, _value, _unit_value);
+		set_position(flexpanel_edge.bottom, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_margin_left()
+	/// @desc    Sets left margin.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_margin_left = function(_value, _unit_value=undefined) {
+		set_margin(flexpanel_edge.left, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_margin_right()
+	/// @desc    Sets right margin.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_margin_right = function(_value, _unit_value=undefined) {
+		set_margin(flexpanel_edge.right, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_margin_top()
+	/// @desc    Sets top margin.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_margin_top = function(_value, _unit_value=undefined) {
+		set_margin(flexpanel_edge.top, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_margin_bottom()
+	/// @desc    Sets bottom margin.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_margin_bottom = function(_value, _unit_value=undefined) {
+		set_margin(flexpanel_edge.bottom, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_margin_all()
+	/// @desc    Sets margin on all edges.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_margin_all = function(_value, _unit_value=undefined) {
+		set_margin(flexpanel_edge.left, _value, _unit_value);
+		set_margin(flexpanel_edge.right, _value, _unit_value);
+		set_margin(flexpanel_edge.top, _value, _unit_value);
+		set_margin(flexpanel_edge.bottom, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_padding_left()
+	/// @desc    Sets left padding.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_padding_left = function(_value, _unit_value=undefined) {
+		set_padding(flexpanel_edge.left, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_padding_right()
+	/// @desc    Sets right padding.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_padding_right = function(_value, _unit_value=undefined) {
+		set_padding(flexpanel_edge.right, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_padding_top()
+	/// @desc    Sets top padding.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_padding_top = function(_value, _unit_value=undefined) {
+		set_padding(flexpanel_edge.top, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_padding_bottom()
+	/// @desc    Sets bottom padding.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_padding_bottom = function(_value, _unit_value=undefined) {
+		set_padding(flexpanel_edge.bottom, _value, _unit_value);
+		return self;
+	};
+
+	#region jsDoc
+	/// @func    set_padding_all()
+	/// @desc    Sets padding on all edges.
+	/// @self    Reflex
+	/// @param   {Real} value
+	/// @param   {Enum.flexpanel_unit} [unit_value]=undefined
+	/// @returns {Struct.Reflex}
+	#endregion
+	static set_padding_all = function(_value, _unit_value=undefined) {
+		set_padding(flexpanel_edge.left, _value, _unit_value);
+		set_padding(flexpanel_edge.right, _value, _unit_value);
+		set_padding(flexpanel_edge.top, _value, _unit_value);
+		set_padding(flexpanel_edge.bottom, _value, _unit_value);
+		return self;
+	};
+	
+	#endregion
+	
 	#endregion
 	
 	#endregion
