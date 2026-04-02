@@ -268,23 +268,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 
 		__grid_apply_auto_placement();
 	};
-	
-	#region jsDoc
-	/// @desc Inserts a node. If the node has no fixed placement, it will be auto-placed.
-	/// @param {Reflex} _node
-	/// @param {Real} _index
-	#endregion
-	static insert = function(_node, _index=-1)
-	{
-		// Let base Reflex do the flexpanel insert + wrapper links
-		static __base_insert = Reflex.insert;
-		__base_insert(_node, _index);
 
-		__grid_span_get_index(_node);
-
-		__grid_apply_auto_placement();
-	};
-	
 	#region jsDoc
 	/// @desc Removes a node from this grid and clears any stored placement info for it.
 	/// @param {Reflex} _node
@@ -298,7 +282,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		// Clear any explicit cell mapping entries pointing at this node
 		__grid_cells_remove_node(_node);
 
-		static __base_remove = Reflex.remove;
+		static __base_remove = ReflexUI.remove;
 		__base_remove(_node);
 
 		__grid_apply_auto_placement();
@@ -312,7 +296,7 @@ function ReflexGridContainer() : ReflexUI() constructor
 		array_resize(__grid_span_records, 0);
 		__grid_cell_map = {};
 
-		static __base_clear = Reflex.clear;
+		static __base_clear = ReflexUI.clear;
 		__base_clear(true);
 
 		__grid_apply_auto_placement();

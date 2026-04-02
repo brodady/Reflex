@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexLinkButton",
   "parent":{
-    "name":"BaseButton",
-    "path":"folders/ReflexUI/Components/BaseButton.yy",
+    "name":"LinkButton",
+    "path":"folders/ReflexUI/Components/BaseButton/LinkButton.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

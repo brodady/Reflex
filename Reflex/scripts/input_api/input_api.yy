@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"input_api",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"input_api",
+  "parent":{
+    "name":"__system",
+    "path":"folders/ReflexUI/Input/__system.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

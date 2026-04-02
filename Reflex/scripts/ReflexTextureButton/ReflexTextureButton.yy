@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexTextureButton",
   "parent":{
-    "name":"BaseButton",
-    "path":"folders/ReflexUI/Components/BaseButton.yy",
+    "name":"TextureButton",
+    "path":"folders/ReflexUI/Components/BaseButton/TextureButton.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

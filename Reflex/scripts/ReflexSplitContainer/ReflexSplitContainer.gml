@@ -39,19 +39,190 @@ function ReflexSplitContainer(_data=undefined) : ReflexUI(_data) constructor
 	// -------------------------------------------------------------------------
 	// Internal nodes
 	// -------------------------------------------------------------------------
-	__pane_a = new ReflexUI();
-	__divider = new ReflexLeafLogic();
-	__pane_b = new ReflexUI();
+	__pane_a = new ReflexUI()
+		.set_clip_content(true)
+		
+	__pane_b = new ReflexUI()
+		.set_clip_content(true)
+		
+	__divider = new ReflexLeafLogic()
+	// -------------------------------------------------------------------------
+	// Divider logic (input + draw + resize watching)
+	// -------------------------------------------------------------------------
+	__divider.set_step(function()
+	{
+		// Watch resize (local clamp/apply only)
+		var _avail = __get_avail_main();
+		if (_avail > 0 && _avail != __last_avail) {
+			__last_avail = _avail;
+			__apply_clamped_offset(true);
+		}
 
+		// Divider visibility/hit semantics
+		var _mx = device_mouse_x_to_gui(0);
+		var _my = device_mouse_y_to_gui(0);
+
+		var _pos = flexpanel_node_layout_get_position(__divider.node_handle, false);
+		var _hot = (__drag_is_enabled()) && (_mx >= _pos.left) && (_mx < _pos.left + _pos.width) && (_my >= _pos.top) && (_my < _pos.top + _pos.height);
+
+		__divider_hot = _hot;
+
+		// Mouse input
+		if (!__dragging) {
+			if (__drag_is_enabled() && _hot && mouse_check_button_pressed(mb_left)) {
+				__dragging = true;
+				__split_has_explicit_offset = true;
+				__drag_device = -1; // Mouse
+
+				__drag_start_offset = __split_offset;
+				__drag_start_mouse = (__vertical) ? _my : _mx;
+
+				__trigger_event(events.drag_started);
+			}
+		}
+
+		// Continue drag with mouse
+		if (__dragging && __drag_device == -1) {
+			if (mouse_check_button(mb_left)) {
+				var _cur_mouse = (__vertical) ? _my : _mx;
+				var _delta = _cur_mouse - __drag_start_mouse;
+
+				__split_offset = __drag_start_offset + _delta;
+				__apply_clamped_offset(false);
+
+				__trigger_event(events.dragged, __split_offset);
+			} else {
+				__dragging = false;
+				__drag_device = -1;
+				__trigger_event(events.drag_ended);
+			}
+		}
+
+		// Touch support (mirroring scrollbar pattern)
+		var _max_touch_devices = 4;
+		for (var _device = 0; _device < _max_touch_devices; _device++) {
+			// Touch released
+			if (device_mouse_check_button_released(_device, mb_left)) {
+				if (__drag_device == _device) {
+					__dragging = false;
+					__drag_device = -1;
+					__trigger_event(events.drag_ended);
+				}
+			}
+			// Touch pressed - start drag
+			else if (device_mouse_check_button_pressed(_device, mb_left)) {
+				if (!__dragging && __drag_is_enabled()) {
+					var _touch_x = device_mouse_x_to_gui(_device);
+					var _touch_y = device_mouse_y_to_gui(_device);
+					
+					var _touch_hot = (_touch_x >= _pos.left) && (_touch_x < _pos.left + _pos.width) && 
+					                 (_touch_y >= _pos.top) && (_touch_y < _pos.top + _pos.height);
+					
+					if (_touch_hot) {
+						__dragging = true;
+						__split_has_explicit_offset = true;
+						__drag_device = _device;
+
+						__drag_start_offset = __split_offset;
+						__drag_start_mouse = (__vertical) ? _touch_y : _touch_x;
+
+						__trigger_event(events.drag_started);
+					}
+				}
+			}
+			// Touch continue drag
+			else if (device_mouse_check_button(_device, mb_left) && __dragging && __drag_device == _device) {
+				var _touch_x = device_mouse_x_to_gui(_device);
+				var _touch_y = device_mouse_y_to_gui(_device);
+				
+				var _cur_mouse = (__vertical) ? _touch_y : _touch_x;
+				var _delta = _cur_mouse - __drag_start_mouse;
+
+				__split_offset = __drag_start_offset + _delta;
+				__apply_clamped_offset(false);
+
+				__trigger_event(events.dragged, __split_offset);
+			}
+		}
+	});
+
+	__divider.set_draw(function()
+	{
+		// Draw rules:
+		// - Visible: draw with grip lines
+		// - Hidden: do not draw
+		// - Hidden-collapsed: no node, nothing to draw
+		// - Collapsed: do not draw (divider is hidden via display:none)
+		if (__dragger_visibility != ReflexSplitContainerDraggerVisibility.DRAGGER_VISIBLE) {
+			return;
+		}
+
+		var _pos = flexpanel_node_layout_get_position(__divider.node_handle, false);
+
+		// Choose color and alpha based on state
+		var _color = __theme.divider_color;
+		var _alpha = __theme.divider_alpha;
+		
+		if (__dragging) {
+			_color = __theme.divider_drag_color;
+			_alpha = __theme.divider_drag_alpha;
+		} else if (__divider_hot) {
+			_color = __theme.divider_hot_color;
+			_alpha = __theme.divider_hot_alpha;
+		}
+
+		// Draw divider background
+		draw_set_alpha(_alpha);
+		draw_set_color(_color);
+		draw_rectangle(_pos.left, _pos.top, _pos.left + _pos.width, _pos.top + _pos.height, false);
+
+		// Draw grip lines for visual affordance
+		draw_set_color(__theme.grip_color);
+		draw_set_alpha(__theme.grip_alpha);
+		
+		var _line_count = __theme.grip_line_count;
+		var _line_spacing = __theme.grip_line_spacing;
+		var _max_length = __theme.grip_line_length;
+		
+		if (__vertical) {
+			// Horizontal grip lines for vertical splitter
+			var _cx = _pos.left + _pos.width / 2;
+			var _cy = _pos.top + _pos.height / 2;
+			var _line_width = min(_pos.width * 0.6, _max_length);
+			
+			// Center the lines
+			var _total_height = (_line_count - 1) * _line_spacing;
+			var _start_y = _cy - _total_height / 2;
+			
+			for (var i = 0; i < _line_count; i++) {
+				var _ly = _start_y + (i * _line_spacing);
+				draw_line_width(_cx - _line_width/2, _ly, _cx + _line_width/2, _ly, 1);
+			}
+		}
+		else {
+			// Vertical grip lines for horizontal splitter
+			var _cx = _pos.left + _pos.width / 2;
+			var _cy = _pos.top + _pos.height / 2;
+			var _line_height = min(_pos.height * 0.6, _max_length);
+			
+			// Center the lines
+			var _total_width = (_line_count - 1) * _line_spacing;
+			var _start_x = _cx - _total_width / 2;
+			
+			for (var i = 0; i < _line_count; i++) {
+				var _lx = _start_x + (i * _line_spacing);
+				draw_line_width(_lx, _cy - _line_height/2, _lx, _cy + _line_height/2, 1);
+			}
+		}
+		
+		draw_set_alpha(1.0);
+	});
+
+	
 	// Insert internal nodes in fixed order without routing overrides
-	static __base_insert = Reflex.insert;
-	__base_insert(__pane_a, -1);
-	__base_insert(__divider, -1);
-	__base_insert(__pane_b, -1);
-
-	// Enable clipping on both panes to prevent content overdraw
-	__pane_a.set_clip_content(true);
-	__pane_b.set_clip_content(true);
+	__core_add(__pane_a);
+	__core_add(__divider);
+	__core_add(__pane_b);
 
 	// -------------------------------------------------------------------------
 	// Defaults
@@ -692,178 +863,6 @@ function ReflexSplitContainer(_data=undefined) : ReflexUI(_data) constructor
 		if (__dragger_visibility == ReflexSplitContainerDraggerVisibility.DRAGGER_HIDDEN_COLLAPSED) { return false; }
 		return true;
 	};
-
-	// -------------------------------------------------------------------------
-	// Divider logic (input + draw + resize watching)
-	// -------------------------------------------------------------------------
-	__divider.set_step(function()
-	{
-		// Watch resize (local clamp/apply only)
-		var _avail = __get_avail_main();
-		if (_avail > 0 && _avail != __last_avail) {
-			__last_avail = _avail;
-			__apply_clamped_offset(true);
-		}
-
-		// Divider visibility/hit semantics
-		var _mx = device_mouse_x_to_gui(0);
-		var _my = device_mouse_y_to_gui(0);
-
-		var _pos = flexpanel_node_layout_get_position(__divider.node_handle, false);
-		var _hot = (__drag_is_enabled()) && (_mx >= _pos.left) && (_mx < _pos.left + _pos.width) && (_my >= _pos.top) && (_my < _pos.top + _pos.height);
-
-		__divider_hot = _hot;
-
-		// Mouse input
-		if (!__dragging) {
-			if (__drag_is_enabled() && _hot && mouse_check_button_pressed(mb_left)) {
-				__dragging = true;
-				__split_has_explicit_offset = true;
-				__drag_device = -1; // Mouse
-
-				__drag_start_offset = __split_offset;
-				__drag_start_mouse = (__vertical) ? _my : _mx;
-
-				__trigger_event(events.drag_started);
-			}
-		}
-
-		// Continue drag with mouse
-		if (__dragging && __drag_device == -1) {
-			if (mouse_check_button(mb_left)) {
-				var _cur_mouse = (__vertical) ? _my : _mx;
-				var _delta = _cur_mouse - __drag_start_mouse;
-
-				__split_offset = __drag_start_offset + _delta;
-				__apply_clamped_offset(false);
-
-				__trigger_event(events.dragged, __split_offset);
-			} else {
-				__dragging = false;
-				__drag_device = -1;
-				__trigger_event(events.drag_ended);
-			}
-		}
-
-		// Touch support (mirroring scrollbar pattern)
-		var _max_touch_devices = 4;
-		for (var _device = 0; _device < _max_touch_devices; _device++) {
-			// Touch released
-			if (device_mouse_check_button_released(_device, mb_left)) {
-				if (__drag_device == _device) {
-					__dragging = false;
-					__drag_device = -1;
-					__trigger_event(events.drag_ended);
-				}
-			}
-			// Touch pressed - start drag
-			else if (device_mouse_check_button_pressed(_device, mb_left)) {
-				if (!__dragging && __drag_is_enabled()) {
-					var _touch_x = device_mouse_x_to_gui(_device);
-					var _touch_y = device_mouse_y_to_gui(_device);
-					
-					var _touch_hot = (_touch_x >= _pos.left) && (_touch_x < _pos.left + _pos.width) && 
-					                 (_touch_y >= _pos.top) && (_touch_y < _pos.top + _pos.height);
-					
-					if (_touch_hot) {
-						__dragging = true;
-						__split_has_explicit_offset = true;
-						__drag_device = _device;
-
-						__drag_start_offset = __split_offset;
-						__drag_start_mouse = (__vertical) ? _touch_y : _touch_x;
-
-						__trigger_event(events.drag_started);
-					}
-				}
-			}
-			// Touch continue drag
-			else if (device_mouse_check_button(_device, mb_left) && __dragging && __drag_device == _device) {
-				var _touch_x = device_mouse_x_to_gui(_device);
-				var _touch_y = device_mouse_y_to_gui(_device);
-				
-				var _cur_mouse = (__vertical) ? _touch_y : _touch_x;
-				var _delta = _cur_mouse - __drag_start_mouse;
-
-				__split_offset = __drag_start_offset + _delta;
-				__apply_clamped_offset(false);
-
-				__trigger_event(events.dragged, __split_offset);
-			}
-		}
-	});
-
-	__divider.set_draw(function()
-	{
-		// Draw rules:
-		// - Visible: draw with grip lines
-		// - Hidden: do not draw
-		// - Hidden-collapsed: no node, nothing to draw
-		// - Collapsed: do not draw (divider is hidden via display:none)
-		if (__dragger_visibility != ReflexSplitContainerDraggerVisibility.DRAGGER_VISIBLE) {
-			return;
-		}
-
-		var _pos = flexpanel_node_layout_get_position(__divider.node_handle, false);
-
-		// Choose color and alpha based on state
-		var _color = __theme.divider_color;
-		var _alpha = __theme.divider_alpha;
-		
-		if (__dragging) {
-			_color = __theme.divider_drag_color;
-			_alpha = __theme.divider_drag_alpha;
-		} else if (__divider_hot) {
-			_color = __theme.divider_hot_color;
-			_alpha = __theme.divider_hot_alpha;
-		}
-
-		// Draw divider background
-		draw_set_alpha(_alpha);
-		draw_set_color(_color);
-		draw_rectangle(_pos.left, _pos.top, _pos.left + _pos.width, _pos.top + _pos.height, false);
-
-		// Draw grip lines for visual affordance
-		draw_set_color(__theme.grip_color);
-		draw_set_alpha(__theme.grip_alpha);
-		
-		var _line_count = __theme.grip_line_count;
-		var _line_spacing = __theme.grip_line_spacing;
-		var _max_length = __theme.grip_line_length;
-		
-		if (__vertical) {
-			// Horizontal grip lines for vertical splitter
-			var _cx = _pos.left + _pos.width / 2;
-			var _cy = _pos.top + _pos.height / 2;
-			var _line_width = min(_pos.width * 0.6, _max_length);
-			
-			// Center the lines
-			var _total_height = (_line_count - 1) * _line_spacing;
-			var _start_y = _cy - _total_height / 2;
-			
-			for (var i = 0; i < _line_count; i++) {
-				var _ly = _start_y + (i * _line_spacing);
-				draw_line_width(_cx - _line_width/2, _ly, _cx + _line_width/2, _ly, 1);
-			}
-		}
-		else {
-			// Vertical grip lines for horizontal splitter
-			var _cx = _pos.left + _pos.width / 2;
-			var _cy = _pos.top + _pos.height / 2;
-			var _line_height = min(_pos.height * 0.6, _max_length);
-			
-			// Center the lines
-			var _total_width = (_line_count - 1) * _line_spacing;
-			var _start_x = _cx - _total_width / 2;
-			
-			for (var i = 0; i < _line_count; i++) {
-				var _lx = _start_x + (i * _line_spacing);
-				draw_line_width(_lx, _cy - _line_height/2, _lx, _cy + _line_height/2, 1);
-			}
-		}
-		
-		draw_set_alpha(1.0);
-	});
 
 	// -------------------------------------------------------------------------
 	// Initial style application

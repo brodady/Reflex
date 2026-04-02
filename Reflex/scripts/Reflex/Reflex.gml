@@ -170,44 +170,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static add_to = function(_parent_or_ui_layer)
 	{
-		// Parent Reflex case
-		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
-			var _ui_layer = flexpanel_node_get_parent(node_handle);
-			if (_ui_layer != undefined) {
-				// Detach first (handles both wrapper + UI layer parenting)
-				remove_from((__parent == undefined) ? "ReflexLayer" : __parent);
-			}
-			
-			_parent_or_ui_layer.add(self);
-			return true;
-		}
-		
-		// UI layer case
-		var _ui_root_node = layer_get_flexpanel_node(_parent_or_ui_layer);
-		if (_ui_root_node == undefined) {
-			return false;
-		}
-
-		// Detach from Reflex parent (wrapper + flexpanel)
-		if (__parent != undefined) {
-			__parent.remove(self);
-		}
-		else {
-			// Detach from native flexpanel parent (UI layer or other owner)
-			var _native_parent = flexpanel_node_get_parent(node_handle);
-			if (_native_parent != undefined) {
-				flexpanel_node_remove_child(_native_parent, node_handle);
-			}
-		}
-		
-		// Become a top-level wrapper node
-		__parent = undefined;
-		
-		// Insert into UI layer root as last child
-		var _child_count = flexpanel_node_get_num_children(_ui_root_node);
-		flexpanel_node_insert_child(_ui_root_node, node_handle, _child_count);
-		
-		return true;
+		__core_add_to(_parent_or_ui_layer)
+		return self;
 	};
 	
 	#region jsDoc
@@ -224,24 +188,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static remove_from = function(_parent_or_ui_layer)
 	{
-		// Reflex parent case
-		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
-			_parent_or_ui_layer.remove(self);
-			return true;
-		}
-		
-		// UI layer case
-		var _ui_root_node = layer_get_flexpanel_node(_parent_or_ui_layer);
-		if (_ui_root_node == undefined) {
-			return false;
-		}
-		
-		// Attempt to remove from the specified UI layer root
-		flexpanel_node_remove_child(_ui_root_node, node_handle);
-		
-		__parent = undefined;
-		
-		return true;
+		__core_remove_from();
+		return self;
 	};
 	
 	#region jsDoc
@@ -254,42 +202,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static add = function(_child_node)
 	{
-		//prevent overwrites when using super
-		static __my_insert = Reflex.insert;
-		__my_insert(_child_node, -1);
-	};
-	
-	#region jsDoc
-	/// @func    insert()
-	/// @desc    Inserts a child node at the given index (or appends if index < 0).
-	///          Also rewires wrapper links:
-	///          - Detaches from the old parent if needed
-	///          - Sets child's __parent to this node
-	///          Mirrors the change into the underlying flexpanel tree and requests reflow.
-	/// @self    Reflex
-	/// @param   {Struct.Reflex} node : Child node to insert.
-	/// @param   {Real} index : Target index. If < 0, appends. Clamped to valid range.
-	/// @returns {Undefined}
-	#endregion
-	static insert = function(_child_node, _index_value=-1)
-	{
-		// Detach from old parent (wrapper side)
-		if (_child_node.__parent != undefined) {
-			_child_node.__parent.remove(_child_node);
-		}
-		
-		// Choose insertion index
-		var _insert_index = _index_value;
-		if (_insert_index < 0) { _insert_index = array_length(__children); }
-		if (_insert_index > array_length(__children)) { _insert_index = array_length(__children); }
-		
-		// Wrapper child list
-		array_insert(__children, _insert_index, _child_node);
-		
-		_child_node.__parent = self;
-		
-		// Flexpanel tree
-		flexpanel_node_insert_child(node_handle, _child_node.node_handle, _insert_index);
+		__core_add(_child_node);
+		return self;
 	};
 	
 	#region jsDoc
@@ -304,17 +218,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static remove = function(_child_node)
 	{
-		if (_child_node == undefined) { return; }
-		if (_child_node.__parent != self) { return; }
-		
-		var _index = array_get_index(__children, _child_node);
-		array_delete(__children, _index, 1);
-		
-		// Wrapper links
-		_child_node.__parent = undefined;
-		
-		// Flexpanel tree
-		flexpanel_node_remove_child(node_handle, _child_node.node_handle);
+		__core_remove(_child_node);
+		return self;
 	};
 	
 	#region jsDoc
@@ -327,16 +232,8 @@ function Reflex(_data=undefined) constructor
 	#endregion
 	static clear = function()
 	{
-		var _count = array_length(__children);
-		for (var i = 0; i < _count; i++)
-		{
-			var _child_node = __children[i];
-			_child_node.__parent = undefined;
-		}
-		
-		array_resize(__children, 0);
-
-		flexpanel_node_remove_all_children(node_handle);
+		__core_clear();
+		return self;
 	};
 	
 	#region jsDoc
@@ -1668,6 +1565,166 @@ function Reflex(_data=undefined) constructor
 	// Helpers
 	// -------------------------------------------------------------------------
     
+	#region jsDoc
+	/// @func    __orphan()
+	/// @desc    Removes self from parent node or ui layer
+	/// @self    Reflex
+	/// @returns {Undefined}
+	#endregion
+	static __orphan = function()
+	{
+		// Detach from Reflex parent (wrapper + flexpanel)
+		if (__parent != undefined) {
+			__parent.remove(self);
+			__parent = undefined;
+		}
+		else {
+			// Detach from native flexpanel parent (UI layer or other owner)
+			var _native_parent = flexpanel_node_get_parent(node_handle);
+			if (_native_parent != undefined) {
+				flexpanel_node_remove_child(_native_parent, node_handle);
+			}
+		}
+	};
+	
+	#region jsDoc
+	/// @func    __core_add_to()
+	/// @desc    Appends a child node directly to the component's flexpanel
+	///          avoiding any container specific api
+	///          this is intended for use internally
+	/// @self    Reflex
+	/// @param   {Struct.Reflex || String} _parent_or_ui_layer : Child node to append.
+	/// @returns {Undefined}
+	#endregion
+	static __core_add_to = function(_parent_or_ui_layer)
+	{
+		__orphan();
+		
+		// Parent Reflex case
+		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
+			var _ui_layer = flexpanel_node_get_parent(node_handle);
+			if (_ui_layer != undefined) {
+				// Detach first (handles both wrapper + UI layer parenting)
+				remove_from((__parent == undefined) ? "ReflexLayer" : __parent);
+			}
+			
+			_parent_or_ui_layer.add(self);
+			return true;
+		}
+		
+		// UI layer case
+		var _ui_root_node = layer_get_flexpanel_node(_parent_or_ui_layer);
+		if (_ui_root_node == undefined) {
+			return false;
+		}
+		
+		// Insert into UI layer root as last child
+		var _child_count = flexpanel_node_get_num_children(_ui_root_node);
+		flexpanel_node_insert_child(_ui_root_node, node_handle, _child_count);
+	};
+	
+	#region jsDoc
+	/// @func    __core_remove_from()
+	/// @desc    Detaches this Reflex node from either:
+	///          1) A Reflex parent (if given a Reflex), or
+	///          2) A UI layer root (if given a layer name String).
+	///          If a Reflex parent is provided, this calls parent.remove(self).
+	///          If a UI layer name is provided, this removes node_handle from that UI layer root.
+	///          After detaching, this node becomes its own wrapper root (__parent=undefined).
+	/// @self    Reflex
+	/// @param   {String|Struct.Reflex} _parent_or_ui_layer : Defaults to (__parent==undefined) ? "ReflexLayer" : __parent.
+	/// @returns {Bool}
+	#endregion
+	static __core_remove_from = function(_parent_or_ui_layer)
+	{
+		// Reflex parent case
+		if (is_instanceof(_parent_or_ui_layer, Reflex)) {
+			_parent_or_ui_layer.remove(self);
+			return true;
+		}
+		
+		// UI layer case
+		var _ui_root_node = layer_get_flexpanel_node(_parent_or_ui_layer);
+		if (_ui_root_node == undefined) {
+			return false;
+		}
+		
+		// Attempt to remove from the specified UI layer root
+		flexpanel_node_remove_child(_ui_root_node, node_handle);
+		
+		__parent = undefined;
+		
+		return true;
+	};
+	
+	#region jsDoc
+	/// @func    __core_add()
+	/// @desc    Appends a child node to the end of this node's children list.
+	///          Equivalent to insert(_child_node, -1).
+	/// @self    Reflex
+	/// @param   {Struct.Reflex} node : Child node to append.
+	/// @returns {Undefined}
+	#endregion
+	static __core_add = function(_child_node)
+	{
+		//if it's a leaf rebuild it's data
+		if (is_instanceof(_child_node, ReflexLeaf)) {
+			_child_node.rebuild_node();
+		}
+		
+		_child_node.__orphan();
+		var _insert_index = array_length(__children);
+		array_push(__children, _child_node);
+		_child_node.__parent = self;
+		flexpanel_node_insert_child(node_handle, _child_node.node_handle, _insert_index);
+		return self;
+	};
+	
+	#region jsDoc
+	/// @func    __core_remove()
+	/// @desc    Removes a child node from this node.
+	///          Clears wrapper links (child __parent becomes undefined),
+	///          removes the child from the flexpanel tree, and requests reflow.
+	///          Does nothing if the node is not a direct child of this node.
+	/// @self    Reflex
+	/// @param   {Struct.Reflex} node : Child node to remove.
+	/// @returns {Undefined}
+	#endregion
+	static __core_remove = function(_child_node)
+	{
+		var _index = array_get_index(__children, _child_node);
+		array_delete(__children, _index, 1);
+		
+		// Wrapper links
+		_child_node.__parent = undefined;
+		
+		// Flexpanel tree
+		flexpanel_node_remove_child(node_handle, _child_node.node_handle);
+	};
+	
+	#region jsDoc
+	/// @func    __core_clear()
+	/// @desc    Removes all children from this node.
+	///          Detaches each child (clears __parent),
+	///          removes all flexpanel children, and requests reflow.
+	/// @self    Reflex
+	/// @returns {Undefined}
+	#endregion
+	static __core_clear = function()
+	{
+		var _count = array_length(__children);
+		for (var i = 0; i < _count; i++)
+		{
+			var _child_node = __children[i];
+			_child_node.__parent = undefined;
+		}
+		
+		array_resize(__children, 0);
+
+		flexpanel_node_remove_all_children(node_handle);
+	};
+	
+	
     #region jsDoc
     /// @func    __resolve_unit()
     /// @desc    This function returns whether a given variable is a real number (single, double or

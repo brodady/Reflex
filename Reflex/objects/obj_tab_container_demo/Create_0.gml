@@ -1,11 +1,11 @@
 // Root demo tabs
-demo_tabs = new ReflexTabContainer();
-demo_tabs.add_to("ReflexLayer");
-demo_tabs.set_width("65%");
-demo_tabs.set_height("65%");
-demo_tabs.set_min_width(300);
-demo_tabs.set_min_height(200);
-demo_tabs.set_deselect_enabled(false);
+demo_tabs = new ReflexTabContainer()
+	.set_width("65%")
+	.set_height("65%")
+	.set_min_width(300)
+	.set_min_height(200)
+	.set_deselect_enabled(false)
+demo_tabs.add_to("ReflexLayer")
 
 // Pages (top-level demo sections)
 page_basics = new ReflexUI();
@@ -21,12 +21,12 @@ demo_tabs.add_tab("Transfer", page_transfer, false);
 // -----------------------------------------------------------------------------
 // Basics page: nested TabContainer with a few colored pages
 // -----------------------------------------------------------------------------
-basic_tabs = new ReflexTabContainer();
-basic_tabs.add_to(page_basics);
-basic_tabs.set_width("100%");
-basic_tabs.set_height("100%");
-basic_tabs.set_deselect_enabled(true);
-basic_tabs.set_tabs_rearrange_group(0);
+basic_tabs = new ReflexTabContainer()
+	.set_width("100%")
+	.set_height("100%")
+	.set_deselect_enabled(true)
+	.set_tabs_rearrange_group(0)
+basic_tabs.add_to(page_basics)
 
 basic_pages = [];
 basic_colors = [c_red, c_orange, c_yellow, c_green, c_aqua, c_blue];
@@ -42,12 +42,12 @@ basic_tabs.set_current_tab(0);
 // -----------------------------------------------------------------------------
 // Overflow page: many tabs to force shrink + scroll and test close-freeze
 // -----------------------------------------------------------------------------
-overflow_tabs = new ReflexTabContainer();
+overflow_tabs = new ReflexTabContainer()
+	.set_width("100%")
+	.set_height("100%")
+	.set_deselect_enabled(false)
+	.set_tabs_rearrange_group(0)
 overflow_tabs.add_to(page_overflow);
-overflow_tabs.set_width("100%");
-overflow_tabs.set_height("100%");
-overflow_tabs.set_deselect_enabled(false);
-overflow_tabs.set_tabs_rearrange_group(0);
 
 overflow_pages = [];
 for (var _i = 0; _i < 40; _i++) {
@@ -61,12 +61,12 @@ overflow_tabs.set_current_tab(0);
 // -----------------------------------------------------------------------------
 // Reorder page: moderate number of tabs to drag reorder within container
 // -----------------------------------------------------------------------------
-reorder_tabs = new ReflexTabContainer();
+reorder_tabs = new ReflexTabContainer()
+	.set_width("100%")
+	.set_height("100%")
+	.set_deselect_enabled(false)
+	.set_tabs_rearrange_group(0)
 reorder_tabs.add_to(page_reorder);
-reorder_tabs.set_width("100%");
-reorder_tabs.set_height("100%");
-reorder_tabs.set_deselect_enabled(false);
-reorder_tabs.set_tabs_rearrange_group(0);
 
 reorder_pages = [];
 reorder_colors = [c_lime, c_teal, c_navy, c_purple, c_fuchsia, c_maroon, c_olive, c_gray, c_silver, c_white];
@@ -82,25 +82,23 @@ reorder_tabs.set_current_tab(0);
 // -----------------------------------------------------------------------------
 // Transfer page: two containers side by side, group-gated transfer
 // -----------------------------------------------------------------------------
-transfer_row = new ReflexHBoxContainer();
-transfer_row.add_to(page_transfer);
-transfer_row.set_width("100%");
-transfer_row.set_height("100%");
-
-transfer_left = new ReflexTabContainer();
-transfer_right = new ReflexTabContainer();
-
-transfer_left.add_to(transfer_row);
-transfer_right.add_to(transfer_row);
-
-transfer_left.set_flex_grow(1);
-transfer_right.set_flex_grow(1);
-
 transfer_group_enabled = true;
 transfer_group_id = 1;
 
-transfer_left.set_tabs_rearrange_group(transfer_group_id);
-transfer_right.set_tabs_rearrange_group(transfer_group_id);
+transfer_row = new ReflexHBoxContainer()
+	.set_width("100%")
+	.set_height("100%")
+transfer_row.add_to(page_transfer);
+
+transfer_left = new ReflexTabContainer()
+	.set_flex_grow(1)
+	.set_tabs_rearrange_group(transfer_group_id);
+transfer_right = new ReflexTabContainer()
+	.set_flex_grow(1)
+	.set_tabs_rearrange_group(transfer_group_id);
+
+transfer_left.add_to(transfer_row);
+transfer_right.add_to(transfer_row);
 
 transfer_left_pages = [];
 transfer_right_pages = [];

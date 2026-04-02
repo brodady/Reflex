@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexColorPickerButton",
   "parent":{
-    "name":"Button",
-    "path":"folders/ReflexUI/Components/BaseButton/Button.yy",
+    "name":"ColorPickerButton",
+    "path":"folders/ReflexUI/Components/BaseButton/Button/ColorPickerButton.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

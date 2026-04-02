@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexOptionButton",
   "parent":{
-    "name":"Button",
-    "path":"folders/ReflexUI/Components/BaseButton/Button.yy",
+    "name":"OptionButton",
+    "path":"folders/ReflexUI/Components/BaseButton/Button/OptionButton.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -189,7 +189,7 @@ function ReflexLeafSprite(_sprite=__spr_reflex, _index = 0) : ReflexLeaf() const
 		static __base_set_visible = Reflex.set_visible;
 		__base_set_visible(_enabled);
 		
-		rebuild_node(to_struct());
+		ensure_node();
 		
 		return self;
 	};

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"input_append",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"input_append",
+  "parent":{
+    "name":"Input",
+    "path":"folders/ReflexUI/Input.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

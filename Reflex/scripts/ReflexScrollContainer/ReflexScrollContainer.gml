@@ -480,21 +480,9 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	/// @returns {Undefined}
 	#endregion
 	static add = function(_child_node) {
-		content.insert(_child_node, -1);
+		content.add(_child_node);
 	};
-
-	#region jsDoc
-	/// @func    insert()
-	/// @desc    Inserts a child node into the content node at the given index (or appends if index < 0).
-	/// @self    ReflexScrollContainer
-	/// @param   {Struct.Reflex} node : Child node to insert (added to content).
-	/// @param   {Real} index : Target index. If < 0, appends. Clamped to valid range by content.
-	/// @returns {Undefined}
-	#endregion
-	static insert = function(_child_node, _index_value=-1) {
-		content.insert(_child_node, _index_value);
-	};
-
+	
 	#region jsDoc
 	/// @func    remove()
 	/// @desc    Removes a child node from the content node.
@@ -505,7 +493,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	static remove = function(_child_node) {
 		content.remove(_child_node);
 	};
-
+	
 	#region jsDoc
 	/// @func    clear()
 	/// @desc    Removes all children from the content node.
@@ -515,7 +503,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	static clear = function() {
 		content.clear();
 	};
-
+	
 	#region jsDoc
 	/// @func    find_by_name()
 	/// @desc    Searches for a child component by name within the content node.
@@ -527,7 +515,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	static find_by_name = function(_name_value, _recursive=false) {
 		return content.find_by_name(_name_value, _recursive);
 	};
-
+	
 	#region jsDoc
 	/// @func    get_child_count()
 	/// @desc    Returns the number of direct children of the content node.
@@ -537,7 +525,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	static get_child_count = function() {
 		return content.get_child_count();
 	};
-
+	
 	#region jsDoc
 	/// @func    get_child_at()
 	/// @desc    Returns the child at the given index from the content node.
@@ -548,7 +536,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	static get_child_at = function(_index) {
 		return content.get_child_at(_index);
 	};
-
+	
 	#region jsDoc
 	/// @func    get_children_array()
 	/// @desc    Returns the content node's internal children array.
@@ -558,7 +546,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	static get_children_array = function() {
 		return content.get_children_array();
 	};
-
+	
 	#region jsDoc
 	/// @func    contains()
 	/// @desc    Returns whether the given node exists in the content node's subtree.
@@ -632,7 +620,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	row_top.set_flex_direction(flexpanel_flex_direction.row);
 	row_top.set_flex_grow(1);
 	row_top.set_gap(flexpanel_gutter.all_gutters, 0);
-	__base_add(row_top);
+	__core_add(row_top);
 	
 	viewport = new ReflexUI();
 	viewport.set_flex_direction(flexpanel_flex_direction.row);
@@ -665,7 +653,7 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	bottom_row.set_min_height(scrollbar_size);
 	bottom_row.set_max_height(scrollbar_size);
 	bottom_row.set_flex_shrink(0);
-	__base_add(bottom_row);
+	__core_add(bottom_row);
 	
 	h_scroll = new ReflexHScrollBar();
 	h_scroll.set_flex_grow(1);
@@ -703,26 +691,13 @@ function ReflexScrollContainer() : ReflexUI() constructor
 	__logic = new ReflexLeafLogic();
 	__logic.set_visible(false);
 	__logic.set_step(method(self, __logic_step));
-	__base_add(__logic);
+	__core_add(__logic);
 	
 	// Input Handler for Enhanced Scrolling
 	__input_handler = new ReflexLeafLogic();
 	__input_handler.set_visible(false);
 	__input_handler.set_step(method(self, __handle_input));
 	viewport.add(__input_handler);
-	
-	static __base_add = function(_child_node) {
-		__base_insert(_child_node, -1);
-	};
-	static __base_insert = ReflexUI.insert;
-	static __base_remove = ReflexUI.remove;
-	static __base_clear = ReflexUI.clear;
-	static __base_find_by_name = ReflexUI.find_by_name;
-	static __base_get_child_count = ReflexUI.get_child_count;
-	static __base_get_child_at = ReflexUI.get_child_at;
-	static __base_get_children_array = ReflexUI.get_children_array;
-	static __base_contains = ReflexUI.contains;
-
 	
 	#region jsDoc
 	/// @func __on_scroll_changed(_value)
@@ -1220,6 +1195,25 @@ function ReflexScrollContainer() : ReflexUI() constructor
 		content.set_position(flexpanel_edge.left, -_sx);
 		content.set_position(flexpanel_edge.top, -_sy);
 	};
-
+	
+	#region jsDoc
+	/// @func    __input_get_clip_rect()
+	/// @desc    Returns the local clip rect for descendants, or undefined if this
+	///          node does not clip its subtree. Clip containers should override
+	///          this and return:
+	///          { left, top, right, bottom }
+	/// @self    ReflexUI
+	/// @returns {Struct|Undefined}
+	/// @ignore
+	#endregion
+	static __input_get_clip_rect = function()
+	{
+		static __ = {};
+		__.left   = __logic.get_instance_id().bbox_left;
+		__.top    = __logic.get_instance_id().bbox_left;
+		__.right  = __logic.get_instance_id().bbox_left;
+		__.bottom = __logic.get_instance_id().bbox_left;
+		return __;
+	};
 	#endregion
 }

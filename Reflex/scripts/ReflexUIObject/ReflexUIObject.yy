@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexUIObject",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexUIObject",
+  "parent":{
+    "name":"LeafWrappers",
+    "path":"folders/ReflexUI/__system/LeafWrappers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

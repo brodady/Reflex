@@ -1,10 +1,9 @@
 #region jsDoc
-/// @func ReflexLeafObject(_object)
+/// @func ReflexLeafObject()
 /// @desc Specialized leaf node for native GameMaker instance rendering ("Instance" layer element).
-/// @param {Asset.GMObject} [_object]=noone Object asset to assign.
 /// @return {ReflexLeafObject}
 #endregion
-function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor 
+function ReflexLeafObject() : ReflexLeaf() constructor 
 {
 	#region Setters
 	
@@ -17,8 +16,12 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	static set_instance_object = function(_obj) {
 		if (instanceObjectIndex == _obj) { return self; }
 		
+		instanceObjectIndex = _obj;
+		
 		// Skip rebuilding because its not finished initializing yet.
 		if (instanceObjectIndex == noone) { return self; }
+		
+		ensure_node();
 		
 		return self;
 	};
@@ -39,10 +42,8 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		instanceOffsetX = _x;
 		instanceOffsetY = _y;
 		
-		call_on_instance_ready(function(_inst) {
-			instanceId.x = instanceOffsetX;
-			instanceId.y = instanceOffsetY;
-		});
+		//i dont care to learn how x/y works on various ui layers depending on gui scaling, and viewports, this just resolves it all with little headache
+		ensure_node();
 		
 		return self;
 	};
@@ -68,10 +69,10 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		instanceScaleX = _x;
 		instanceScaleY = (_y != undefined) ? _y : _x;
 		
-		call_on_instance_ready(function(_inst) {
+		if (__inst_valid) {
 			_inst.image_xscale = instanceScaleX;
 			_inst.image_yscale = instanceScaleY;
-		});
+		};
 		
 		return self;
 	};
@@ -86,9 +87,9 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		if (instanceImageSpeed == _spd) { return self; }
 		instanceImageSpeed = _spd;
 		
-		call_on_instance_ready(function(_inst) {
-			_inst.image_speed = instanceImageSpeed;
-		});
+		if (__inst_valid) {
+			_inst.image_speed = _spd;
+		};
 		
 		return self;
 	};
@@ -103,13 +104,13 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		if (instanceImageIndex == _ind) { return self; }
 		instanceImageIndex = _ind;
 		
-		call_on_instance_ready(function(_inst) {
-			_inst.image_index = instanceImageIndex;
-		});
+		if (__inst_valid) {
+			_inst.image_index = _ind;
+		};
 		
 		return self;
 	};
-
+	
 	#region jsDoc
 	/// @func set_instance_color(_col)
 	/// @desc Sets instance color tint. IDE: "Colour".
@@ -125,9 +126,9 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		instanceColour = _unsigned;
 		image_blend = _col;
 		
-		call_on_instance_ready(function(_inst) {
-			instanceId.image_blend = image_blend;
-		});
+		if (__inst_valid) {
+			instanceId.image_blend = _col;
+		};
 		
 		return self;
 	};
@@ -143,13 +144,53 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		if (instanceAngle == _ang) { return self; }
 		instanceAngle = _ang;
 		
-		call_on_instance_ready(function(_inst) {
-			_inst.image_angle = instanceAngle;
-		});
+		if (__inst_valid) {
+			instanceId.image_angle = _ang;
+		}
 		
 		return self;
 	};
 	
+	#region jsDoc
+	/// @func    set_variable(_name, _value)
+	/// @desc    Writes an instance variable definition to the wrapped ReflexLeafObject.
+	///          If the runtime instance already exists, the live instance value is updated too.
+	/// @self    ReflexLeafObject
+	/// @param   {String} _name
+	/// @param   {Any} _value
+	/// @returns {Struct.ReflexLeafObject}
+	#endregion
+	static set_variable = function(_name, _value) {
+		
+		// https://github.com/YoYoGames/GameMaker-Bugs/issues/14272
+		if (__is_settable_var(_name)) {
+			_name = _name + "__";
+		}
+		else if (__is_gettable_var(_name)) {
+			throw $"\n\n\nReflex :: Unable to set variable `{_name}`, this is a read only variable.\n\n"
+		}
+		
+		instanceVariables[$ _name] = _value;
+		
+		if (__is_built) {
+			if (__inst_valid) {
+				instanceId[$ _name] = _value;
+			}
+			else {
+				var _self = self;
+				call_on_instance_ready(method({_self, _name, _value}, function(){
+					_self.instanceId[$ _name] = _value;
+				}))
+			}
+		}
+		
+		return self;
+	};
+	
+
+	#region Built in Variables
+	
+	#region General Variables
 	/// TODO:
 	/// GM BUG: This is disabled until one of the two following bugs are resolved by GM
 	// https://github.com/YoYoGames/GameMaker-Bugs/issues/14199
@@ -168,44 +209,80 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		static __base_set_visible = Reflex.set_visible;
 		__base_set_visible(_enabled);
 		
-		call_on_instance_ready(function(_inst) {
-			_inst.visible = flexVisible;
-		});
+		set_variable("visible", _enabled)
 		
 		return self;
 	};
+	static set_solid = function(_solid) {
+		set_variable("solid", _solid)
+		return self;
+	}
+	static set_persistent = function(_persistent) {
+		set_variable("persistent", _persistent)
+		return self;
+	}
+	static set_depth = function(_depth) {
+		set_variable("depth", _depth)
+		return self;
+	}
+	static set_layer = function(_layer) {
+		set_variable("layer", _layer)
+		return self;
+	}
+	static set_collision_space = function(_collision_space) {
+		set_variable("collision_space", _collision_space)
+		return self;
+	}
+	static set_alarm = function(_index, _count) {
+		if (__inst_valid) {
+			instanceId.alarm[_index] = _count;
+		}
+		else {
+			call_on_instance_ready(method({_index, _count}, function(_inst) {
+				_inst.alarm[_index] = _count;
+			}))
+		}
+		return self;
+	}
+	#endregion
 	
-	//#region jsDoc
-	///// @func set_instance_id(_id)
-	///// @desc Sets the instance id reference value. IDE: "Instance".
-	///// @param {Real} _id Instance id.
-	///// @return {ReflexLeafObject}
-	//#endregion
-	//static set_instance_id = function(_id) {
-	//	if (instanceId == _id) { return self; }
-		
-	//	if (instance_exists(instanceId)) {
-	//		instance_destroy(instanceId);
-	//	}
-		
-	//	instanceId = _id;
-		
-	//	call_on_instance_ready(function(_inst) {
-	//		_inst.x = instanceOffsetX;
-	//		_inst.y = instanceOffsetY;
-
-	//		_inst.image_xscale = instanceScaleX;
-	//		_inst.image_yscale = instanceScaleY;
-
-	//		_inst.image_speed = instanceImageSpeed;
-	//		_inst.image_index = instanceImageIndex;
-
-	//		_inst.image_blend = instanceColour;
-	//		_inst.image_angle = instanceAngle;
-	//	});
-		
-	//	return self;
-	//};
+	#region Movement And Position
+	// ReflexUI will not support movement setters.
+	#endregion 
+	
+	#region Object Properties
+	static set_object_index = set_instance_object;
+	#endregion 
+	
+	#region Sprite Properties
+	static set_sprite_index = function(_sprite_index) {
+		set_variable("sprite_index", _sprite_index)
+		set_variable("mask_index", _sprite_index)
+		return self;
+	}
+	static set_image_alpha = function(_image_alpha) {
+		set_variable("image_alpha", _image_alpha)
+		return self;
+	}
+	static set_image_angle = set_instance_angle;
+	static set_image_blend = set_instance_color;
+	static set_image_index = set_instance_image_index;
+	static set_image_number = function(_image_number) {
+		set_variable("image_number", _image_number)
+		return self;
+	}
+	static set_image_speed = set_instance_image_speed;
+	static set_image_xscale = function(_image_xscale) {
+		set_variable("image_xscale", _image_xscale)
+		return self;
+	}
+	static set_image_yscale = function(_image_yscale) {
+		set_variable("image_yscale", _image_yscale)
+		return self;
+	}
+	#endregion
+	
+	#endregion
 	
 	#endregion
 	
@@ -268,12 +345,12 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	static get_instance_image_index = function() { return instanceImageIndex; };
 	
 	#region jsDoc
-	/// @func get_instance_colour()
+	/// @func get_instance_color()
 	/// @desc Gets the instance color value.
 	/// @returns {Real}
 	#endregion
-	static get_instance_colour = function() { return instanceColour; };
-	static get_instance_color = get_instance_colour;
+	static get_instance_color = function() { return instanceColour; };
+	static get_instance_colour = get_instance_color;
 	
 	#region jsDoc
 	/// @func get_instance_angle()
@@ -298,6 +375,80 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	/// @returns {Real|Undefined}
 	#endregion
 	static get_instance_id = function() { return instanceId; };
+	
+	#region jsDoc
+	/// @func    get_variable(_name)
+	/// @desc    Gets an instance variable definition to the wrapped ReflexLeafObject.
+	///          If the runtime instance doesnt exists, undefined is returned instead.
+	/// @self    ReflexLeafObject
+	/// @param   {String} _name
+	/// @param   {Any} _value
+	/// @returns {Struct.ReflexLeafObject}
+	#endregion
+	static get_variable = function(_name) {
+		if (__is_settable_var(_name)) {
+			_name = string_replace(_name, "__", "");
+		}
+		
+		if (__inst_valid) {
+			return instanceId[$ _name];
+		}
+		else {
+			return undefined
+		}
+	};
+	
+	#region Built in Variables
+	
+	#region General Variables
+	//static get_visible SEE:: Reflex.get_visible
+	static get_id = get_instance_id;
+	static get_solid = function() { return get_variable("solid"); }
+	static get_persistent = function() { return get_variable("persistent"); }
+	static get_depth = function() { return get_variable("depth"); }
+	static get_layer = function() { return get_variable("layer"); }
+	static get_on_ui_layer = function() { return get_variable("on_ui_layer"); }
+	static get_collision_space = function() { return get_variable("collision_space"); }
+	static get_alarm = function() { return get_variable("alarm"); }
+	#endregion
+	
+	#region Movement And Position
+	static get_direction = function() { return get_variable("direction"); }
+	static get_friction = function() { return get_variable("friction"); }
+	static get_gravity = function() { return get_variable("gravity"); }
+	static get_gravity_direction = function() { return get_variable("gravity_direction"); }
+	static get_hspeed = function() { return get_variable("hspeed"); }
+	static get_vspeed = function() { return get_variable("vspeed"); }
+	static get_speed = function() { return get_variable("speed"); }
+	static get_xstart = function() { return get_variable("xstart"); }
+	static get_ystart = function() { return get_variable("ystart"); }
+	static get_x = function() { return get_variable("x"); }
+	static get_y = function() { return get_variable("y"); }
+	static get_xprevious = function() { return get_variable("xprevious"); }
+	static get_yprevious = function() { return get_variable("yprevious"); }
+	#endregion 
+	
+	#region Object Properties
+	static get_object_index = function() { return get_variable("object_index"); }
+	#endregion 
+	
+	#region Sprite Properties
+	static get_sprite_index = function() { return get_variable("sprite_index"); }
+	static get_sprite_width = function() { return get_variable("sprite_width"); }
+	static get_sprite_height = function() { return get_variable("sprite_height"); }
+	static get_sprite_xoffset = function() { return get_variable("sprite_xoffset"); }
+	static get_sprite_yoffset = function() { return get_variable("sprite_yoffset"); }
+	static get_image_alpha = function() { return get_variable("image_alpha"); }
+	static get_image_angle = get_instance_angle;
+	static get_image_blend = get_instance_color;
+	static get_image_index = get_instance_image_index;
+	static get_image_number = function() { return get_variable("image_number"); }
+	static get_image_speed = get_instance_image_speed;
+	static get_image_xscale = get_instance_scale_x;
+	static get_image_yscale = get_instance_scale_y;
+	#endregion
+	
+	#endregion
 	
 	#endregion
 	
@@ -340,7 +491,65 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	
 	// Instance element specific
 	instanceObjectIndex = noone; // "Object"
-	instanceVariables = {}; // "Variables" - instance variable overrides are stored here
+	instanceVariables = {
+		
+		// The reason we prefix everything with underscores here is specifically because built in variables are ignored by `flexpanel_create_node`... for some reason...
+		// https://github.com/YoYoGames/GameMaker-Bugs/issues/14272
+		
+		#region Built in Variables
+	
+		#region General Variables
+		//id = ref instance 100001; Can fetch this, but cant set
+		//visible = 1; SEE:: `Reflex.visible`
+		__solid: 0,
+		__persistent: 0,
+		__depth: 0,
+		__layer: -1,
+		//on_ui_layer = 1; Can fetch this, but cant set (also should always be true)
+		__collision_space: colspace.ui_display, // ideally will always be colspace.ui_display
+		//alarm = -1; Can fetch this, but cant set before instance exists
+		#endregion
+
+		#region Movement And Position
+		//Can fetch these, but wont support setting
+		//direction = 0,
+		//friction = 0,
+		//gravity = 0,
+		//gravity_direction = 270,
+		//hspeed = 0,
+		//vspeed = 0,
+		//speed = 0,
+		//xstart = 0,
+		//ystart = 0,
+		//x = 0,
+		//y = 0,
+		//xprevious = 0,
+		//yprevious = 0,
+		#endregion 
+
+		#region Object Properties
+		//object_index = ref object Object4; SEE:: instanceObjectIndex
+		#endregion 
+
+		#region Sprite Properties
+		__sprite_index: -1,
+		//sprite_width = 0, Can fetch this, but cant set
+		//sprite_height = 0, Can fetch this, but cant set
+		//sprite_xoffset = 0, Can fetch these, but cant set them
+		//sprite_yoffset = 0, Can fetch these, but cant set them
+		__image_alpha: 1,
+		//image_angle = 0, SEE:: instanceAngle
+		//image_blend = c_white, SEE:: instanceColour
+		//image_index = 0, SEE:: instanceImageIndex
+		__image_number: 1,
+		//image_speed = 1, SEE:: instanceImageSpeed
+		//image_xscale = 5, SEE:: instanceScaleX
+		//image_yscale = 5, SEE:: instanceScaleY
+		#endregion
+	
+		#endregion
+		
+	}; // "Variables" - instance variable overrides are stored here
 	
 	instanceOffsetX = 0.0; // "Position - X"
 	instanceOffsetY = 0.0; // "Position - Y"
@@ -377,7 +586,7 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		var _base_struct = __base_to_struct();
 		
 		// Instance Specific Data
-		_base_struct.instanceObjectIndex = instanceObjectIndex;
+		_base_struct.instanceObjectIndex = (instanceObjectIndex == noone) ? __obj_reflex_null_object : instanceObjectIndex;
 		_base_struct.instanceVariables = instanceVariables;
 		
 		_base_struct.instanceOffsetX = instanceOffsetX;
@@ -405,14 +614,8 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	///        - Invalidates instance and restarts polling.
 	/// @param {Struct} _element_struct
 	#endregion
-	#endregion
-	static rebuild_node = function(_element_struct)
+	static rebuild_node = function(_element_struct=to_struct())
 	{
-		//if (__parent == undefined && __in_ui_layer = false) {
-		//	__invalidate_inst();
-		//	return;
-		//}
-		
 		static __base_rebuild_node = ReflexLeaf.rebuild_node;
 		__base_rebuild_node(_element_struct);
 		
@@ -436,7 +639,6 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	/// @desc Ensures a one-frame polling loop exists until instanceId becomes valid.
 	/// @returns {Undefined}
 	#endregion
-	#endregion
 	static __ensure_inst_polling = function() {
 		// ensure that we have done our first build, as some functions directly use rebuild,
 		// while others attempt to simply set an instance or layer value
@@ -444,7 +646,7 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		if (!variable_struct_exists(_s, "layerElements"))
 		|| (!is_array(_s.layerElements))
 		|| (array_length(_s.layerElements) == 0) {
-			rebuild_node(to_struct());
+			rebuild_node();
 			return;
 		}
 		
@@ -479,7 +681,12 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 	#endregion
 	static __validate_inst = function(_inst)
 	{
-		if (!instance_exists(_inst) || _inst == -1 || _inst == noone) { return; }
+		if (!instance_exists(_inst))
+		|| (_inst == -1)
+		|| (_inst == noone)
+		|| (_inst.object_index == __obj_reflex_null_object) // flexpanels cant take in `noone` so we use a null object ref
+		{ return; }
+		
 		
 		instanceId = _inst;
 		__inst_valid = true;
@@ -498,12 +705,6 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 			var _fn = array_pop(__call_on_inst_exist);
 			_fn(_inst);
 		}
-		
-		// TODO:
-		// Ideally this wouldnt be needed,
-		// but currently there is no way to disable visibility of an object,
-		// please see linked bugs in set_visible in both this script and base Reflex script
-		_inst.visible = flexVisible;
 		
 	};
 	
@@ -531,9 +732,24 @@ function ReflexLeafObject(_object=noone) : ReflexLeaf() constructor
 		}
 	};
 	
+	static __is_gm_built_in_var = function(_name)
+	{
+		return (__is_settable_var(_name) || __is_gettable_var(_name))
+	}
+	static __is_settable_var = function(_name)
+	{
+		static __set_vars = ["alarm", "depth", "direction", "friction", "gravity", "gravity_direction", "hspeed", "layer", "persistent", "solid", "speed", "vspeed", "x", "xprevious", "xstart", "y", "yprevious", "ystart", "path_endaction", "path_orientation", "path_position", "path_positionprevious", "path_scale", "path_speed", "in_sequence", "drawn_by_sequence", "image_alpha", "image_angle", "image_blend", "image_index", "image_speed", "image_xscale", "image_yscale", "mask_index", "sprite_index", "timeline_index", "timeline_loop", "timeline_position", "timeline_running", "timeline_speed", "phy_active", "phy_angular_damping", "phy_angular_velocity", "phy_bullet", "phy_fixed_rotation", "phy_linear_damping", "phy_linear_velocity_x", "phy_linear_velocity_y", "phy_position_x", "phy_position_y", "phy_rotation", "phy_speed_x", "phy_speed_y"]
+		return (array_get_index(__set_vars, _name) != -1);
+		//return array_contains(__set_vars, _name);
+	}
+	static __is_gettable_var = function(_name)
+	{
+		static __get_vars = ["id", "on_ui_layer", "object_index", "event_number", "event_object", "event_type", "sequence_instance", "bbox_bottom", "bbox_left", "bbox_right", "bbox_top", "collision_space", "image_number", "sprite_height", "sprite_width", "sprite_xoffset", "sprite_yoffset", "phy_collision_points", "phy_collision_x", "phy_collision_y", "phy_col_normal_x", "phy_col_normal_y", "phy_com_x", "phy_com_y", "phy_dynamic", "phy_inertia", "phy_kinematic", "phy_mass", "phy_position_xprevious", "phy_position_yprevious", "phy_sleeping", "phy_speed", "in_collision_tree", "player_id", "player_local", "player_avatar_url", "player_avatar_sprite", "player_type", "player_user_id"];
+		return (array_get_index(__get_vars, _name) != -1);
+		//return array_contains(__get_vars, _name);
+	}
 	
-	
-	// Init
-	instanceObjectIndex = _object;
 	#endregion
 }
+
+

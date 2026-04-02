@@ -1,2 +1,0 @@
-step = undefined;
-draw = undefined;

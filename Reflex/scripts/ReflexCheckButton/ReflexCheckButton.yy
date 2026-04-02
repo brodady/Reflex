@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ReflexCheckButton",
   "parent":{
-    "name":"Button",
-    "path":"folders/ReflexUI/Components/BaseButton/Button.yy",
+    "name":"CheckButton",
+    "path":"folders/ReflexUI/Components/BaseButton/Button/CheckButton.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

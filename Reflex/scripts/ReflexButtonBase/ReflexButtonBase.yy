@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ReflexButtonBase",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ReflexButtonBase",
+  "parent":{
+    "name":"BaseButton",
+    "path":"folders/ReflexUI/Components/BaseButton.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

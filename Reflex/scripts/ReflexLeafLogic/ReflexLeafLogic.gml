@@ -4,7 +4,7 @@
 ///       Stores callbacks in __step/__draw so they can be re-applied after rebuilds.
 /// @param {Asset.GMObject} [_helper_object]=__obj_reflex_logic_handler
 #endregion
-function ReflexLeafLogic(_helper_object=__obj_reflex_logic_handler) : ReflexLeafObject(_helper_object) constructor
+function ReflexLeafLogic() : ReflexLeafObject() constructor
 {
 	#region jsDoc
 	/// @func    set_step()
@@ -16,9 +16,7 @@ function ReflexLeafLogic(_helper_object=__obj_reflex_logic_handler) : ReflexLeaf
 	static set_step = function(_method)
 	{
 		__step = _method;
-		call_on_instance_ready(function(_inst) {
-			_inst.step = __step;
-		})
+		set_variable("step", _method)
 		return self;
 	};
 
@@ -32,9 +30,7 @@ function ReflexLeafLogic(_helper_object=__obj_reflex_logic_handler) : ReflexLeaf
 	static set_draw = function(_method)
 	{
 		__draw = _method;
-		call_on_instance_ready(function(_inst) {
-			_inst.draw = __draw;
-		})
+		set_variable("draw", _method)
 		return self;
 	};
 
@@ -69,15 +65,12 @@ function ReflexLeafLogic(_helper_object=__obj_reflex_logic_handler) : ReflexLeaf
     /// @desc Recreates the native Flexpanel node to apply layerElement changes.
     /// @param {Struct} _element_struct The layerElements struct defining the type (Sprite/Text).
     #endregion
-    static rebuild_node = function(_element_struct) {
+    static rebuild_node = function(_element_struct=to_struct()) {
 		static __base_rebuild_node = ReflexLeafObject.rebuild_node;
 		__base_rebuild_node(_element_struct);
-		
-		call_on_instance_ready(function(_inst) {
-			_inst.step = __step;
-			_inst.draw = __draw;
-		})
 	}
 	
 	#endregion
+	
+	set_instance_object(__obj_reflex_logic_handler);
 }

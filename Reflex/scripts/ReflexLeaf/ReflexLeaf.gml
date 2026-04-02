@@ -52,7 +52,7 @@ function ReflexLeaf() : Reflex() constructor
 
 		flexAnchor = _preset;
 
-		rebuild_node(to_struct());
+		ensure_node();
 		return self;
 	};
 	
@@ -72,7 +72,7 @@ function ReflexLeaf() : Reflex() constructor
 		flexStretchWidth = _width;
 		flexStretchHeight = _height;
 		
-		rebuild_node(to_struct());
+		ensure_node();
         return self;
     };
 	
@@ -87,7 +87,7 @@ function ReflexLeaf() : Reflex() constructor
 		if (flexStretchKeepAspect == _enabled) { return self; }
 		flexStretchKeepAspect = _enabled;
 		
-		rebuild_node(to_struct());
+		ensure_node();
 		return self;
 	};
 	
@@ -107,7 +107,7 @@ function ReflexLeaf() : Reflex() constructor
 		flexTileHorizontal = _horz;
 		flexTileVertical = _vert;
 		
-		rebuild_node(to_struct());
+		ensure_node();
         return self;
     };
 	
@@ -222,10 +222,10 @@ function ReflexLeaf() : Reflex() constructor
 	#endregion
 	static add_to = function(_parent_or_ui_layer)
 	{
-		static __base_add_to = Reflex.add_to;
-		var _value = __base_add_to(_parent_or_ui_layer);
+		ensure_node();
+		__core_add_to(_parent_or_ui_layer);
 		__ensure_elem_polling();
-		return _value;
+		return self;
 	}
 	
 	#region jsDoc
@@ -242,10 +242,16 @@ function ReflexLeaf() : Reflex() constructor
 	#endregion
 	static remove_from = function(_parent_or_ui_layer)
 	{
-		static __base_remove_from = Reflex.remove_from;
-		var _value = __base_remove_from(_parent_or_ui_layer);
+		__core_remove_from(_parent_or_ui_layer);
 		__invalidate_elem();
-		return _value;
+		return self;
+	}
+	
+	static ensure_node = function() {
+		// if we have built, and we are dirty, rebuild
+		if (__is_built) {
+			rebuild_node();
+		}
 	}
 	
 	#region jsDoc
@@ -256,12 +262,9 @@ function ReflexLeaf() : Reflex() constructor
 	///        - Invalidates element and restarts polling.
 	/// @param {Struct} _element_struct
 	#endregion
-	static rebuild_node = function(_element_struct)
+	static rebuild_node = function(_element_struct=to_struct())
 	{
-		//if (__parent == undefined && __in_ui_layer = false) {
-		//	__invalidate_elem();
-		//	return;
-		//}
+		__is_built = true;
 		
 		var _s = flexpanel_node_get_struct(node_handle);
 		if (!variable_struct_exists(_s, "layerElements") || !is_array(_s.layerElements)) {
@@ -317,6 +320,8 @@ function ReflexLeaf() : Reflex() constructor
 	flexStretchKeepAspect = false;
 	
 	#endregion
+	
+	__is_built = false;
 	
 	//array used to allow for calling when the instance finally exists.
 	__elem_timesource = undefined;
@@ -382,7 +387,7 @@ function ReflexLeaf() : Reflex() constructor
 		if (!variable_struct_exists(_s, "layerElements"))
 		|| (!is_array(_s.layerElements))
 		|| (array_length(_s.layerElements) == 0) {
-			rebuild_node(to_struct());
+			rebuild_node();
 			return;
 		}
 		
